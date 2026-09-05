@@ -20,29 +20,23 @@ export default function BottomNav() {
 
   return (
     /* Only visible on mobile (< md) */
-    <div
-      className="md:hidden fixed z-[80] left-1/2 -translate-x-1/2"
-      style={{
-        bottom: 'calc(env(safe-area-inset-bottom, 0px) + 14px)',
-        width: 'calc(100% - 28px)',
-        maxWidth: '430px',
-      }}
-    >
-      {/* Outer warm glow ring */}
-      <div className="absolute inset-0 rounded-[28px] bg-gradient-to-r from-[#d97706]/35 via-[#f59e0b]/20 to-[#5c3110]/35 blur-xl pointer-events-none" />
+    <div className="md:hidden fixed z-[80] bottom-4 left-0 right-0 px-3 flex justify-center pointer-events-none pb-[env(safe-area-inset-bottom)]">
+      <div className="relative w-full max-w-[430px] pointer-events-auto">
+        {/* Outer warm glow ring */}
+        <div className="absolute inset-0 rounded-[28px] bg-gradient-to-r from-[#d97706]/35 via-[#f59e0b]/20 to-[#5c3110]/35 blur-xl pointer-events-none" />
 
-      {/* Glass pill navigation */}
-      <nav
-        className="relative rounded-[28px] flex items-center px-2 py-2 gap-1"
-        style={{
-          background: 'rgba(255, 251, 235, 0.82)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          border: '1px solid rgba(251, 191, 36, 0.4)',
-          boxShadow:
-            '0 12px 35px rgba(92,49,16,0.16), 0 2px 10px rgba(245,158,11,0.15), inset 0 1px 0 rgba(255,255,255,0.7)',
-        }}
-      >
+        {/* Glass pill navigation */}
+        <nav
+          className="relative w-full rounded-[28px] flex items-center justify-between px-2 py-2 gap-1"
+          style={{
+            background: 'rgba(255, 251, 235, 0.82)',
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
+            border: '1px solid rgba(251, 191, 36, 0.4)',
+            boxShadow:
+              '0 12px 35px rgba(92,49,16,0.16), 0 2px 10px rgba(245,158,11,0.15), inset 0 1px 0 rgba(255,255,255,0.7)',
+          }}
+        >
         {NAV_ITEMS.map((item) => {
           const Icon = item.icon;
           const isActive = location.pathname === item.path;
@@ -107,6 +101,7 @@ export default function BottomNav() {
           );
         })}
       </nav>
+      </div>
     </div>
   );
 }
