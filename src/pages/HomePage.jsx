@@ -41,7 +41,7 @@ function HeroCarousel() {
         onMouseLeave={() => setAuto(true)}
       >
         {s.heroImage && (
-          <MediaDisplay src={s.heroImage} alt="Hero Banner" className="w-full h-auto object-cover max-h-[520px]" loading="eager" />
+          <MediaDisplay src={s.heroImage} alt="Hero Banner" className="w-full h-[250px] sm:h-[350px] md:h-[450px] lg:h-[500px] object-cover" loading="eager" />
         )}
         
         {/* Navigation Arrows */}
