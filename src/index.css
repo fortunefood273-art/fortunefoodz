@@ -262,23 +262,24 @@ body {
 .font-playfair { font-family: 'Playfair Display', serif; }
 .font-jakarta { font-family: 'Plus Jakarta Sans', sans-serif; }
 
+
 /* ── SCROLL REVEAL ANIMATIONS ── */
 .reveal-fade-up,
 .reveal-fade-down,
 .reveal-fade-left,
 .reveal-fade-right,
 .reveal-scale-up {
-  transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.85s cubic-bezier(0.16, 1, 0.3, 1),
-              filter 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+              filter 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: opacity, transform, filter;
 }
 
-.reveal-fade-up { opacity: 0; transform: translateY(40px); filter: blur(4px); }
-.reveal-fade-down { opacity: 0; transform: translateY(-40px); filter: blur(4px); }
-.reveal-fade-left { opacity: 0; transform: translateX(-40px); filter: blur(4px); }
-.reveal-fade-right { opacity: 0; transform: translateX(40px); filter: blur(4px); }
-.reveal-scale-up { opacity: 0; transform: scale(0.93) translateY(20px); filter: blur(4px); }
+.reveal-fade-up    { opacity: 0; transform: translateY(48px);  filter: blur(5px); }
+.reveal-fade-down  { opacity: 0; transform: translateY(-48px); filter: blur(5px); }
+.reveal-fade-left  { opacity: 0; transform: translateX(-48px); filter: blur(5px); }
+.reveal-fade-right { opacity: 0; transform: translateX(48px);  filter: blur(5px); }
+.reveal-scale-up   { opacity: 0; transform: scale(0.88) translateY(24px); filter: blur(6px); }
 
 .reveal-fade-up.is-visible,
 .reveal-fade-down.is-visible,
@@ -289,3 +290,72 @@ body {
   transform: translate(0, 0) scale(1);
   filter: blur(0px);
 }
+
+/* ── GLOBAL SECTION AUTO-ANIMATE ── */
+/* Every <section> and .animate-section gets a smooth entry animation automatically */
+section,
+.animate-section {
+  opacity: 0;
+  transform: translateY(36px);
+  filter: blur(3px);
+  transition: opacity 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+              filter 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform, filter;
+}
+
+section.in-view,
+.animate-section.in-view {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0px);
+}
+
+/* Stagger children cards inside animated sections */
+section.in-view > * { animation: none; }
+
+/* Card pop-in for product grids */
+@keyframes card-pop {
+  0%   { opacity: 0; transform: translateY(20px) scale(0.95); }
+  60%  { opacity: 1; transform: translateY(-4px) scale(1.01); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+section.in-view .product-card,
+section.in-view [class*="rounded-2xl"] {
+  animation: card-pop 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Stagger each card based on its position in the parent */
+section.in-view [class*="rounded-2xl"]:nth-child(1)  { animation-delay: 0.05s; }
+section.in-view [class*="rounded-2xl"]:nth-child(2)  { animation-delay: 0.10s; }
+section.in-view [class*="rounded-2xl"]:nth-child(3)  { animation-delay: 0.15s; }
+section.in-view [class*="rounded-2xl"]:nth-child(4)  { animation-delay: 0.20s; }
+section.in-view [class*="rounded-2xl"]:nth-child(5)  { animation-delay: 0.25s; }
+section.in-view [class*="rounded-2xl"]:nth-child(6)  { animation-delay: 0.30s; }
+section.in-view [class*="rounded-2xl"]:nth-child(7)  { animation-delay: 0.10s; }
+section.in-view [class*="rounded-2xl"]:nth-child(8)  { animation-delay: 0.15s; }
+
+/* Heading slide-in */
+@keyframes heading-slide {
+  from { opacity: 0; transform: translateX(-20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+section.in-view h2,
+section.in-view h3 {
+  animation: heading-slide 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.05s both;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  section, .animate-section,
+  .reveal-fade-up, .reveal-fade-down,
+  .reveal-fade-left, .reveal-fade-right, .reveal-scale-up {
+    transition: none !important;
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+}
+
