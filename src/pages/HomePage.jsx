@@ -739,12 +739,13 @@ function CategorySectionsGrid() {
         const catProducts = products.filter(p => p.category === cat.label);
         const props = { cat, products: catProducts, addToCart, toggleWishlist, isInCart, isWishlisted, navigate };
 
-        if (cat.label === 'Exotic Spices') return <ExoticSpicesSection key={cat.label} {...props} />;
-        if (cat.label === 'Dry Fruits') return <DryFruitsSection key={cat.label} {...props} />;
-        if (cat.label === 'Gourmet Nuts') return <GourmetNutsSection key={cat.label} {...props} />;
-        if (cat.label === 'Healthy Seeds') return <HealthySeedsSection key={cat.label} {...props} />;
-        if (cat.label === 'Pure Ghee & Oils') return <PureGheeSection key={cat.label} {...props} />;
-        if (cat.label === 'Festive Gift Boxes') return <FestiveGiftsSection key={cat.label} {...props} />;
+        const lowerLabel = cat.label.toLowerCase();
+        if (lowerLabel.includes('spice')) return <ExoticSpicesSection key={cat.label} {...props} />;
+        if (lowerLabel.includes('dry') || lowerLabel.includes('dried')) return <DryFruitsSection key={cat.label} {...props} />;
+        if (lowerLabel.includes('nut')) return <GourmetNutsSection key={cat.label} {...props} />;
+        if (lowerLabel.includes('seed')) return <HealthySeedsSection key={cat.label} {...props} />;
+        if (lowerLabel.includes('dairy') || lowerLabel.includes('oil') || lowerLabel.includes('ghee')) return <PureGheeSection key={cat.label} {...props} />;
+        if (lowerLabel.includes('festive') || lowerLabel.includes('gift')) return <FestiveGiftsSection key={cat.label} {...props} />;
 
         // Fallback for any dynamic new categories
         return (
