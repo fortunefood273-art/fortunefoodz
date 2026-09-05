@@ -1,5 +1,6 @@
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '.env.production') });
+const prisma = require('./db');
 
 // High-quality Unsplash food images (stable, no API key needed)
 const SLIDES = [

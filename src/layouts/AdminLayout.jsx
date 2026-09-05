@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard, Package, Image, Percent,
-  Menu, X, Settings, Users, ShoppingBag, CreditCard, Music2, Activity
+  Menu, X, Settings, Users, ShoppingBag, CreditCard, Music2, Activity,
+  Instagram, Bell, Mail, BarChart2
 } from 'lucide-react';
 
 const NAV_ITEMS = [
@@ -14,9 +15,13 @@ const NAV_ITEMS = [
   { path: '/admin/deals', label: 'Offer Zone', icon: Percent },
   { path: '/admin/orders', label: 'Orders', icon: ShoppingBag },
   { path: '/admin/customers', label: 'Customers', icon: Users },
-  { path: '/admin/retention', label: 'Analytics', icon: Activity },
+  { path: '/admin/retention', label: 'Web Analytics', icon: BarChart2 },
   { path: '/admin/payment', label: 'Payment Config', icon: CreditCard },
   { path: '/admin/settings', label: 'Store Settings', icon: Settings },
+  { path: '/admin/instagram', label: 'Instagram Reels', icon: Instagram },
+  { path: '/admin/notifications', label: 'Push Notifications', icon: Bell },
+  { path: '/admin/campaigns', label: 'Email Campaigns', icon: Mail },
+  { path: '/admin/music', label: 'Studio Music', icon: Music2 },
 ];
 
 export default function AdminLayout() {
