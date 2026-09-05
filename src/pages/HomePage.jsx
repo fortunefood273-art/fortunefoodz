@@ -1276,8 +1276,7 @@ export default function HomePage() {
       </main>
 
       <Footer />
-
-      <div className="h-20 md:hidden" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }} />
+      <div className="h-24 md:hidden" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }} />
     </div>
   );
 }

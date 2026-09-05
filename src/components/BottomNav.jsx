@@ -18,14 +18,14 @@ export default function BottomNav() {
 
   return (
     <div className="md:hidden fixed z-[80] bottom-3 left-0 right-0 px-4 flex justify-center pointer-events-none">
-      <div className="relative w-full max-w-[420px] pointer-events-auto">
+      <div className="relative w-full max-w-[420px] min-w-0 pointer-events-auto">
 
         {/* Warm ambient glow behind pill */}
         <div className="absolute inset-x-4 bottom-0 h-10 rounded-full bg-amber-400/30 blur-2xl pointer-events-none" />
 
         {/* Glass pill */}
         <nav
-          className="relative w-full rounded-3xl flex items-center justify-between px-3 py-2"
+          className="relative w-full min-w-0 rounded-3xl flex items-center justify-between px-3 py-2"
           style={{
             background: 'linear-gradient(135deg, rgba(255,251,235,0.95) 0%, rgba(254,243,199,0.92) 100%)',
             backdropFilter: 'blur(24px)',
@@ -49,7 +49,7 @@ export default function BottomNav() {
                   navigate(item.path);
                 }}
                 aria-label={item.label}
-                className="relative flex-1 flex flex-col items-center justify-center py-1.5 gap-0.5 rounded-2xl transition-all duration-200"
+                className="relative flex-1 flex flex-col items-center justify-center py-1.5 gap-0.5 rounded-2xl transition-all duration-200 min-w-0"
                 style={{
                   background: isActive
                     ? 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)'
@@ -74,7 +74,7 @@ export default function BottomNav() {
 
                 {/* Label */}
                 <span
-                  className="text-[9px] font-bold leading-none tracking-wide"
+                  className="text-[9px] font-bold leading-none tracking-wide max-w-full overflow-hidden text-ellipsis whitespace-nowrap text-center"
                   style={{
                     color: isActive ? '#fff' : '#78350f',
                     transition: 'color 0.2s ease',

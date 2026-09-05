@@ -90,7 +90,7 @@ function AppInner() {
   }, []);
 
   return (
-    <div className="min-h-screen mesh-bg text-gray-800 font-sans pb-24 md:pb-0">
+    <div className="min-h-screen mesh-bg text-gray-800 font-sans overflow-x-hidden max-w-full relative">
       <PageLoader 
         skip={false}
         dataReady={!loading}

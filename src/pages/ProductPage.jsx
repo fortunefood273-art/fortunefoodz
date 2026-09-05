@@ -25,7 +25,7 @@ export default function ProductPage() {
 
   if (!product) {
     return (
-      <div className="min-h-screen mesh-bg flex flex-col">
+      <div className="min-h-screen mesh-bg pb-32 md:pb-0 flex flex-col">
         <Header />
         <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
           <h2 className="text-2xl font-cinzel font-bold text-stone-900 mb-2">Product Not Found</h2>
@@ -55,7 +55,7 @@ export default function ProductPage() {
   const relatedProducts = products.filter(p => p.category === product.category && p.id !== product.id).slice(0, 4);
 
   return (
-    <div className="min-h-screen mesh-bg">
+    <div className="min-h-screen mesh-bg pb-32 md:pb-0">
       <Header />
       
       <main className="pb-28 md:pb-16 pt-4">
