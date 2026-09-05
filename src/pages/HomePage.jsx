@@ -727,96 +727,201 @@ function FestiveGiftsSection({ cat, products, addToCart, toggleWishlist, isInCar
   );
 }
 
-/* ── CATEGORY SECTIONS GRID (DIVERSE & RICH THEMED SECTIONS) ── */
+/* ── CATEGORY SECTIONS GRID ── */
 function CategorySectionsGrid() {
   const { categories, products } = useData();
   const { addToCart, toggleWishlist, isInCart, isWishlisted } = useCart();
   const navigate = useNavigate();
 
+  // Show only these 6 on the homepage in this order, to keep the page concise
+  const FEATURED = ['Spices', 'Dry Fruit', 'Seeds', 'Healthy Snacks', 'Dairy', 'Sharbat'];
+  const featuredCats = FEATURED
+    .map(name => categories.find(c => c.label === name))
+    .filter(Boolean);
+
+  // Helper: small compact card used in most layouts
+  const SmallCard = ({ p }) => (
+    <div className="bg-white rounded-2xl border border-amber-100 overflow-hidden shadow-sm hover:shadow-xl transition-all cursor-pointer group flex flex-col">
+      <Link to={`/product/${p.id}`} className="relative overflow-hidden block h-28 md:h-36 bg-amber-50/50">
+        <MediaDisplay src={p.img} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+        <div className="absolute top-2 left-2 bg-[#d97706] text-white text-[9px] font-bold px-2 py-0.5 rounded-md shadow">{p.tag || 'PURE'}</div>
+        <button onClick={e => { e.preventDefault(); e.stopPropagation(); toggleWishlist(p); }}
+          className="absolute top-2 right-2 bg-white/90 rounded-full p-1.5 shadow-sm hover:scale-110 transition-transform">
+          <Heart size={12} className={isWishlisted(p.id) ? 'fill-red-500 text-red-500' : 'text-stone-400'} />
+        </button>
+      </Link>
+      <div className="p-2 flex flex-col flex-1">
+        <p className="text-[9px] text-[#d97706] font-bold uppercase tracking-wider truncate">{p.badge || 'Fortune Foodz'}</p>
+        <Link to={`/product/${p.id}`} className="text-stone-800 text-[11px] font-bold leading-tight mt-0.5 line-clamp-2 hover:text-[#d97706]">{p.name}</Link>
+        <div className="flex items-baseline gap-1 mt-auto pt-2">
+          <span className="text-stone-900 font-black text-sm">₹{p.price}</span>
+          {p.mrp && <span className="text-stone-400 text-[10px] line-through">₹{p.mrp}</span>}
+        </div>
+        <button onClick={() => addToCart(p)} className={`w-full mt-1.5 text-[10px] font-bold py-1.5 rounded-xl transition-all flex items-center justify-center gap-1 ${isInCart(p.id) ? 'bg-emerald-600 text-white' : 'bg-gradient-to-r from-[#5c3110] to-[#d97706] text-amber-50'}`}>
+          <ShoppingBag size={10} />{isInCart(p.id) ? 'Added ✓' : 'Add'}
+        </button>
+      </div>
+    </div>
+  );
+
+  // Helper: horizontal card (image left, text right) used for Dairy/Sharbat
+  const HorizontalCard = ({ p }) => (
+    <div className="bg-white rounded-2xl border border-amber-100 overflow-hidden shadow-sm hover:shadow-md transition-all cursor-pointer group flex flex-row gap-0">
+      <Link to={`/product/${p.id}`} className="relative overflow-hidden block w-24 md:w-32 flex-shrink-0 bg-amber-50/50">
+        <MediaDisplay src={p.img} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+      </Link>
+      <div className="p-3 flex flex-col flex-1 justify-between">
+        <div>
+          <p className="text-[9px] text-[#d97706] font-bold uppercase tracking-wider">{p.tag || 'PREMIUM'}</p>
+          <Link to={`/product/${p.id}`} className="text-stone-800 text-xs font-bold leading-tight mt-0.5 line-clamp-2 hover:text-[#d97706] block">{p.name}</Link>
+        </div>
+        <div className="flex items-center justify-between mt-2">
+          <div>
+            <span className="text-stone-900 font-black text-sm">₹{p.price}</span>
+            {p.mrp && <span className="text-stone-400 text-[10px] line-through ml-1">₹{p.mrp}</span>}
+          </div>
+          <button onClick={() => addToCart(p)} className={`text-[10px] font-bold py-1 px-3 rounded-lg transition-all ${isInCart(p.id) ? 'bg-emerald-600 text-white' : 'bg-[#d97706] text-white'}`}>
+            {isInCart(p.id) ? '✓' : '+'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
+  // Section header row
+  const SectionHeader = ({ cat, count }) => (
+    <div className="flex items-center justify-between mb-4 pb-3 border-b border-amber-200/50">
+      <div className="flex items-center gap-3">
+        <span className="text-2xl">{cat.emoji}</span>
+        <div>
+          <h2 className="text-stone-900 font-cinzel font-bold text-lg md:text-2xl leading-tight">{cat.label}</h2>
+          <p className="text-stone-400 text-xs">{count} products available</p>
+        </div>
+      </div>
+      <button onClick={() => navigate('/category', { state: { category: cat.label } })}
+        className="flex items-center gap-1 text-[#5c3110] text-xs font-bold bg-amber-50 hover:bg-[#5c3110] hover:text-white border border-amber-300 px-3 py-1.5 rounded-full transition-all">
+        View All <ArrowRight size={13} />
+      </button>
+    </div>
+  );
+
   return (
-    <div className="space-y-4 md:space-y-6 mb-4">
-      {categories.map((cat) => {
-        const catProducts = products.filter(p => p.category === cat.label);
-        const props = { cat, products: catProducts, addToCart, toggleWishlist, isInCart, isWishlisted, navigate };
+    <div className="space-y-4 md:space-y-5 mb-4">
+      {featuredCats.map((cat, sectionIdx) => {
+        const catProducts = products.filter(p => p.category === cat.label).slice(0, 6);
 
-        const lowerLabel = cat.label.toLowerCase();
-        if (lowerLabel.includes('spice')) return <ExoticSpicesSection key={cat.label} {...props} />;
-        if (lowerLabel.includes('dry') || lowerLabel.includes('dried')) return <DryFruitsSection key={cat.label} {...props} />;
-        if (lowerLabel.includes('nut')) return <GourmetNutsSection key={cat.label} {...props} />;
-        if (lowerLabel.includes('seed')) return <HealthySeedsSection key={cat.label} {...props} />;
-        if (lowerLabel.includes('dairy') || lowerLabel.includes('oil') || lowerLabel.includes('ghee')) return <PureGheeSection key={cat.label} {...props} />;
-        if (lowerLabel.includes('festive') || lowerLabel.includes('gift')) return <FestiveGiftsSection key={cat.label} {...props} />;
-
-        // Fallback for any dynamic new categories
-        return (
+        // ── LAYOUT A: 2-col grid + 1 tall spotlight card (Spices) ──
+        if (cat.label === 'Spices') return (
           <section key={cat.label} className="relative z-10 max-w-[1600px] mx-auto w-full px-4 md:px-6">
-            <div className="glass-panel rounded-3xl p-4 md:p-6">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 pb-3 border-b border-amber-200/60 gap-3">
-                <div className="flex items-center gap-3">
-                  <span className="text-3xl p-2 bg-amber-100/80 rounded-2xl border border-amber-300/60 shadow-sm">{cat.emoji}</span>
-                  <div>
-                    <h2 className="text-stone-900 font-cinzel font-bold text-xl md:text-3xl flex items-center gap-2">
-                      {cat.label} Section <span className="text-xs font-bold text-amber-800 bg-amber-100 px-3 py-0.5 rounded-full border border-amber-300">({catProducts.length} Products)</span>
-                    </h2>
-                    <p className="text-stone-500 text-xs md:text-sm mt-0.5">Handpicked organic harvest & lab tested purity 🌿</p>
-                  </div>
-                </div>
-                <button onClick={() => navigate('/category', { state: { category: cat.label } })}
-                  className="self-start sm:self-auto flex items-center gap-1.5 text-[#5c3110] text-xs md:text-sm font-bold bg-amber-50 hover:bg-[#5c3110] hover:text-amber-100 border border-amber-300 px-4 py-2 rounded-full transition-all shadow-sm">
-                  View All {cat.label} ({catProducts.length}) <ArrowRight size={14} />
-                </button>
-              </div>
-
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                {catProducts.map((p, idx) => (
-                  <ScrollReveal key={p.id} delay={(idx % 6) * 80} className="h-full" animation="scale-up">
-                    <div className="product-card bg-white rounded-2xl border border-amber-100 overflow-hidden shadow-sm hover:shadow-xl transition-all cursor-pointer group h-full flex flex-col">
-                      <Link to={`/product/${p.id}`} className="relative bg-amber-50/50 overflow-hidden block" style={{ height: 160 }}>
-                        <MediaDisplay src={p.img} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                        <div className="absolute top-2 left-2 bg-[#d97706] text-white text-[9px] font-bold px-2 py-0.5 rounded-md shadow">{p.tag || '100% PURE'}</div>
-                        <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleWishlist(p); }} className="absolute top-2 right-2 bg-white/90 rounded-full p-1.5 shadow-sm hover:scale-110 transition-transform">
-                          <Heart size={13} className={isWishlisted(p.id) ? 'fill-red-500 text-red-500' : 'text-stone-400'} />
-                        </button>
-                      </Link>
-
-                      <div className="p-3 flex flex-col flex-1">
-                        <p className="text-[9px] text-[#d97706] font-bold uppercase tracking-wider">{p.badge || p.brand || 'Fortune Foodz'}</p>
-                        <Link to={`/product/${p.id}`} className="text-stone-800 text-xs font-bold leading-tight mt-0.5 line-clamp-2 hover:text-[#d97706]">
-                          {p.name}
-                        </Link>
-
-                        <div className="flex items-center gap-1 mt-1">
-                          <div className="flex items-center bg-emerald-600 rounded px-1.5 py-0.5 gap-0.5">
-                            <Star size={8} className="text-white fill-white" />
-                            <span className="text-white text-[9px] font-bold">{p.rating}</span>
-                          </div>
-                          <span className="text-stone-400 text-[9px]">({p.reviews})</span>
-                        </div>
-
-                        <div className="flex items-baseline gap-1 mt-2">
-                          <span className="text-stone-900 font-black text-sm">₹{p.price}</span>
-                          {p.mrp && <span className="text-stone-400 text-[10px] line-through">₹{p.mrp}</span>}
-                        </div>
-
-                        <div className="mt-auto pt-2">
-                          <button onClick={() => addToCart(p)}
-                            className={`w-full text-[11px] font-bold py-1.5 rounded-xl transition-all flex items-center justify-center gap-1 ${
-                              isInCart(p.id)
-                                ? 'bg-emerald-600 text-white'
-                                : 'bg-gradient-to-r from-[#5c3110] to-[#d97706] text-amber-50 hover:from-[#3b1c06] hover:to-[#b45309] shadow-sm'
-                            }`}>
-                            <ShoppingBag size={11} />
-                            {isInCart(p.id) ? 'Added ✓' : 'Add to Cart'}
-                          </button>
-                        </div>
-                      </div>
+            <div className="glass-panel rounded-3xl p-4 md:p-5 bg-gradient-to-br from-amber-50/80 to-orange-50/60">
+              <SectionHeader cat={cat} count={catProducts.length} />
+              <div className="flex gap-3">
+                {/* Spotlight (first product large) */}
+                {catProducts[0] && (
+                  <Link to={`/product/${catProducts[0].id}`} className="relative flex-shrink-0 w-40 md:w-52 rounded-2xl overflow-hidden group shadow-md">
+                    <MediaDisplay src={catProducts[0].img} alt={catProducts[0].name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 min-h-[220px] md:min-h-[260px]" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+                    <div className="absolute bottom-0 left-0 right-0 p-3">
+                      <p className="text-amber-300 text-[9px] font-bold uppercase">{catProducts[0].tag}</p>
+                      <p className="text-white text-xs font-bold line-clamp-2">{catProducts[0].name}</p>
+                      <p className="text-amber-200 text-sm font-black mt-1">₹{catProducts[0].price}</p>
                     </div>
-                  </ScrollReveal>
+                  </Link>
+                )}
+                {/* Rest in 2-col grid */}
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-2 flex-1">
+                  {catProducts.slice(1).map(p => <SmallCard key={p.id} p={p} />)}
+                </div>
+              </div>
+            </div>
+          </section>
+        );
+
+        // ── LAYOUT B: Horizontal scrollable row (Dry Fruit) ──
+        if (cat.label === 'Dry Fruit') return (
+          <section key={cat.label} className="relative z-10 max-w-[1600px] mx-auto w-full px-4 md:px-6">
+            <div className="glass-panel rounded-3xl p-4 md:p-5 bg-gradient-to-br from-stone-50/80 to-amber-50/60">
+              <SectionHeader cat={cat} count={catProducts.length} />
+              <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1 snap-x snap-mandatory scrollbar-none">
+                {catProducts.map(p => (
+                  <div key={p.id} className="flex-shrink-0 w-36 md:w-44 snap-start">
+                    <SmallCard p={p} />
+                  </div>
                 ))}
               </div>
             </div>
           </section>
         );
+
+        // ── LAYOUT C: 3-col grid (Seeds) ──
+        if (cat.label === 'Seeds') return (
+          <section key={cat.label} className="relative z-10 max-w-[1600px] mx-auto w-full px-4 md:px-6">
+            <div className="glass-panel rounded-3xl p-4 md:p-5 bg-gradient-to-br from-green-50/60 to-emerald-50/40">
+              <SectionHeader cat={cat} count={catProducts.length} />
+              <div className="grid grid-cols-3 md:grid-cols-6 gap-2 md:gap-3">
+                {catProducts.map(p => <SmallCard key={p.id} p={p} />)}
+              </div>
+            </div>
+          </section>
+        );
+
+        // ── LAYOUT D: Horizontal list cards (Healthy Snacks) ──
+        if (cat.label === 'Healthy Snacks') return (
+          <section key={cat.label} className="relative z-10 max-w-[1600px] mx-auto w-full px-4 md:px-6">
+            <div className="glass-panel rounded-3xl p-4 md:p-5 bg-gradient-to-br from-lime-50/60 to-green-50/50">
+              <SectionHeader cat={cat} count={catProducts.length} />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3">
+                {catProducts.map(p => <HorizontalCard key={p.id} p={p} />)}
+              </div>
+            </div>
+          </section>
+        );
+
+        // ── LAYOUT E: 2-col with badge ribbon (Dairy) ──
+        if (cat.label === 'Dairy') return (
+          <section key={cat.label} className="relative z-10 max-w-[1600px] mx-auto w-full px-4 md:px-6">
+            <div className="glass-panel rounded-3xl p-4 md:p-5 bg-gradient-to-br from-blue-50/40 to-indigo-50/30">
+              <SectionHeader cat={cat} count={catProducts.length} />
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                {catProducts.map(p => (
+                  <div key={p.id} className="relative">
+                    <div className="absolute top-0 right-0 z-10 bg-blue-600 text-white text-[8px] font-black px-2 py-0.5 rounded-bl-lg rounded-tr-2xl">DAIRY</div>
+                    <SmallCard p={p} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        );
+
+        // ── LAYOUT F: Sharbat / Drinks – pill cards scrollable row ──
+        if (cat.label === 'Sharbat') return (
+          <section key={cat.label} className="relative z-10 max-w-[1600px] mx-auto w-full px-4 md:px-6">
+            <div className="glass-panel rounded-3xl p-4 md:p-5 bg-gradient-to-br from-pink-50/60 to-rose-50/40">
+              <SectionHeader cat={cat} count={catProducts.length} />
+              <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1 snap-x snap-mandatory scrollbar-none">
+                {catProducts.map(p => (
+                  <div key={p.id} className="flex-shrink-0 w-32 md:w-40 snap-start">
+                    <div className="bg-white rounded-2xl border border-pink-100 overflow-hidden shadow-sm hover:shadow-lg transition-all cursor-pointer group flex flex-col text-center">
+                      <Link to={`/product/${p.id}`} className="relative overflow-hidden block h-28 bg-pink-50/50">
+                        <MediaDisplay src={p.img} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                      </Link>
+                      <div className="p-2">
+                        <p className="text-stone-800 text-[10px] font-bold line-clamp-2">{p.name}</p>
+                        <p className="text-rose-600 font-black text-sm mt-1">₹{p.price}</p>
+                        <button onClick={() => addToCart(p)} className={`w-full mt-1.5 text-[10px] font-bold py-1 rounded-lg transition-all ${isInCart(p.id) ? 'bg-emerald-600 text-white' : 'bg-rose-500 text-white'}`}>
+                          {isInCart(p.id) ? 'Added ✓' : '+ Cart'}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        );
+
+        return null;
       })}
     </div>
   );
