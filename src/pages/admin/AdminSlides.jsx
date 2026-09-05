@@ -14,6 +14,7 @@ export default function AdminSlides() {
   const [isSlideModalOpen, setIsSlideModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isUploading, setIsUploading] = useState(false);
+  const [isUploadingMobile, setIsUploadingMobile] = useState(false);
 
   const defaultSlide = {
     heroImage: ''
@@ -146,51 +147,100 @@ export default function AdminSlides() {
             <div className="overflow-y-auto flex-1 p-6">
               <div className="space-y-8">
                 
-                {/* Visual Preview */}
+                {/* Visual Preview — side by side desktop + mobile */}
                 <div className="bg-gray-50 p-5 rounded-2xl border border-gray-100">
-                  <h4 className="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2"><ImageIcon size={16}/> Live Preview Layout</h4>
-                  <div className="w-full h-32 rounded-xl shadow-inner flex overflow-hidden relative bg-gray-900">
-                    {editingSlide.heroImage ? (
-                      <MediaDisplay src={editingSlide.heroImage} className="absolute inset-0 w-full h-full object-cover" alt="hero bg" />
-                    ) : (
-                      <div className="flex w-full items-center justify-center text-gray-500 text-sm">Upload an image to see preview</div>
-                    )}
+                  <h4 className="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2"><ImageIcon size={16}/> Live Preview</h4>
+                  <div className="flex gap-3">
+                    <div className="flex-1">
+                      <p className="text-xs text-gray-400 mb-1.5 font-semibold">🖥️ Desktop</p>
+                      <div className="w-full h-24 rounded-xl shadow-inner overflow-hidden relative bg-gray-900">
+                        {editingSlide.heroImage ? (
+                          <MediaDisplay src={editingSlide.heroImage} className="absolute inset-0 w-full h-full object-cover" alt="desktop preview" />
+                        ) : (
+                          <div className="flex w-full h-full items-center justify-center text-gray-500 text-xs">No desktop image</div>
+                        )}
+                      </div>
+                    </div>
+                    <div className="w-28 shrink-0">
+                      <p className="text-xs text-gray-400 mb-1.5 font-semibold">📱 Mobile</p>
+                      <div className="w-full h-24 rounded-xl shadow-inner overflow-hidden relative bg-gray-900">
+                        {(editingSlide.mobileImage || editingSlide.heroImage) ? (
+                          <MediaDisplay src={editingSlide.mobileImage || editingSlide.heroImage} className="absolute inset-0 w-full h-full object-cover" alt="mobile preview" />
+                        ) : (
+                          <div className="flex w-full h-full items-center justify-center text-gray-500 text-xs text-center px-1">No image</div>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                <div className="space-y-4">
+                <div className="space-y-5">
                   <h4 className="font-bold text-gray-800 border-b pb-2">🖼️ Media</h4>
+
+                  {/* Desktop image */}
                   <div>
                     <label className="block text-sm font-bold text-gray-700 mb-1">
-                      Banner Media (Image or Video) <span className="text-red-500">*</span>
-                      <span className="block text-xs text-gray-400 font-normal mt-0.5">Recommended Size: 1920x640 pixels (3:1 ratio)</span>
+                      🖥️ Desktop Banner (Image or Video) <span className="text-red-500">*</span>
+                      <span className="block text-xs text-gray-400 font-normal mt-0.5">Recommended: 1920×640 px (3:1 ratio)</span>
                     </label>
                     <div className="flex gap-2 items-center">
-                       {editingSlide.heroImage && <MediaDisplay src={editingSlide.heroImage} className="w-16 h-10 rounded bg-gray-100 object-cover shrink-0 border" alt="thumb" />}
-                       <div className="flex-1 flex flex-col">
-                         <div className="flex gap-2">
-                           <input type="url" value={editingSlide.heroImage || ''} onChange={e => setEditingSlide({...editingSlide, heroImage: e.target.value})} className="flex-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all text-sm" placeholder="Paste media URL here..." />
-                           <span className="text-sm text-gray-500 flex items-center">OR</span>
-                           <label className={`cursor-pointer ${isUploading ? 'bg-gray-100 opacity-70' : 'bg-white hover:bg-gray-50'} px-4 py-2.5 rounded-xl border border-gray-200 flex items-center gap-2 text-sm font-medium transition-colors text-gray-700`}>
-                             {isUploading ? <><Loader2 className="animate-spin" size={16} /> Uploading...</> : 'Upload'}
-                             <input type="file" accept="image/*,video/*" className="hidden" disabled={isUploading} onChange={async (e) => {
-                                 if (e.target.files && e.target.files[0]) {
-                                   setIsUploading(true);
-                                   try {
-                                     const base64 = await handleImageUpload(e.target.files[0]);
-                                     setEditingSlide({...editingSlide, heroImage: base64});
-                                   } catch(err) {
-                                     console.error("Upload failed", err);
-                                     alert("Image upload failed");
-                                   } finally {
-                                     setIsUploading(false);
-                                   }
-                                 }
-                             }} />
-                           </label>
-                         </div>
-                       </div>
+                      {editingSlide.heroImage && <MediaDisplay src={editingSlide.heroImage} className="w-16 h-10 rounded bg-gray-100 object-cover shrink-0 border" alt="thumb" />}
+                      <div className="flex-1 flex gap-2">
+                        <input type="url" value={editingSlide.heroImage || ''} onChange={e => setEditingSlide({...editingSlide, heroImage: e.target.value})} className="flex-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all text-sm" placeholder="Paste desktop media URL..." />
+                        <span className="text-sm text-gray-500 flex items-center">OR</span>
+                        <label className={`cursor-pointer shrink-0 ${isUploading ? 'bg-gray-100 opacity-70' : 'bg-white hover:bg-gray-50'} px-4 py-2.5 rounded-xl border border-gray-200 flex items-center gap-2 text-sm font-medium transition-colors text-gray-700`}>
+                          {isUploading ? <><Loader2 className="animate-spin" size={16} /> Uploading...</> : 'Upload'}
+                          <input type="file" accept="image/*,video/*" className="hidden" disabled={isUploading} onChange={async (e) => {
+                            if (e.target.files && e.target.files[0]) {
+                              setIsUploading(true);
+                              try {
+                                const url = await handleImageUpload(e.target.files[0]);
+                                setEditingSlide(prev => ({...prev, heroImage: url}));
+                              } catch(err) {
+                                console.error("Upload failed", err);
+                                alert("Image upload failed: " + (err?.message || err));
+                              } finally { setIsUploading(false); }
+                            }
+                          }} />
+                        </label>
+                      </div>
                     </div>
+                  </div>
+
+                  {/* Mobile image */}
+                  <div>
+                    <label className="block text-sm font-bold text-gray-700 mb-1">
+                      📱 Mobile Banner
+                      <span className="block text-xs text-gray-400 font-normal mt-0.5">Recommended: 720×900 px (portrait). If empty, desktop image is used on mobile too.</span>
+                    </label>
+                    <div className="flex gap-2 items-center">
+                      {editingSlide.mobileImage && <MediaDisplay src={editingSlide.mobileImage} className="w-10 h-14 rounded bg-gray-100 object-cover shrink-0 border" alt="mobile thumb" />}
+                      <div className="flex-1 flex gap-2">
+                        <input type="url" value={editingSlide.mobileImage || ''} onChange={e => setEditingSlide({...editingSlide, mobileImage: e.target.value})} className="flex-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all text-sm" placeholder="Paste mobile image URL... (optional)" />
+                        <span className="text-sm text-gray-500 flex items-center">OR</span>
+                        <label className={`cursor-pointer shrink-0 ${isUploadingMobile ? 'bg-gray-100 opacity-70' : 'bg-white hover:bg-gray-50'} px-4 py-2.5 rounded-xl border border-gray-200 flex items-center gap-2 text-sm font-medium transition-colors text-gray-700`}>
+                          {isUploadingMobile ? <><Loader2 className="animate-spin" size={16} /> Uploading...</> : 'Upload'}
+                          <input type="file" accept="image/*" className="hidden" disabled={isUploadingMobile} onChange={async (e) => {
+                            if (e.target.files && e.target.files[0]) {
+                              setIsUploadingMobile(true);
+                              try {
+                                const url = await handleImageUpload(e.target.files[0]);
+                                setEditingSlide(prev => ({...prev, mobileImage: url}));
+                              } catch(err) {
+                                console.error("Mobile upload failed", err);
+                                alert("Mobile image upload failed: " + (err?.message || err));
+                              } finally { setIsUploadingMobile(false); }
+                            }
+                          }} />
+                        </label>
+                      </div>
+                    </div>
+                    {editingSlide.mobileImage && (
+                      <button type="button" onClick={() => setEditingSlide(prev => ({...prev, mobileImage: ''}))}
+                        className="mt-2 text-xs text-red-400 hover:text-red-600 underline">
+                        Remove mobile image (use desktop fallback)
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
