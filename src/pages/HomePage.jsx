@@ -28,6 +28,16 @@ function HeroCarousel() {
   if (!slides || slides.length === 0) return null;
   const s = slides[cur] || slides[0];
 
+  // Gradient fallbacks per index
+  const GRADIENTS = [
+    'linear-gradient(135deg, #78350f 0%, #92400e 40%, #1c1917 100%)',
+    'linear-gradient(135deg, #14532d 0%, #166534 40%, #1c1917 100%)',
+    'linear-gradient(135deg, #7c2d12 0%, #9a3412 40%, #1c1917 100%)',
+    'linear-gradient(135deg, #713f12 0%, #854d0e 40%, #1c1917 100%)',
+    'linear-gradient(135deg, #3b0764 0%, #581c87 40%, #1c1917 100%)',
+  ];
+  const fallbackGrad = GRADIENTS[cur % GRADIENTS.length];
+
   return (
     <motion.div 
       initial={{ opacity: 0, y: 30 }}
@@ -36,22 +46,64 @@ function HeroCarousel() {
       className="relative z-10 max-w-[1600px] mx-auto w-full px-4 md:px-6 mb-4"
     >
       <div
-        className="relative overflow-hidden rounded-3xl w-full shadow-2xl border border-amber-200"
+        className="relative overflow-hidden rounded-3xl w-full shadow-2xl border border-amber-200/30"
+        style={{ background: fallbackGrad }}
         onMouseEnter={() => setAuto(false)}
         onMouseLeave={() => setAuto(true)}
       >
         {/* Desktop banner */}
         {s.heroImage && (
-          <MediaDisplay src={s.heroImage} alt="Hero Banner" className="hidden md:block w-full md:h-[400px] lg:h-[480px] object-cover" loading="eager" />
+          <MediaDisplay
+            src={s.heroImage}
+            alt="Hero Banner"
+            className="hidden md:block w-full h-[340px] md:h-[420px] lg:h-[500px] object-cover"
+            loading="eager"
+          />
         )}
+
         {/* Mobile banner – falls back to heroImage if no mobileImage */}
-        <MediaDisplay
-          src={s.mobileImage || s.heroImage}
-          alt="Hero Banner"
-          className="block md:hidden w-full aspect-[9/10] object-cover"
-          loading="eager"
-        />
-        
+        {(s.mobileImage || s.heroImage) ? (
+          <MediaDisplay
+            src={s.mobileImage || s.heroImage}
+            alt="Hero Banner"
+            className="block md:hidden w-full h-[260px] object-cover"
+            loading="eager"
+          />
+        ) : (
+          /* Fallback when no image: show brand visual on mobile */
+          <div className="block md:hidden w-full h-[260px] flex items-center justify-center">
+            <div className="text-center px-8">
+              <div className="text-5xl mb-3">🌿</div>
+              <p className="text-amber-300 font-bold text-xl">Fortune Foodz</p>
+              <p className="text-white/70 text-sm mt-1">Pure. Natural. Authentic.</p>
+            </div>
+          </div>
+        )}
+
+        {/* Dark overlay for text readability on images */}
+        {(s.heroImage || s.mobileImage) && (
+          <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/20 to-transparent pointer-events-none" />
+        )}
+
+        {/* Text overlay — shows when slide has content */}
+        {(s.title || s.subtitle) && (
+          <div className="absolute inset-0 flex flex-col justify-center px-8 md:px-16 z-10 pointer-events-none">
+            {s.badge && (
+              <span className="inline-flex items-center gap-1.5 bg-amber-500/90 text-white text-xs font-bold px-3 py-1 rounded-full mb-3 w-fit backdrop-blur-sm shadow">
+                {s.badge}
+              </span>
+            )}
+            {s.tag && <p className="text-amber-300/90 text-xs font-bold tracking-widest uppercase mb-1">{s.tag}</p>}
+            {s.title && <h2 className="text-white font-black text-2xl md:text-4xl lg:text-5xl leading-tight drop-shadow-lg max-w-lg">{s.title}</h2>}
+            {s.subtitle && <p className="text-white/80 text-sm md:text-base mt-2 max-w-sm drop-shadow">{s.subtitle}</p>}
+            {s.cta && (
+              <button className="pointer-events-auto mt-5 w-fit bg-amber-500 hover:bg-amber-400 text-white font-bold px-6 py-2.5 rounded-full shadow-lg shadow-amber-500/30 transition-all hover:-translate-y-0.5 text-sm">
+                {s.cta} →
+              </button>
+            )}
+          </div>
+        )}
+
         {/* Navigation Arrows */}
         <button onClick={prev} className="absolute left-2 md:left-6 top-1/2 -translate-y-1/2 bg-white/90 backdrop-blur-md rounded-full p-2 md:p-3 shadow-lg hover:bg-amber-500 hover:text-white transition-all z-20">
           <ChevronLeft size={18} className="text-stone-800 hover:text-white" />
@@ -64,7 +116,7 @@ function HeroCarousel() {
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-20">
           {slides.map((_, i) => (
             <button key={i} onClick={() => setCur(i)}
-              className={`h-2.5 rounded-full transition-all duration-300 ${i === cur ? 'bg-amber-400 w-8' : 'bg-white/60 w-2.5'}`} />
+              className={`h-2 rounded-full transition-all duration-300 ${i === cur ? 'bg-amber-400 w-8' : 'bg-white/50 w-2'}`} />
           ))}
         </div>
       </div>
