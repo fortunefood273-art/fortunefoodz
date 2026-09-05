@@ -1,10 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const multer = require('multer');
 const cloudinary = require('cloudinary').v2;
-const fs = require('fs');
-const os = require('os');
-const path = require('path');
 
 // Configure Cloudinary
 cloudinary.config({
@@ -13,49 +9,39 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-// Setup multer for temporary local storage before uploading to Cloudinary
-const tempDir = path.join(os.tmpdir(), 'primepets_uploads');
-if (!fs.existsSync(tempDir)){
-  fs.mkdirSync(tempDir, { recursive: true });
-}
-
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, tempDir);
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + '-' + file.originalname);
-  }
-});
-
-const upload = multer({ 
-  storage: storage,
-  limits: { fileSize: 50 * 1024 * 1024 } // 50MB limit to handle videos
-});
-
-router.post('/', upload.single('file'), async (req, res) => {
+// POST /api/upload
+// Accepts a base64-encoded file as JSON: { file: "data:image/...;base64,..." }
+router.post('/', async (req, res) => {
   try {
-    if (!req.file) {
-      return res.status(400).json({ error: 'No file uploaded' });
+    const { file } = req.body;
+
+    if (!file) {
+      return res.status(400).json({ error: 'No file provided in request body' });
     }
 
-    // Determine resource type automatically (image or video)
-    const result = await cloudinary.uploader.upload(req.file.path, {
-      resource_type: 'auto', 
-      folder: 'primepets_media'
-    });
+    // Validate it looks like a base64 data URI
+    if (!file.startsWith('data:')) {
+      return res.status(400).json({ error: 'Invalid file format – expected base64 data URI' });
+    }
 
-    // Cleanup local temp file
-    fs.unlinkSync(req.file.path);
+    // Check Cloudinary credentials are set
+    if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
+      console.error('Cloudinary env vars missing');
+      return res.status(500).json({ error: 'Image upload service not configured. Please set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET in Vercel environment variables.' });
+    }
+
+    // Upload base64 directly to Cloudinary (no temp file needed)
+    const result = await cloudinary.uploader.upload(file, {
+      resource_type: 'auto',
+      folder: 'fortune_foodz_media',
+      quality: 'auto:good',
+      fetch_format: 'auto'
+    });
 
     res.json({ url: result.secure_url, type: result.resource_type });
   } catch (error) {
     console.error('Upload Error:', error);
-    // Cleanup on error
-    if (req.file && fs.existsSync(req.file.path)) {
-      fs.unlinkSync(req.file.path);
-    }
-    res.status(500).json({ error: 'Failed to upload file to Cloudinary' });
+    res.status(500).json({ error: error.message || 'Failed to upload file to Cloudinary' });
   }
 });
 
