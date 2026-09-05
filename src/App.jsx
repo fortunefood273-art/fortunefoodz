@@ -39,6 +39,11 @@ const AdminPayment = lazy(() => import('./pages/admin/AdminPayment'));
 const AdminMusic = lazy(() => import('./pages/admin/AdminMusic'));
 const AdminLive = lazy(() => import('./pages/admin/AdminLive'));
 const AdminRetention = lazy(() => import('./pages/admin/AdminRetention'));
+const FeedsPage = lazy(() => import('./pages/FeedsPage'));
+const AdminInstagram = lazy(() => import('./pages/admin/AdminInstagram'));
+const AdminSiteEditor = lazy(() => import('./pages/admin/AdminSiteEditor'));
+const AdminNotifications = lazy(() => import('./pages/admin/AdminNotifications'));
+const AdminCampaigns = lazy(() => import('./pages/admin/AdminCampaigns'));
 
 // Protected Admin Route Component
 const ProtectedAdminRoute = ({ children }) => {
@@ -104,6 +109,7 @@ function AppInner() {
                 <Route path="/"         element={<PageTransition><HomePage /></PageTransition>} />
                 <Route path="/category" element={<PageTransition><CategoryPage /></PageTransition>} />
                 <Route path="/offers"   element={<PageTransition><OffersPage /></PageTransition>} />
+                <Route path="/feeds"    element={<PageTransition><FeedsPage /></PageTransition>} />
                 <Route path="/hub"      element={<PageTransition><HubPage /></PageTransition>} />
                 <Route path="/account"  element={<PageTransition><AccountPage /></PageTransition>} />
                 <Route path="/login"    element={<PageTransition><LoginPage /></PageTransition>} />
@@ -123,6 +129,10 @@ function AppInner() {
                   <Route path="music" element={<AdminMusic />} />
                   <Route path="settings" element={<AdminSettings />} />
                   <Route path="retention" element={<AdminRetention />} />
+                  <Route path="instagram" element={<AdminInstagram />} />
+                  <Route path="site-editor" element={<AdminSiteEditor />} />
+                  <Route path="notifications" element={<AdminNotifications />} />
+                  <Route path="campaigns" element={<AdminCampaigns />} />
                 </Route>
               </Routes>
             </Suspense>

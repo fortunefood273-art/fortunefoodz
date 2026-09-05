@@ -32,7 +32,7 @@ function buildWhatsAppMessage(orderId, customerInfo, cartItems, total, paymentMe
     .map(i => `- ${i.name} ${i.selectedWeight ? `(${i.selectedWeight})` : ''} x${i.qty} = ₹${i.price * i.qty}`)
     .join('\n');
   return encodeURIComponent(
-    `✨ New Fortune Food Order #${orderId}\nCustomer: ${customerInfo.name}\nPhone: ${customerInfo.phone}\nAddress: ${customerInfo.address}\n\nItems:\n${itemLines}\n\nTotal Amount: ₹${total}\nPayment Method: ${paymentMethod}`
+    `✨ New Fortune Foodz Order #${orderId}\nCustomer: ${customerInfo.name}\nPhone: ${customerInfo.phone}\nAddress: ${customerInfo.address}\n\nItems:\n${itemLines}\n\nTotal Amount: ₹${total}\nPayment Method: ${paymentMethod}`
   );
 }
 
@@ -171,7 +171,7 @@ function OrderSummary({ cartItems, cartTotal }) {
   const total = grandTotal(cartTotal);
   return (
     <div className="bg-amber-50/80 border border-amber-200 rounded-2xl p-4 space-y-2.5">
-      <p className="text-xs font-bold text-stone-800 uppercase tracking-wide font-cinzel">Fortune Food Summary</p>
+      <p className="text-xs font-bold text-stone-800 uppercase tracking-wide font-cinzel">Fortune Foodz Summary</p>
       <div className="space-y-1.5 max-h-36 overflow-y-auto pr-1">
         {cartItems.map(item => (
           <div key={item.id} className="flex justify-between text-xs">
@@ -288,7 +288,7 @@ export default function CheckoutModal({ isOpen, onClose, cartItems, cartTotal, o
       if (!loaded) { showToast('Could not load payment gateway. Please check internet connection.'); setLoading(false); return; }
       const options = {
         key: keyId, amount: rpOrder.amount, currency: rpOrder.currency || 'INR',
-        name: 'Fortune Food',
+        name: 'Fortune Foodz',
         description: 'Organic Dry Fruits & Spices Order', order_id: rpOrder.id,
         prefill: { name: form.name.trim(), contact: form.phone.trim() },
         theme: { color: '#d97706' },
@@ -355,7 +355,7 @@ export default function CheckoutModal({ isOpen, onClose, cartItems, cartTotal, o
         <div className="bg-gradient-to-r from-[#5c3110] via-[#d97706] to-[#b45309] px-5 py-4 flex items-center justify-between flex-shrink-0 shadow-md">
           <div className="flex items-center gap-2.5">
             <ShieldCheck size={20} className="text-amber-300" />
-            <p className="text-amber-50 font-cinzel font-bold text-base leading-tight">Fortune Food Checkout</p>
+            <p className="text-amber-50 font-cinzel font-bold text-base leading-tight">Fortune Foodz Checkout</p>
           </div>
           <button
             onClick={handleClose}
@@ -580,7 +580,7 @@ export default function CheckoutModal({ isOpen, onClose, cartItems, cartTotal, o
                 </div>
 
                 <p className="text-stone-500 text-xs">
-                  Thank you for choosing Fortune Food. We are dispatching your 100% pure organic shipment! ✨
+                  Thank you for choosing Fortune Foodz. We are dispatching your 100% pure organic shipment! ✨
                 </p>
 
                 <button

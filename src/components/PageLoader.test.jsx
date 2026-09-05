@@ -6,7 +6,7 @@ import { DataContext } from '../context/DataContext';
 
 const renderPageLoader = () => {
   return render(
-    <DataContext.Provider value={{ frontendSettings: { storeName: 'Fortune Food' } }}>
+    <DataContext.Provider value={{ frontendSettings: { storeName: 'Fortune Foodz' } }}>
       <PageLoader onFinish={() => {}} />
     </DataContext.Provider>
   );
@@ -14,5 +14,5 @@ const renderPageLoader = () => {
 
 test('renders PageLoader correctly', () => {
   renderPageLoader();
-  expect(screen.getByText('FORTUNE FOOD')).toBeInTheDocument();
+  expect(screen.getByText('FORTUNE FOODZ')).toBeInTheDocument();
 });

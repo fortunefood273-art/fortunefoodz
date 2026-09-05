@@ -40,7 +40,7 @@ export default function AdminLayout() {
         <div className="h-16 flex items-center justify-between px-6 border-b border-amber-900/30 shrink-0">
           <Link to="/admin" className="font-cinzel font-bold text-lg text-amber-400 flex items-center gap-2">
             <img src="/logo.png" alt="Logo" className="w-8 h-8 rounded-full bg-white p-0.5 object-contain" />
-            Fortune Food
+            Fortune Foodz
           </Link>
           <button className="md:hidden p-2 text-amber-200" onClick={toggleSidebar}>
             <X size={20} />
@@ -84,10 +84,10 @@ export default function AdminLayout() {
             <Menu size={24} />
           </button>
           <h1 className="font-cinzel font-bold text-base md:text-lg text-stone-900">
-            {NAV_ITEMS.find(item => item.path === location.pathname)?.label || 'Fortune Food Admin Portal'}
+            {NAV_ITEMS.find(item => item.path === location.pathname)?.label || 'Fortune Foodz Admin Portal'}
           </h1>
           <div className="ml-auto flex items-center gap-3">
-            <span className="text-xs text-stone-500 font-semibold hidden sm:block">Fortune Food HQ Admin</span>
+            <span className="text-xs text-stone-500 font-semibold hidden sm:block">Fortune Foodz HQ Admin</span>
             <Link to="/" className="text-xs font-bold text-amber-50 bg-gradient-to-r from-[#5c3110] to-[#d97706] hover:shadow-md px-4 py-2 rounded-xl transition-all">
               Live Storefront →
             </Link>

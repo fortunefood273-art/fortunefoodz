@@ -110,7 +110,7 @@ export default function CartDrawer() {
                     {/* Product Details */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between">
-                        <p className="text-[10px] text-[#d97706] font-bold uppercase tracking-wider">{item.brand || 'Fortune Food'}</p>
+                        <p className="text-[10px] text-[#d97706] font-bold uppercase tracking-wider">{item.brand || 'Fortune Foodz'}</p>
                         {item.selectedWeight && (
                           <span className="text-[10px] bg-amber-100 text-amber-900 font-bold px-1.5 py-0.5 rounded">
                             {item.selectedWeight}

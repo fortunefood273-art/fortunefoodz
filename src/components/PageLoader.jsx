@@ -97,7 +97,7 @@ export default function PageLoader({ onFinish, skip, dataReady }) {
           <GoldenSaffronDust />
 
           <div className="relative z-10 flex flex-col items-center justify-center text-center px-4">
-            {/* Fortune Food Animated Logo */}
+            {/* Fortune Foodz Animated Logo */}
             <motion.div
               initial={{ scale: 0.8, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
@@ -110,7 +110,7 @@ export default function PageLoader({ onFinish, skip, dataReady }) {
                 className="w-56 h-56 md:w-80 md:h-80 flex items-center justify-center drop-shadow-[0_0_35px_rgba(245,158,11,0.6)]"
               >
                 <div className="relative w-48 h-48 md:w-72 md:h-72 flex items-center justify-center p-4 bg-white rounded-full border-4 border-amber-400 shadow-2xl">
-                  <img src="/logo.png" alt="Fortune Food Logo" className="w-full h-full object-contain relative z-10" />
+                  <img src="/logo.png" alt="Fortune Foodz Logo" className="w-full h-full object-contain relative z-10" />
                 </div>
               </motion.div>
             </motion.div>
@@ -122,7 +122,7 @@ export default function PageLoader({ onFinish, skip, dataReady }) {
               transition={{ delay: 0.4, duration: 0.8 }}
               className="text-3xl md:text-5xl font-cinzel font-bold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-amber-100 mb-2 drop-shadow-md"
             >
-              FORTUNE FOOD
+              FORTUNE FOODZ
             </motion.h1>
 
             <motion.p

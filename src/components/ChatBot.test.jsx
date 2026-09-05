@@ -33,14 +33,14 @@ describe('ChatBot Component', () => {
     const toggleButton = screen.getByRole('button');
     
     // Initial state: chat is closed
-    expect(screen.queryByText(/Fortune Food Purity Assistant/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Fortune Foodz Purity Assistant/i)).not.toBeInTheDocument();
     
     // Click toggle
     fireEvent.click(toggleButton);
     
     // Wait for animation to finish and chat to open
     await waitFor(() => {
-      expect(screen.getByText(/Fortune Food Purity Assistant/i)).toBeInTheDocument();
+      expect(screen.getByText(/Fortune Foodz Purity Assistant/i)).toBeInTheDocument();
     });
   });
 

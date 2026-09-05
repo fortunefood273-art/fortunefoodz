@@ -122,7 +122,7 @@ export default function HubPage() {
                     <h3 className="font-cinzel font-bold text-sm text-stone-900">Purity Certification</h3>
                   </div>
                   <p className="text-stone-600 text-xs leading-relaxed">
-                    Every product at Fortune Food comes with an official certificate of organic origin and lab testing.
+                    Every product at Fortune Foodz comes with an official certificate of organic origin and lab testing.
                   </p>
                 </div>
               </ScrollReveal>

@@ -2,8 +2,8 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { auth } from '../firebase';
 import { 
   onAuthStateChanged, 
-  signInWithEmailAndPassword, 
-  createUserWithEmailAndPassword, 
+  GoogleAuthProvider,
+  signInWithPopup, 
   signOut 
 } from 'firebase/auth';
 import axios from 'axios';
@@ -41,19 +41,23 @@ export function AuthProvider({ children }) {
     return () => unsubscribe();
   }, []);
 
-  const login = async (email, password) => {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    return userCredential.user;
-  };
-
-  const register = async (name, email, password) => {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    const token = await userCredential.user.getIdToken();
+  const loginWithGoogle = async () => {
+    const provider = new GoogleAuthProvider();
+    const userCredential = await signInWithPopup(auth, provider);
     
-    // Register user in our backend database
-    await axios.post('/api/auth/register', { name, email }, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    // Register or login user in our backend database
+    try {
+      const token = await userCredential.user.getIdToken();
+      await axios.post('/api/auth/register', { 
+        name: userCredential.user.displayName, 
+        email: userCredential.user.email 
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+    } catch (error) {
+      // It's okay if it fails (e.g. user already exists, or backend route missing)
+      console.log('Backend sync skipped or failed', error);
+    }
     
     return userCredential.user;
   };
@@ -62,25 +66,13 @@ export function AuthProvider({ children }) {
     await signOut(auth);
   };
 
-  const checkUserExists = async (email) => {
-    try {
-      const response = await axios.post('/api/auth/check', { email });
-      return response.data.exists;
-    } catch (error) {
-      console.error("Error checking if user exists:", error);
-      return false; // Safest default is to assume they don't exist and trigger register
-    }
-  };
-
   return (
     <AuthContext.Provider value={{ 
       user, 
-      login, 
-      register, 
+      loginWithGoogle, 
       logout,
-      checkUserExists,
       isAuthenticated: !!user,
-      isAdmin: user?.role === 'admin' 
+      isAdmin: user?.email === 'fortunefood273@gmail.com'
     }}>
       {!loading && children}
     </AuthContext.Provider>

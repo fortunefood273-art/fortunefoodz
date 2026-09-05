@@ -3,10 +3,13 @@ import axios from 'axios';
 import {
   Package, ChevronDown, ChevronUp, Trash2, MessageCircle,
   ShoppingBag, Clock, CheckCircle, TrendingUp, RefreshCw,
-  IndianRupee, Phone, User, Hash, Filter, Loader2,
+  IndianRupee, Phone, User, Hash, Filter, Loader2, Download
 } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
+import { useData } from '../../context/DataContext';
 import ScrollReveal from '../../components/ScrollReveal';
+import InvoiceTemplate from '../../components/InvoiceTemplate';
+import html2pdf from 'html2pdf.js';
 
 /* ─── Constants ─────────────────────────────────────────────────────────── */
 
@@ -49,12 +52,12 @@ function buildWhatsAppUrl(order) {
   const items = parseItems(order.items);
   const itemList = items.map(i => `• ${i.name || i.productName || 'Item'} x${i.qty || i.quantity || 1}`).join('\n');
   const text = encodeURIComponent(
-    `Hello ${order.customerName || order.name || 'Customer'}! 🐾\n\n` +
-    `Your Prime Pets order *#${String(order.id).slice(-6).toUpperCase()}* update:\n\n` +
+    `Hello ${order.customerName || order.name || 'Customer'}! 🎨\n\n` +
+    `Your Fortune Foodz order *#${String(order.id).slice(-6).toUpperCase()}* update:\n\n` +
     `${itemList || '(see order details)'}\n\n` +
     `Total: ₹${order.total || order.totalAmount || 0}\n` +
     `Status: ${order.status}\n\n` +
-    `Thank you for shopping with us! 🐶🐱`
+    `Thank you for shopping with us! ✨🖼️`
   );
   return `https://wa.me/${cc}?text=${text}`;
 }
@@ -97,8 +100,8 @@ function ExpandedItems({ items }) {
                 onError={e => { e.target.style.display = 'none'; }}
               />
             ) : (
-              <div className="w-10 h-10 rounded-lg bg-orange-50 border border-orange-100 flex items-center justify-center">
-                <Package size={16} className="text-orange-400" />
+              <div className="w-10 h-10 rounded-lg bg-[#F2EDE4]/50 border border-[#F2EDE4] flex items-center justify-center">
+                <Package size={16} className="text-gray-200" />
               </div>
             )}
             <div>
@@ -108,7 +111,7 @@ function ExpandedItems({ items }) {
           </div>
           <div className="flex items-center gap-6 text-sm">
             <span className="text-gray-500">Qty: <span className="font-bold text-gray-700">{item.qty || item.quantity || 1}</span></span>
-            <span className="text-orange-600 font-bold">₹{item.price || item.sellingPrice || '—'}</span>
+            <span className="text-[#A8873A] font-bold">₹{item.price || item.sellingPrice || '—'}</span>
           </div>
         </div>
       ))}
@@ -136,6 +139,7 @@ function StatCard({ label, value, icon: Icon, color, bg }) {
 
 export default function AdminOrders() {
   const { showToast } = useCart();
+  const { frontendSettings } = useData();
 
   const [orders, setOrders]             = useState([]);
   const [loading, setLoading]           = useState(true);
@@ -143,6 +147,10 @@ export default function AdminOrders() {
   const [expandedRow, setExpandedRow]   = useState(null);
   const [updatingId, setUpdatingId]     = useState(null);
   const [deletingId, setDeletingId]     = useState(null);
+  
+  const [downloadingOrderId, setDownloadingOrderId] = useState(null);
+  const [selectedOrderForInvoice, setSelectedOrderForInvoice] = useState(null);
+  const invoiceRef = React.useRef(null);
 
   /* ── Fetch ── */
   const fetchOrders = useCallback(async () => {
@@ -191,6 +199,36 @@ export default function AdminOrders() {
     }
   };
 
+  /* ── Download Invoice ── */
+  const handleDownloadInvoice = async (order) => {
+    setDownloadingOrderId(order.id);
+    setSelectedOrderForInvoice(order);
+    
+    // Wait for state update to render InvoiceTemplate and images to fetch
+    setTimeout(async () => {
+      try {
+        const element = invoiceRef.current;
+        const opt = {
+          margin:       0,
+          filename:     `Invoice_${String(order.id).slice(-6).toUpperCase()}.pdf`,
+          image:        { type: 'jpeg', quality: 0.98 },
+          html2canvas:  { scale: 2, useCORS: true },
+          jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+        };
+        const generatePdf = typeof html2pdf === 'function' ? html2pdf : html2pdf.default;
+        await generatePdf().set(opt).from(element).save();
+      } catch (err) {
+        console.error('Invoice generation failed:', err);
+        const errMsg = err?.message || String(err);
+        showToast('❌ Failed to generate invoice.');
+        alert('Invoice Generation Error: ' + errMsg);
+      } finally {
+        setDownloadingOrderId(null);
+        setSelectedOrderForInvoice(null);
+      }
+    }, 500);
+  };
+
   /* ── Stats ── */
   const stats = useMemo(() => {
     const total     = orders.length;
@@ -203,7 +241,7 @@ export default function AdminOrders() {
       { label: 'Total Orders',   value: total,     icon: ShoppingBag,  color: 'text-blue-500',   bg: 'bg-blue-50' },
       { label: 'Pending',        value: pending,   icon: Clock,        color: 'text-yellow-500', bg: 'bg-yellow-50' },
       { label: 'Confirmed',      value: confirmed, icon: CheckCircle,  color: 'text-green-500',  bg: 'bg-green-50' },
-      { label: 'Total Revenue',  value: `₹${revenue.toLocaleString('en-IN')}`, icon: TrendingUp, color: 'text-orange-500', bg: 'bg-orange-50' },
+      { label: 'Total Revenue',  value: `₹${revenue.toLocaleString('en-IN')}`, icon: TrendingUp, color: 'text-[#C9A84C]', bg: 'bg-[#F2EDE4]/50' },
     ];
   }, [orders]);
 
@@ -219,7 +257,12 @@ export default function AdminOrders() {
   /* ─────────────────────────────────────────────────────────────────────── */
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="space-y-8 animate-fade-in relative">
+      <div style={{ position: 'fixed', left: '-9999px', top: '0', pointerEvents: 'none' }}>
+        {selectedOrderForInvoice && (
+          <InvoiceTemplate ref={invoiceRef} order={selectedOrderForInvoice} frontendSettings={frontendSettings} />
+        )}
+      </div>
 
       {/* Page Header */}
       <ScrollReveal>
@@ -270,8 +313,8 @@ export default function AdminOrders() {
                   onClick={() => setActiveFilter(tab)}
                   className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
                     activeFilter === tab
-                      ? 'bg-orange-500 text-white shadow-md shadow-orange-500/20'
-                      : 'bg-white border border-gray-200 text-gray-500 hover:border-orange-300 hover:text-orange-500'
+                      ? 'bg-[#C9A84C] text-white shadow-md shadow-[#C9A84C]/20'
+                      : 'bg-white border border-gray-200 text-gray-500 hover:border-gray-200 hover:text-[#C9A84C]'
                   }`}
                 >
                   {tab}
@@ -282,13 +325,140 @@ export default function AdminOrders() {
 
           {/* Loading skeleton */}
           {loading ? (
-            <div className="p-12 flex flex-col items-center justify-center gap-4 text-gray-400">
-              <RefreshCw size={36} className="animate-spin text-orange-400" />
+        <div className="p-12 flex flex-col items-center justify-center gap-4 text-gray-400">
+              <RefreshCw size={36} className="animate-spin text-gray-200" />
               <p className="font-medium">Loading orders…</p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse min-w-[960px]">
+            <div>
+              {/* Mobile View */}
+              <div className="block lg:hidden space-y-4">
+                {filteredOrders.length === 0 ? (
+                  <div className="py-12 text-center bg-gray-50/50 rounded-2xl border border-gray-100">
+                    <div className="inline-flex flex-col items-center gap-3 text-gray-400">
+                      <Package size={42} className="text-gray-200" />
+                      <p className="text-base font-bold text-gray-500">No orders found</p>
+                    </div>
+                  </div>
+                ) : (
+                  filteredOrders.map(order => {
+                    const isExpanded   = expandedRow === order.id;
+                    const itemList     = parseItems(order.items);
+                    const itemCount    = itemList.length || order.itemCount || '-';
+                    const orderTotal   = order.total || order.totalAmount || 0;
+                    const customerName = order.customerName || order.name || '-';
+                    const phone        = order.phone || order.customerPhone || '-';
+                    const payMethod    = order.paymentMethod || order.payment || '-';
+                    const payStatus    = order.paymentStatus || 'PENDING';
+                    const ordStatus    = order.status || 'PENDING';
+                    const shortId      = String(order.id).slice(-6).toUpperCase();
+
+                    return (
+                      <div key={order.id} className="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm">
+                        <div className="flex items-center justify-between mb-3 border-b border-gray-50 pb-3">
+                          <span className="font-mono font-bold text-gray-700 text-sm">#{shortId}</span>
+                          <span className="text-xs text-gray-500 font-medium">{formatDate(order.createdAt)}</span>
+                        </div>
+                        
+                        <div className="space-y-2 mb-4">
+                          <div className="flex justify-between items-center text-sm">
+                            <span className="text-gray-500 flex items-center gap-1"><User size={14}/> {customerName}</span>
+                            <span className="font-bold text-gray-800 flex items-center gap-1"><IndianRupee size={12} /> {orderTotal}</span>
+                          </div>
+                          <div className="flex justify-between items-center text-sm">
+                            <span className="text-gray-500 flex items-center gap-1"><Phone size={14}/> {phone}</span>
+                            <span className="text-gray-600 font-medium">{itemCount} items</span>
+                          </div>
+                        </div>
+
+                        <div className="flex gap-2 mb-4 flex-wrap">
+                          <select
+                            value={ordStatus}
+                            onChange={(e) => handleStatusChange(order.id, e.target.value)}
+                            className={`text-[10px] font-bold px-2 py-1.5 rounded-lg border-0 appearance-none pr-6 cursor-pointer relative ${ORDER_STATUS_STYLES[ordStatus] || 'bg-gray-100 text-gray-700'}`}
+                            style={{ backgroundImage: 'url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 4px center' }}
+                          >
+                            {ORDER_STATUSES.map(s => (
+                              <option key={s} value={s}>{s}</option>
+                            ))}
+                          </select>
+                          
+                          <select
+                            value={payStatus}
+                            className={`text-[10px] font-bold px-2 py-1.5 rounded-lg border-0 appearance-none pr-6 cursor-pointer relative ${PAYMENT_STATUS_STYLES[payStatus] || 'bg-gray-100 text-gray-700'}`}
+                            style={{ backgroundImage: 'url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 4px center' }}
+                          >
+                            {['PENDING', 'PAID', 'FAILED'].map(s => (
+                              <option key={s} value={s}>{s}</option>
+                            ))}
+                          </select>
+                          <span className="bg-gray-100 text-gray-600 text-[10px] px-2 py-1.5 rounded-lg font-bold">{payMethod}</span>
+                        </div>
+
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => toggleExpand(order.id)}
+                            className="flex-1 bg-gray-50 hover:bg-gray-100 text-gray-600 text-sm font-bold py-2 rounded-xl transition-colors flex items-center justify-center gap-1"
+                          >
+                            {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />} Items
+                          </button>
+                          <button
+                            title="Download Invoice"
+                            onClick={() => handleDownloadInvoice(order)}
+                            disabled={downloadingOrderId === order.id}
+                            className="w-10 h-10 bg-[#F2EDE4]/50 hover:bg-[#F2EDE4] text-[#A8873A] rounded-xl flex items-center justify-center transition-colors shrink-0 disabled:opacity-50"
+                          >
+                            {downloadingOrderId === order.id ? <Loader2 size={16} className="animate-spin" /> : <Download size={16} />}
+                          </button>
+                          <button
+                            onClick={() => handleDelete(order.id)}
+                            className="w-10 h-10 bg-red-50 hover:bg-red-100 text-red-500 rounded-xl flex items-center justify-center transition-colors shrink-0"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+
+                        {isExpanded && (
+                          <div className="mt-4 bg-gray-50 rounded-xl p-3 space-y-3">
+                            {itemList.length > 0 ? itemList.map((itm, i) => (
+                              <div key={i} className="flex gap-3">
+                                {itm.img ? (
+                                  <div className="w-12 h-12 rounded-lg bg-gray-200 overflow-hidden shrink-0">
+                                    <img src={itm.img} alt={itm.name} className="w-full h-full object-cover" />
+                                  </div>
+                                ) : (
+                                  <div className="w-12 h-12 rounded-lg bg-gray-200 flex items-center justify-center text-gray-400 shrink-0">
+                                    <ShoppingBag size={20} />
+                                  </div>
+                                )}
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-sm font-bold text-gray-700 truncate">{itm.name || 'Unknown Item'}</p>
+                                  <div className="flex gap-3 mt-1 text-xs text-gray-500">
+                                    <span>Qty: {itm.quantity || 1}</span>
+                                    <span className="font-medium text-gray-700">₹{itm.price || 0}</span>
+                                  </div>
+                                </div>
+                              </div>
+                            )) : (
+                              <p className="text-sm text-gray-500 text-center py-2">No item details available.</p>
+                            )}
+                            {order.address && (
+                              <div className="pt-3 border-t border-gray-200">
+                                <p className="text-xs font-bold text-gray-500 mb-1">Shipping Address</p>
+                                <p className="text-sm text-gray-700 leading-tight whitespace-pre-line">{order.address}</p>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+
+              {/* Desktop View */}
+              <div className="hidden lg:block overflow-x-auto">
+                <table className="w-full text-left border-collapse min-w-[960px]">
                 <thead>
                   <tr className="bg-gray-50/50 text-gray-500 text-xs uppercase tracking-wider border-b border-gray-100">
                     <th className="px-4 py-4 font-semibold pl-6 w-10"></th>
@@ -343,14 +513,14 @@ export default function AdminOrders() {
                       return (
                         <React.Fragment key={order.id}>
                           {/* Main row */}
-                          <tr className={`hover:bg-orange-50/20 transition-colors group ${isExpanded ? 'bg-orange-50/10' : ''}`}>
+                          <tr className={`hover:bg-[#F2EDE4]/50/20 transition-colors group ${isExpanded ? 'bg-[#F2EDE4]/50/10' : ''}`}>
 
                             {/* Expand toggle */}
                             <td className="px-4 py-4 pl-6">
                               <button
                                 onClick={() => toggleExpand(order.id)}
                                 title={isExpanded ? 'Collapse' : 'Show items'}
-                                className="w-7 h-7 rounded-lg bg-gray-100 hover:bg-orange-100 text-gray-500 hover:text-orange-600 flex items-center justify-center transition-colors"
+                                className="w-7 h-7 rounded-lg bg-gray-100 hover:bg-[#F2EDE4] text-gray-500 hover:text-[#A8873A] flex items-center justify-center transition-colors"
                               >
                                 {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                               </button>
@@ -378,7 +548,7 @@ export default function AdminOrders() {
 
                             {/* Items count */}
                             <td className="px-4 py-4 text-center">
-                              <span className="bg-orange-50 text-orange-600 font-bold text-xs px-2.5 py-1 rounded-full border border-orange-100">
+                              <span className="bg-[#F2EDE4]/50 text-[#A8873A] font-bold text-xs px-2.5 py-1 rounded-full border border-[#F2EDE4]">
                                 {itemCount}
                               </span>
                             </td>
@@ -409,7 +579,7 @@ export default function AdminOrders() {
                                   value={ordStatus}
                                   disabled={updatingId === order.id}
                                   onChange={e => handleStatusChange(order.id, e.target.value)}
-                                  className={`appearance-none pl-3 pr-7 py-1.5 rounded-xl border text-xs font-bold cursor-pointer focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all disabled:opacity-60 disabled:cursor-wait border-transparent ${ORDER_STATUS_STYLES[ordStatus] || 'bg-gray-100 text-gray-600'}`}
+                                  className={`appearance-none pl-3 pr-7 py-1.5 rounded-xl border text-xs font-bold cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#C9A84C]/20 focus:border-[#C9A84C] transition-all disabled:opacity-60 disabled:cursor-wait border-transparent ${ORDER_STATUS_STYLES[ordStatus] || 'bg-gray-100 text-gray-600'}`}
                                 >
                                   {ORDER_STATUSES.map(s => (
                                     <option key={s} value={s}>{s}</option>
@@ -422,6 +592,15 @@ export default function AdminOrders() {
                             {/* Actions */}
                             <td className="px-4 py-4 pr-6">
                               <div className="flex items-center justify-end gap-2 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity">
+                                {/* Download */}
+                                <button
+                                  title="Download Invoice"
+                                  onClick={() => handleDownloadInvoice(order)}
+                                  disabled={downloadingOrderId === order.id}
+                                  className="p-2 text-[#A8873A] hover:bg-[#F2EDE4] rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                  {downloadingOrderId === order.id ? <Loader2 size={17} className="animate-spin" /> : <Download size={17} />}
+                                </button>
                                 {/* WhatsApp */}
                                 <a
                                   href={buildWhatsAppUrl({ ...order, customerName, phone, status: ordStatus })}
@@ -448,14 +627,14 @@ export default function AdminOrders() {
                           {/* Expandable items row */}
                           {isExpanded && (
                             <tr>
-                              <td colSpan={11} className="px-8 py-5 bg-gradient-to-r from-orange-50/60 to-amber-50/30 border-b border-orange-100/50">
+                              <td colSpan={11} className="px-8 py-5 bg-gradient-to-r from-[#F2EDE4]/50/60 to-gray-200 border-b border-[#F2EDE4]/50">
                                 <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3 flex items-center gap-2">
-                                  <Package size={12} className="text-orange-400" />
+                                  <Package size={12} className="text-gray-200" />
                                   Order Items — #{shortId}
                                 </p>
                                 <ExpandedItems items={order.items} />
                                 {(order.address || order.deliveryAddress) && (
-                                  <div className="mt-3 pt-3 border-t border-orange-100 text-sm text-gray-500">
+                                  <div className="mt-3 pt-3 border-t border-[#F2EDE4] text-sm text-gray-500">
                                     <span className="font-semibold text-gray-600">Delivery address: </span>
                                     {order.address || order.deliveryAddress}
                                   </div>
@@ -470,6 +649,7 @@ export default function AdminOrders() {
                 </tbody>
               </table>
             </div>
+          </div>
           )}
         </div>
       </ScrollReveal>

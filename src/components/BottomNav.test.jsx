@@ -10,7 +10,7 @@ describe('BottomNav Component', () => {
   it('renders all navigation items', () => {
     render(
       <MemoryRouter>
-        <DataContext.Provider value={{ frontendSettings: { storeName: 'Fortune Food' } }}>
+        <DataContext.Provider value={{ frontendSettings: { storeName: 'Fortune Foodz' } }}>
           <CartProvider>
             <BottomNav />
           </CartProvider>

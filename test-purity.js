@@ -2,7 +2,7 @@ import http from 'http';
 
 function runUnitTests() {
   console.log('\n===================================================');
-  console.log('  FORTUNE FOOD - UNIT & INTEGRATION TEST SUITE 🎉 ');
+  console.log('  FORTUNE FOODZ - UNIT & INTEGRATION TEST SUITE 🎉 ');
   console.log('===================================================\n');
 
   let passed = 0;
@@ -51,7 +51,7 @@ function runUnitTests() {
   });
 
   // 4. Promo Coupons Validation
-  test('Fortune Food Promo Coupons code validation', () => {
+  test('Fortune Foodz Promo Coupons code validation', () => {
     const coupons = ['FESTIVE25', 'PURITY10', 'SAFFRON20', 'SPICE15'];
     if (!coupons.includes('SAFFRON20')) throw new Error('Saffron discount coupon missing');
   });

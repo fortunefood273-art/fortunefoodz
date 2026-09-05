@@ -27,7 +27,7 @@ describe('Header Component', () => {
     return render(
       <MemoryRouter>
         <AuthProvider>
-          <DataContext.Provider value={{ frontendSettings: { storeName: 'Fortune Food' }, products: [] }}>
+          <DataContext.Provider value={{ frontendSettings: { storeName: 'Fortune Foodz' }, products: [] }}>
             <CartProvider>
               {ui}
             </CartProvider>
@@ -39,7 +39,7 @@ describe('Header Component', () => {
 
   it('renders the logo and brand name', () => {
     renderWithProviders(<Header />);
-    expect(screen.getAllByText('FORTUNE FOOD')[0]).toBeInTheDocument();
+    expect(screen.getAllByText('FORTUNE FOODZ')[0]).toBeInTheDocument();
   });
 
   it('renders desktop navigation links', () => {

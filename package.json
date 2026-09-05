@@ -1,5 +1,5 @@
 {
-  "name": "fortune-food",
+  "name": "fortune-foodz",
   "private": true,
   "version": "0.0.0",
   "scripts": {
@@ -16,6 +16,7 @@
     "firebase": "^12.17.1",
     "framer-motion": "^13.0.0",
     "fuse.js": "^7.5.0",
+    "html2pdf.js": "^0.14.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "react-router-dom": "^7.18.0",

@@ -19,7 +19,7 @@ describe('AccountPage Component', () => {
   const renderWithProviders = (ui) => {
     return render(
       <MemoryRouter>
-        <DataContext.Provider value={{ frontendSettings: { storeName: 'Fortune Food' } }}>
+        <DataContext.Provider value={{ frontendSettings: { storeName: 'Fortune Foodz' } }}>
           <CartProvider>
             {ui}
           </CartProvider>
@@ -36,7 +36,7 @@ describe('AccountPage Component', () => {
     });
 
     renderWithProviders(<AccountPage />);
-    expect(screen.getByText('Welcome to Fortune Food')).toBeInTheDocument();
+    expect(screen.getByText('Welcome to Fortune Foodz')).toBeInTheDocument();
     expect(screen.getByText('Sign In Now')).toBeInTheDocument();
   });
 

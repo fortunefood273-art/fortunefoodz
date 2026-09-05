@@ -26,7 +26,7 @@ const mockSetFrontendSettings = vi.fn();
 const renderAdminSettings = () => {
   return render(
     <BrowserRouter>
-      <DataContext.Provider value={{ frontendSettings: { storeName: 'Fortune Food', tagline: 'Promise of Purity', logoChar: 'F' }, setFrontendSettings: mockSetFrontendSettings }}>
+      <DataContext.Provider value={{ frontendSettings: { storeName: 'Fortune Foodz', tagline: 'Promise of Purity', logoChar: 'F' }, setFrontendSettings: mockSetFrontendSettings }}>
         <CartProvider>
           <AdminSettings />
         </CartProvider>
@@ -38,15 +38,15 @@ const renderAdminSettings = () => {
 test('renders settings form correctly', () => {
   renderAdminSettings();
   expect(screen.getByText('Frontend Settings')).toBeInTheDocument();
-  expect(screen.getByDisplayValue('Fortune Food')).toBeInTheDocument();
+  expect(screen.getByDisplayValue('Fortune Foodz')).toBeInTheDocument();
 });
 
 test('changes tabs and updates form data', async () => {
   renderAdminSettings();
   
   // Update general info
-  const storeNameInput = screen.getByDisplayValue('Fortune Food');
-  fireEvent.change(storeNameInput, { target: { value: 'Fortune Food Pure' } });
+  const storeNameInput = screen.getByDisplayValue('Fortune Foodz');
+  fireEvent.change(storeNameInput, { target: { value: 'Fortune Foodz Pure' } });
   
   // Switch tab
   const footerTab = screen.getByText('Footer & Text');
@@ -64,7 +64,7 @@ test('changes tabs and updates form data', async () => {
   });
   
   expect(mockSetFrontendSettings).toHaveBeenCalledWith(expect.objectContaining({
-    storeName: 'Fortune Food Pure',
+    storeName: 'Fortune Foodz Pure',
     tagline: 'Promise of Purity'
   }));
 });

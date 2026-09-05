@@ -13,7 +13,7 @@ app.use(express.json({ limit: '10mb' }));
 
 // Basic health check route
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', message: 'Fortune Food API is running' });
+  res.json({ status: 'ok', message: 'Fortune Foodz API is running' });
 });
 
 // Placeholder for Prisma integration
@@ -36,6 +36,8 @@ app.use('/api/orders', require('./routes/orders'));
 app.use('/api/payment', require('./routes/payment'));
 app.use('/api/analytics', require('./routes/analytics'));
 app.use('/api/customers', require('./routes/customers'));
+app.use('/api/campaigns', require('./routes/campaigns'));
+app.use('/api/instagram', require('./routes/instagram'));
 
 if (process.env.NODE_ENV !== 'production' && require.main === module) {
   app.listen(port, () => {

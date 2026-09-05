@@ -38,9 +38,9 @@ export default function AccountPage() {
               <div className="max-w-7xl mx-auto px-4 md:px-6 py-12 md:py-16 text-center md:text-left flex flex-col md:flex-row items-center justify-between gap-6">
                 <div>
                   <span className="text-amber-200 text-xs font-bold uppercase tracking-widest bg-amber-900/40 px-3 py-1 rounded-full border border-amber-300/30">
-                    Fortune Food Purity Club
+                    Fortune Foodz Purity Club
                   </span>
-                  <h1 className="font-cinzel font-bold text-3xl md:text-5xl mt-3">Welcome to Fortune Food</h1>
+                  <h1 className="font-cinzel font-bold text-3xl md:text-5xl mt-3">Welcome to Fortune Foodz</h1>
                   <p className="text-amber-100 text-sm md:text-base mt-2 max-w-lg">Sign in to track organic saffron orders, earn purity reward coins, and manage saved delivery addresses.</p>
                   
                   <div className="flex flex-wrap gap-3 mt-6 justify-center md:justify-start">
@@ -190,7 +190,7 @@ export default function AccountPage() {
               ) : (
                 <div>
                   <h2 className="font-cinzel font-bold text-xl text-stone-900 mb-2">{activeTab}</h2>
-                  <p className="text-stone-500 text-xs">Section under active sync with Fortune Food server database.</p>
+                  <p className="text-stone-500 text-xs">Section under active sync with Fortune Foodz server database.</p>
                 </div>
               )}
             </div>

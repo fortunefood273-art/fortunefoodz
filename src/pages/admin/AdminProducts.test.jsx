@@ -7,8 +7,8 @@ import AdminProducts from './AdminProducts';
 import React, { useState } from 'react';
 
 const initialProducts = [
-  { id: 1, name: 'Premium Jumbo California Almonds', brand: 'Fortune Food', price: 649, mrp: 849, badge: '⭐ Customer Choice', category: 'Dry Fruits', img: '' },
-  { id: 2, name: 'Royal Whole King Cashews (W240)', brand: 'Fortune Food', price: 799, mrp: 999, badge: '🔥 Hot Selling', category: 'Dry Fruits', img: '' }
+  { id: 1, name: 'Premium Jumbo California Almonds', brand: 'Fortune Foodz', price: 649, mrp: 849, badge: '⭐ Customer Choice', category: 'Dry Fruits', img: '' },
+  { id: 2, name: 'Royal Whole King Cashews (W240)', brand: 'Fortune Foodz', price: 799, mrp: 999, badge: '🔥 Hot Selling', category: 'Dry Fruits', img: '' }
 ];
 
 function MockDataProvider({ children }) {
@@ -65,7 +65,7 @@ describe('AdminProducts', () => {
     
     await act(async () => {
       fireEvent.change(nameInput, { target: { value: 'Test Product 123' } });
-      fireEvent.change(brandInput, { target: { value: 'Fortune Food' } });
+      fireEvent.change(brandInput, { target: { value: 'Fortune Foodz' } });
       fireEvent.change(priceInput, { target: { value: '100' } });
       fireEvent.change(mrpInput, { target: { value: '150' } });
       fireEvent.change(imgInput, { target: { value: 'http://test.img' } });

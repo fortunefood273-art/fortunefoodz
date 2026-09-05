@@ -6,7 +6,7 @@ import { MessageSquare, X, Send, Sparkles, ShieldCheck } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 
 export default function ChatBot() {
-  const { user, login, register, checkUserExists, isAuthenticated } = useAuth();
+  const { user, loginWithGoogle, isAuthenticated } = useAuth();
   const { frontendSettings } = useData();
   const settings = frontendSettings || {};
   const navigate = useNavigate();
@@ -45,12 +45,12 @@ export default function ChatBot() {
       if (isAuthenticated) {
         setStep('MAIN_MENU');
         setMessages([
-          { sender: 'bot', text: `Welcome back to Fortune Food, ${user?.name?.split(' ')[0]}! ✨ How can I assist you with your organic dry fruits or spices today?`, isMenu: true }
+          { sender: 'bot', text: `Welcome back to Fortune Foodz, ${user?.name?.split(' ')[0]}! ✨ How can I assist you with your organic dry fruits or spices today?`, isMenu: true }
         ]);
       } else {
         setStep('ASK_NAME');
         setMessages([
-          { sender: 'bot', text: `Greetings! I am your Fortune Food Purity Assistant. May I know your name to recommend our fresh organic harvest?` }
+          { sender: 'bot', text: `Greetings! I am your Fortune Foodz Purity Assistant. May I know your name to recommend our fresh organic harvest?` }
         ]);
       }
     }
@@ -73,52 +73,8 @@ export default function ChatBot() {
 
     if (step === 'ASK_NAME') {
       setCapturedName(input);
-      setStep('ASK_CONTACT');
-      setTimeout(() => {
-        addMessage(`Pleasure to meet you, ${input}! Please share your phone or email so we can save your purity preferences.`, 'bot');
-      }, 500);
-      return;
-    }
-
-    if (step === 'ASK_CONTACT') {
-      setCapturedContact(input);
-      setLoading(true);
-      
-      try {
-        const exists = await checkUserExists(input);
-        if (exists) {
-          setAuthMode('login');
-          setStep('VERIFY_AUTH');
-          addMessage('Welcome back! Please enter your password to access your Fortune Rewards account.', 'bot');
-        } else {
-          setAuthMode('register');
-          setStep('VERIFY_AUTH');
-          addMessage("Welcome to the Fortune Food family! Create a password to claim your welcome purity discount.", 'bot');
-        }
-      } catch (err) {
-        console.error(err);
-        addMessage("Something went wrong. Please try again.", 'bot');
-      } finally {
-        setLoading(false);
-      }
-      return;
-    }
-
-    if (step === 'VERIFY_AUTH') {
-      setLoading(true);
-      try {
-        if (authMode === 'login') {
-          await login(capturedContact, input);
-        } else {
-          await register(capturedName, capturedContact, input);
-        }
-        setStep('MAIN_MENU');
-        addMessage("You are successfully logged in! How can I serve you today?", 'bot', true);
-      } catch (err) {
-        addMessage(err.message + ". Please try again.", 'bot');
-      } finally {
-        setLoading(false);
-      }
+      setStep('MAIN_MENU');
+      addMessage(`Pleasure to meet you, ${input}! How can I serve you today?`, 'bot', true);
       return;
     }
   };
@@ -139,6 +95,19 @@ export default function ChatBot() {
     }
   };
 
+  const handleGoogleSignIn = async () => {
+    setLoading(true);
+    try {
+      await loginWithGoogle();
+      setStep('MAIN_MENU');
+      addMessage("You are successfully logged in! How can I serve you today?", 'bot', true);
+    } catch (err) {
+      addMessage(err.message + ". Please try again.", 'bot');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <>
       <div className="fixed bottom-24 md:bottom-6 right-5 z-[110]">
@@ -156,10 +125,10 @@ export default function ChatBot() {
               <div className="bg-gradient-to-r from-[#5c3110] via-[#d97706] to-[#b45309] p-4 flex items-center justify-between shadow-md">
                 <div className="flex items-center gap-3">
                   <div className="w-9 h-9 rounded-full border-2 border-amber-300 bg-white p-0.5 flex items-center justify-center overflow-hidden flex-shrink-0">
-                    <img src="/logo.png" alt="Fortune Food Logo" className="w-full h-full object-contain" />
+                    <img src="/logo.png" alt="Fortune Foodz Logo" className="w-full h-full object-contain" />
                   </div>
                   <div>
-                    <h3 className="text-amber-50 font-bold leading-tight font-cinzel text-sm">Fortune Food Assistant</h3>
+                    <h3 className="text-amber-50 font-bold leading-tight font-cinzel text-sm">Fortune Foodz Assistant</h3>
                     <p className="text-amber-200 text-[10px] uppercase font-bold tracking-wider flex items-center gap-1">
                       <ShieldCheck size={11} className="text-emerald-400" /> Purity Verified
                     </p>

@@ -23,7 +23,7 @@ describe('CartDrawer Component', () => {
   const renderWithProviders = (ui) => {
     return render(
       <MemoryRouter>
-        <DataContext.Provider value={{ frontendSettings: { storeName: 'Fortune Food' } }}>
+        <DataContext.Provider value={{ frontendSettings: { storeName: 'Fortune Foodz' } }}>
           <CartProvider>
             {ui}
           </CartProvider>

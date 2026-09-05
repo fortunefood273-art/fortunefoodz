@@ -110,7 +110,7 @@ export default function ProductPage() {
             <ScrollReveal delay={100}>
               <div className="flex flex-col">
                 <div className="mb-2 flex items-center justify-between">
-                  <span className="text-[#d97706] font-bold text-xs tracking-wider uppercase bg-amber-100 px-2.5 py-1 rounded-full">{product.brand || 'Fortune Food'}</span>
+                  <span className="text-[#d97706] font-bold text-xs tracking-wider uppercase bg-amber-100 px-2.5 py-1 rounded-full">{product.brand || 'Fortune Foodz'}</span>
                   <span className="text-emerald-700 text-xs font-bold flex items-center gap-1"><ShieldCheck size={14} /> 100% Organic Purity</span>
                 </div>
                 
@@ -250,7 +250,7 @@ export default function ProductPage() {
                 )}
                 {activeTab === 'purity testing' && (
                   <div className="space-y-2">
-                    <p className="font-bold text-[#5c3110]">Fortune Food Purity Guarantee:</p>
+                    <p className="font-bold text-[#5c3110]">Fortune Foodz Purity Guarantee:</p>
                     <p>All dry fruits and spices undergo rigorous 12-point quality testing for moisture, heavy metals, synthetic colors, and artificial aromas.</p>
                   </div>
                 )}

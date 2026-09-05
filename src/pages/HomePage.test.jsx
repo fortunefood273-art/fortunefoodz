@@ -42,7 +42,7 @@ const mockData = {
     { id: 'pg-1', name: 'A2 Gir Cow Bilona Ghee 500ml', category: 'Pure Ghee & Oils', price: 1250, mrp: 1499, rating: '5.0', reviews: 210, tag: 'ORGANIC', badge: 'Traditional Bilona', img: 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108' },
     { id: 'gb-1', name: 'Royal Velvet Dry Fruit Hamper', category: 'Festive Gift Boxes', price: 1899, mrp: 2299, rating: '4.9', reviews: 45, tag: 'ORGANIC', badge: 'Luxury Gift Box', img: 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48' },
   ],
-  frontendSettings: { storeName: 'Fortune Food' }
+  frontendSettings: { storeName: 'Fortune Foodz' }
 };
 
 const renderHomePage = () => {
@@ -67,7 +67,7 @@ describe('HomePage', () => {
   it('renders successfully without crashing', () => {
     renderHomePage();
     // Verify header or brand title exists
-    expect(screen.getAllByText('FORTUNE FOOD')[0]).toBeInTheDocument();
+    expect(screen.getAllByText('FORTUNE FOODZ')[0]).toBeInTheDocument();
   });
 
   it('renders initial data from DataContext', () => {

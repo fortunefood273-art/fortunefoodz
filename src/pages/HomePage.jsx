@@ -779,7 +779,7 @@ function CategorySectionsGrid() {
                       </Link>
 
                       <div className="p-3 flex flex-col flex-1">
-                        <p className="text-[9px] text-[#d97706] font-bold uppercase tracking-wider">{p.badge || p.brand || 'Fortune Food'}</p>
+                        <p className="text-[9px] text-[#d97706] font-bold uppercase tracking-wider">{p.badge || p.brand || 'Fortune Foodz'}</p>
                         <Link to={`/product/${p.id}`} className="text-stone-800 text-xs font-bold leading-tight mt-0.5 line-clamp-2 hover:text-[#d97706]">
                           {p.name}
                         </Link>
@@ -882,7 +882,7 @@ function FarmOriginSection() {
               100% Traceable Organic Sourcing
             </h2>
             <p className="text-amber-200/80 text-xs md:text-sm leading-relaxed mb-4">
-              Every package of Fortune Food is sourced directly from certified organic farmers across Pampore Valley, Wayanad, and California orchards to ensure unparalleled purity and flavor.
+              Every package of Fortune Foodz is sourced directly from certified organic farmers across Pampore Valley, Wayanad, and California orchards to ensure unparalleled purity and flavor.
             </p>
 
             <div className="grid grid-cols-2 gap-2.5 text-xs md:text-sm">
@@ -959,15 +959,15 @@ function Footer() {
           <div>
             <div className="flex items-center gap-3 mb-3 cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
               <div className="w-11 h-11 rounded-full border-2 border-amber-400 bg-amber-50 p-0.5 overflow-hidden">
-                <img src="/logo.png" alt="Fortune Food" className="w-full h-full object-contain" />
+                <img src="/logo.png" alt="Fortune Foodz" className="w-full h-full object-contain" />
               </div>
               <div>
-                <p className="font-cinzel font-bold text-lg text-amber-100">FORTUNE FOOD</p>
+                <p className="font-cinzel font-bold text-lg text-amber-100">FORTUNE FOODZ</p>
                 <p className="text-[#2563eb] text-[9px] font-bold tracking-wider uppercase">Promise of Purity</p>
               </div>
             </div>
             <p className="text-amber-200/70 text-xs leading-relaxed mb-3">
-              Fortune Food brings 100% pure organic dry fruits, Kashmiri Mongra saffron, jumbo almonds, and authentic spices direct from certified organic farms to your kitchen.
+              Fortune Foodz brings 100% pure organic dry fruits, Kashmiri Mongra saffron, jumbo almonds, and authentic spices direct from certified organic farms to your kitchen.
             </p>
           </div>
 
@@ -1015,7 +1015,7 @@ function Footer() {
         </div>
 
         <div className="border-t border-amber-900/60 pt-4 flex justify-between text-xs text-amber-200/50">
-          <p>© 2026 Fortune Food — Promise of Purity. All rights reserved.</p>
+          <p>© 2026 Fortune Foodz — Promise of Purity. All rights reserved.</p>
           <div className="flex gap-4">
             <span>Organic Certified</span>
             <span>FSSAI Approved</span>
