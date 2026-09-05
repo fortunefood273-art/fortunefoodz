@@ -733,11 +733,16 @@ function CategorySectionsGrid() {
   const { addToCart, toggleWishlist, isInCart, isWishlisted } = useCart();
   const navigate = useNavigate();
 
-  // Show only these 6 on the homepage in this order, to keep the page concise
-  const FEATURED = ['Spices', 'Dry Fruit', 'Seeds', 'Healthy Snacks', 'Dairy', 'Sharbat'];
+  // Show ALL categories from the database in this preferred order
+  const FEATURED = [
+    'Spices', 'Dry Fruit', 'Seeds', 'Healthy Snacks', 'Dairy', 'Sharbat',
+    'Dried Fruit', 'Mukhwas', 'Choclate', 'Oil', 'Bakery', 'Ayurvedic', 'Millets'
+  ];
   const featuredCats = FEATURED
     .map(name => categories.find(c => c.label === name))
-    .filter(Boolean);
+    .filter(Boolean)
+    // Also append any remaining categories not in the above list
+    .concat(categories.filter(c => !FEATURED.includes(c.label)));
 
   // Helper: small compact card used in most layouts
   const SmallCard = ({ p }) => (
@@ -921,7 +926,55 @@ function CategorySectionsGrid() {
           </section>
         );
 
-        return null;
+        // ── FALLBACK: cycle through layouts A-F for all other categories ──
+        const bgPalette = [
+          'bg-gradient-to-br from-amber-50/80 to-orange-50/60',
+          'bg-gradient-to-br from-stone-50/80 to-amber-50/60',
+          'bg-gradient-to-br from-green-50/60 to-emerald-50/40',
+          'bg-gradient-to-br from-lime-50/60 to-green-50/50',
+          'bg-gradient-to-br from-violet-50/40 to-purple-50/30',
+          'bg-gradient-to-br from-teal-50/60 to-cyan-50/40',
+        ];
+        const bg = bgPalette[sectionIdx % bgPalette.length];
+        const layoutVariant = sectionIdx % 3; // 0=grid, 1=scroll, 2=horizontal list
+
+        if (layoutVariant === 1) return (
+          <section key={cat.label} className="relative z-10 max-w-[1600px] mx-auto w-full px-4 md:px-6">
+            <div className={`glass-panel rounded-3xl p-4 md:p-5 ${bg}`}>
+              <SectionHeader cat={cat} count={catProducts.length} />
+              <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1 snap-x snap-mandatory scrollbar-none">
+                {catProducts.map(p => (
+                  <div key={p.id} className="flex-shrink-0 w-36 md:w-44 snap-start">
+                    <SmallCard p={p} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        );
+
+        if (layoutVariant === 2) return (
+          <section key={cat.label} className="relative z-10 max-w-[1600px] mx-auto w-full px-4 md:px-6">
+            <div className={`glass-panel rounded-3xl p-4 md:p-5 ${bg}`}>
+              <SectionHeader cat={cat} count={catProducts.length} />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3">
+                {catProducts.map(p => <HorizontalCard key={p.id} p={p} />)}
+              </div>
+            </div>
+          </section>
+        );
+
+        // default: compact 3-col grid
+        return (
+          <section key={cat.label} className="relative z-10 max-w-[1600px] mx-auto w-full px-4 md:px-6">
+            <div className={`glass-panel rounded-3xl p-4 md:p-5 ${bg}`}>
+              <SectionHeader cat={cat} count={catProducts.length} />
+              <div className="grid grid-cols-3 md:grid-cols-6 gap-2 md:gap-3">
+                {catProducts.map(p => <SmallCard key={p.id} p={p} />)}
+              </div>
+            </div>
+          </section>
+        );
       })}
     </div>
   );
