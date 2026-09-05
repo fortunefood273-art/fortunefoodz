@@ -41,7 +41,7 @@ function HeroCarousel() {
         onMouseLeave={() => setAuto(true)}
       >
         {s.heroImage && (
-          <MediaDisplay src={s.heroImage} alt="Hero Banner" className="w-full h-[250px] sm:h-[350px] md:h-[450px] lg:h-[500px] object-cover" loading="eager" />
+          <MediaDisplay src={s.heroImage} alt="Hero Banner" className="w-full aspect-[2/1] md:aspect-auto md:h-[400px] lg:h-[480px] object-cover" loading="eager" />
         )}
         
         {/* Navigation Arrows */}
@@ -86,7 +86,7 @@ function SiteHeroBannersSection() {
           <ScrollReveal key={b.id || idx} delay={idx * 150} animation="scale-up">
             <div 
               onClick={() => navigate(b.link || '/category')}
-              className="group relative overflow-hidden rounded-3xl h-[220px] md:h-[280px] shadow-xl border border-amber-300/40 cursor-pointer bg-stone-900"
+              className="group relative overflow-hidden rounded-3xl h-[160px] md:h-[280px] shadow-xl border border-amber-300/40 cursor-pointer bg-stone-900"
             >
               <MediaDisplay 
                 src={b.mediaUrl} 
@@ -148,7 +148,7 @@ function QuickCategories() {
 
   return (
     <section className="relative z-10 max-w-[1600px] mx-auto w-full px-4 md:px-6 mb-4">
-      <div className="relative overflow-hidden rounded-3xl p-5 md:p-7 border border-amber-300/40 shadow-xl bg-gradient-to-br from-[#3b1c06] via-[#5c3110] to-[#1a0e05]">
+      <div className="relative overflow-hidden rounded-3xl p-4 md:p-7 border border-amber-300/40 shadow-xl bg-gradient-to-br from-[#3b1c06] via-[#5c3110] to-[#1a0e05]">
         
         {/* Background Sparkles */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -207,7 +207,7 @@ function ExoticSpicesSection({ cat, products, addToCart, toggleWishlist, isInCar
 
   return (
     <section className="relative z-10 max-w-[1600px] mx-auto w-full px-4 md:px-6">
-      <div className="relative overflow-hidden rounded-3xl p-6 md:p-8 border border-amber-500/40 shadow-2xl bg-gradient-to-br from-[#2a0802] via-[#451004] to-[#170301] text-amber-50">
+      <div className="relative overflow-hidden rounded-3xl p-4 md:p-8 border border-amber-500/40 shadow-2xl bg-gradient-to-br from-[#2a0802] via-[#451004] to-[#170301] text-amber-50">
         
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 pb-4 border-b border-amber-500/30 gap-3">
@@ -240,7 +240,7 @@ function ExoticSpicesSection({ cat, products, addToCart, toggleWishlist, isInCar
                 <Heart size={16} className={isWishlisted(hero.id) ? 'fill-red-500 text-red-500' : ''} />
               </button>
 
-              <Link to={`/product/${hero.id}`} className="relative h-60 rounded-xl overflow-hidden mb-4 block">
+              <Link to={`/product/${hero.id}`} className="relative h-48 md:h-60 rounded-xl overflow-hidden mb-4 block">
                 <MediaDisplay src={hero.img} alt={hero.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-transparent to-transparent opacity-80" />
               </Link>
@@ -277,7 +277,7 @@ function ExoticSpicesSection({ cat, products, addToCart, toggleWishlist, isInCar
             {rest.map((p, idx) => (
               <ScrollReveal key={p.id} delay={idx * 60} animation="scale-up" className="h-full">
                 <div className="bg-stone-950/70 rounded-2xl border border-amber-500/30 overflow-hidden hover:border-amber-400 transition-all group flex flex-col h-full shadow-lg">
-                  <Link to={`/product/${p.id}`} className="relative h-36 bg-stone-900 overflow-hidden block">
+                  <Link to={`/product/${p.id}`} className="relative h-28 md:h-36 bg-stone-900 overflow-hidden block">
                     <MediaDisplay src={p.img} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                     <div className="absolute top-1.5 left-1.5 bg-amber-500/90 text-stone-950 text-[8px] font-extrabold px-1.5 py-0.5 rounded">{p.tag || '100% PURE'}</div>
                   </Link>
@@ -313,7 +313,7 @@ function DryFruitsSection({ cat, products, addToCart, toggleWishlist, isInCart, 
 
   return (
     <section className="relative z-10 max-w-[1600px] mx-auto w-full px-4 md:px-6">
-      <div className="relative overflow-hidden rounded-3xl p-6 md:p-8 border border-amber-700/40 shadow-xl bg-gradient-to-r from-[#241306] via-[#3a200b] to-[#190c03] text-amber-50">
+      <div className="relative overflow-hidden rounded-3xl p-4 md:p-8 border border-amber-700/40 shadow-xl bg-gradient-to-r from-[#241306] via-[#3a200b] to-[#190c03] text-amber-50">
         
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 pb-4 border-b border-amber-700/30 gap-3">
@@ -337,7 +337,7 @@ function DryFruitsSection({ cat, products, addToCart, toggleWishlist, isInCart, 
           {products.map((p, idx) => (
             <ScrollReveal key={p.id} delay={idx * 70} animation="scale-up" className="h-full">
               <div className="bg-[#170b03]/90 rounded-2xl border border-amber-700/40 overflow-hidden shadow-md hover:border-amber-400 transition-all cursor-pointer group flex flex-col h-full">
-                <Link to={`/product/${p.id}`} className="relative h-40 bg-stone-950 overflow-hidden block">
+                <Link to={`/product/${p.id}`} className="relative h-32 md:h-40 bg-stone-950 overflow-hidden block">
                   <MediaDisplay src={p.img} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                   <span className="absolute top-2 left-2 bg-amber-700/90 text-amber-100 text-[9px] font-bold px-2 py-0.5 rounded shadow">
                     {p.badge || 'HARVEST'}
@@ -387,7 +387,7 @@ function GourmetNutsSection({ cat, products, addToCart, toggleWishlist, isInCart
 
   return (
     <section className="relative z-10 max-w-[1600px] mx-auto w-full px-4 md:px-6">
-      <div className="relative overflow-hidden rounded-3xl p-6 md:p-8 border border-emerald-500/30 shadow-2xl bg-gradient-to-br from-[#052418] via-[#0a3827] to-[#03140e] text-emerald-50">
+      <div className="relative overflow-hidden rounded-3xl p-4 md:p-8 border border-emerald-500/30 shadow-2xl bg-gradient-to-br from-[#052418] via-[#0a3827] to-[#03140e] text-emerald-50">
         
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 pb-4 border-b border-emerald-500/30 gap-3">
@@ -413,7 +413,7 @@ function GourmetNutsSection({ cat, products, addToCart, toggleWishlist, isInCart
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {topTwo.map((p) => (
               <div key={p.id} className="bg-stone-950/80 rounded-2xl border border-emerald-500/40 p-4 flex gap-4 items-center shadow-xl group hover:border-emerald-400 transition-all">
-                <Link to={`/product/${p.id}`} className="relative w-36 h-36 rounded-xl overflow-hidden flex-shrink-0 bg-stone-900 block">
+                <Link to={`/product/${p.id}`} className="relative w-24 h-24 md:w-36 md:h-36 rounded-xl overflow-hidden flex-shrink-0 bg-stone-900 block">
                   <MediaDisplay src={p.img} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                   <span className="absolute top-1.5 left-1.5 bg-emerald-500 text-stone-950 text-[8px] font-extrabold px-2 py-0.5 rounded">{p.badge || 'ROASTED'}</span>
                 </Link>
@@ -449,7 +449,7 @@ function GourmetNutsSection({ cat, products, addToCart, toggleWishlist, isInCart
             {bottomFour.map((p, idx) => (
               <ScrollReveal key={p.id} delay={idx * 60} animation="scale-up" className="h-full">
                 <div className="bg-stone-950/70 rounded-2xl border border-emerald-500/30 overflow-hidden p-3 hover:border-emerald-400 transition-all group flex flex-col h-full shadow-md">
-                  <Link to={`/product/${p.id}`} className="relative h-32 rounded-xl overflow-hidden bg-stone-900 block mb-2">
+                  <Link to={`/product/${p.id}`} className="relative h-24 md:h-32 rounded-xl overflow-hidden bg-stone-900 block mb-2">
                     <MediaDisplay src={p.img} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                   </Link>
 
@@ -487,7 +487,7 @@ function GourmetNutsSection({ cat, products, addToCart, toggleWishlist, isInCart
 function HealthySeedsSection({ cat, products, addToCart, toggleWishlist, isInCart, isWishlisted, navigate }) {
   return (
     <section className="relative z-10 max-w-[1600px] mx-auto w-full px-4 md:px-6">
-      <div className="relative overflow-hidden rounded-3xl p-6 md:p-8 border border-emerald-300 shadow-xl bg-gradient-to-br from-[#f0fdf4] via-[#ecfdf5] to-[#d1fae5] text-stone-900">
+      <div className="relative overflow-hidden rounded-3xl p-4 md:p-8 border border-emerald-300 shadow-xl bg-gradient-to-br from-[#f0fdf4] via-[#ecfdf5] to-[#d1fae5] text-stone-900">
         
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 pb-4 border-b border-emerald-200 gap-3">
@@ -511,7 +511,7 @@ function HealthySeedsSection({ cat, products, addToCart, toggleWishlist, isInCar
           {products.map((p, idx) => (
             <ScrollReveal key={p.id} delay={idx * 65} animation="scale-up" className="h-full">
               <div className="bg-white rounded-2xl border border-emerald-200 p-3 overflow-hidden shadow-sm hover:shadow-xl transition-all cursor-pointer group flex flex-col h-full">
-                <Link to={`/product/${p.id}`} className="relative h-36 bg-emerald-50 rounded-xl overflow-hidden block mb-2">
+                <Link to={`/product/${p.id}`} className="relative h-28 md:h-36 bg-emerald-50 rounded-xl overflow-hidden block mb-2">
                   <MediaDisplay src={p.img} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                   <span className="absolute top-1.5 left-1.5 bg-emerald-600 text-white text-[8px] font-bold px-2 py-0.5 rounded-full shadow">
                     {p.badge || 'SUPERFOOD'}
@@ -561,7 +561,7 @@ function PureGheeSection({ cat, products, addToCart, toggleWishlist, isInCart, i
 
   return (
     <section className="relative z-10 max-w-[1600px] mx-auto w-full px-4 md:px-6">
-      <div className="relative overflow-hidden rounded-3xl p-6 md:p-8 border border-amber-400/60 shadow-xl bg-gradient-to-r from-[#fffbeb] via-[#fef3c7] to-[#fde68a] text-stone-900">
+      <div className="relative overflow-hidden rounded-3xl p-4 md:p-8 border border-amber-400/60 shadow-xl bg-gradient-to-r from-[#fffbeb] via-[#fef3c7] to-[#fde68a] text-stone-900">
         
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 pb-4 border-b border-amber-300/80 gap-3">
@@ -590,7 +590,7 @@ function PureGheeSection({ cat, products, addToCart, toggleWishlist, isInCart, i
                 <Award size={12} /> A2 BILONA CERTIFIED
               </div>
 
-              <Link to={`/product/${hero.id}`} className="relative h-56 rounded-xl overflow-hidden mb-4 block">
+              <Link to={`/product/${hero.id}`} className="relative h-48 md:h-56 rounded-xl overflow-hidden mb-4 block">
                 <MediaDisplay src={hero.img} alt={hero.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
               </Link>
 
@@ -621,7 +621,7 @@ function PureGheeSection({ cat, products, addToCart, toggleWishlist, isInCart, i
             {rest.map((p, idx) => (
               <ScrollReveal key={p.id} delay={idx * 60} animation="scale-up" className="h-full">
                 <div className="bg-white/90 rounded-2xl border border-amber-300/80 overflow-hidden hover:border-amber-500 transition-all group flex flex-col h-full shadow-sm p-2.5">
-                  <Link to={`/product/${p.id}`} className="relative h-32 bg-amber-50 rounded-xl overflow-hidden block mb-2">
+                  <Link to={`/product/${p.id}`} className="relative h-28 md:h-32 bg-amber-50 rounded-xl overflow-hidden block mb-2">
                     <MediaDisplay src={p.img} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                     <span className="absolute top-1 left-1 bg-amber-500 text-stone-950 text-[8px] font-bold px-1.5 py-0.5 rounded">{p.tag || '100% PURE'}</span>
                   </Link>
@@ -660,7 +660,7 @@ function PureGheeSection({ cat, products, addToCart, toggleWishlist, isInCart, i
 function FestiveGiftsSection({ cat, products, addToCart, toggleWishlist, isInCart, isWishlisted, navigate }) {
   return (
     <section className="relative z-10 max-w-[1600px] mx-auto w-full px-4 md:px-6">
-      <div className="relative overflow-hidden rounded-3xl p-6 md:p-8 border border-amber-400/50 shadow-2xl bg-gradient-to-br from-[#3b040a] via-[#5c0812] to-[#260206] text-amber-50">
+      <div className="relative overflow-hidden rounded-3xl p-4 md:p-8 border border-amber-400/50 shadow-2xl bg-gradient-to-br from-[#3b040a] via-[#5c0812] to-[#260206] text-amber-50">
         
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 pb-4 border-b border-amber-400/30 gap-3">
@@ -684,7 +684,7 @@ function FestiveGiftsSection({ cat, products, addToCart, toggleWishlist, isInCar
           {products.map((p, idx) => (
             <ScrollReveal key={p.id} delay={idx * 70} animation="scale-up" className="h-full">
               <div className="bg-[#200307]/90 rounded-2xl border border-amber-400/40 overflow-hidden shadow-xl hover:border-amber-300 transition-all cursor-pointer group flex flex-col h-full">
-                <Link to={`/product/${p.id}`} className="relative h-40 bg-stone-950 overflow-hidden block">
+                <Link to={`/product/${p.id}`} className="relative h-32 md:h-40 bg-stone-950 overflow-hidden block">
                   <MediaDisplay src={p.img} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                   <div className="absolute top-2 left-2 bg-amber-400 text-stone-950 text-[9px] font-black px-2 py-0.5 rounded shadow flex items-center gap-1">
                     <Sparkles size={10} /> {p.badge || 'ROYAL GIFT'}
@@ -872,7 +872,7 @@ function DealsSection() {
 function FarmOriginSection() {
   return (
     <section className="relative z-10 max-w-[1600px] mx-auto w-full px-4 md:px-6 mb-4">
-      <div className="bg-gradient-to-r from-[#5c3110] to-[#3b1c06] rounded-3xl p-5 md:p-7 border border-amber-400/40 text-amber-50 shadow-xl relative overflow-hidden">
+      <div className="bg-gradient-to-r from-[#5c3110] to-[#3b1c06] rounded-3xl p-4 md:p-7 border border-amber-400/40 text-amber-50 shadow-xl relative overflow-hidden">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
           <div>
             <div className="inline-flex items-center gap-1.5 bg-amber-400/20 text-amber-300 px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-2">
