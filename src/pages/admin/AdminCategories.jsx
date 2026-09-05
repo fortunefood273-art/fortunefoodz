@@ -193,7 +193,7 @@ export default function AdminCategories() {
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-bold text-gray-700 mb-1">Category Label <span className="text-red-500">*</span></label>
-                    <input required type="text" placeholder="e.g. Dog Food" value={editing.label || ''} onChange={e => setEditing({...editing, label: e.target.value})} className="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all text-sm" />
+                    <input required type="text" placeholder="e.g. Dry Fruits" value={editing.label || ''} onChange={e => setEditing({...editing, label: e.target.value})} className="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all text-sm" />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>

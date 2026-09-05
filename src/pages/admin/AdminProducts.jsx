@@ -20,7 +20,7 @@ export default function AdminProducts() {
   const [isUploadingGallery, setIsUploadingGallery] = useState(false);
 
   const defaultProduct = {
-    name: '', brand: '', petType: 'Dogs', category: '', price: '', mrp: '', rating: 4.5, reviews: 0, img: '', images: [], tag: '', badge: ''
+    name: '', brand: 'Fortune Foodz', petType: 'General', category: '', price: '', mrp: '', rating: 4.5, reviews: 0, img: '', images: [], tag: '', badge: ''
   };
 
   const uniqueBrands = [...new Set((products || []).map(p => p.brand).filter(Boolean))];
@@ -304,30 +304,34 @@ export default function AdminProducts() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div className="md:col-span-2">
                     <label htmlFor="name" className="block text-sm font-bold text-gray-700 mb-1">Product Name <span className="text-red-500">*</span></label>
-                    <input id="name" required type="text" placeholder="e.g. Pedigree Adult Dog Food" value={editing.name || ''} onChange={e => setEditing({...editing, name: e.target.value})} className="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all text-sm" />
+                    <input id="name" required type="text" placeholder="e.g. Kashmiri Mongra Saffron 5g" value={editing.name || ''} onChange={e => setEditing({...editing, name: e.target.value})} className="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all text-sm" />
                   </div>
                   
                   <div>
                     <label htmlFor="brand" className="block text-sm font-bold text-gray-700 mb-1">Brand <span className="text-red-500">*</span></label>
-                    <input id="brand" list="brand-list" required type="text" placeholder="Select or type brand" value={editing.brand || ''} onChange={e => setEditing({...editing, brand: e.target.value})} className="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all text-sm" />
+                    <input id="brand" list="brand-list" required type="text" placeholder="e.g. Fortune Foodz" value={editing.brand || ''} onChange={e => setEditing({...editing, brand: e.target.value})} className="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all text-sm" />
                     <datalist id="brand-list">
                       {uniqueBrands.map(b => <option key={b} value={b} />)}
                     </datalist>
                   </div>
 
                   <div>
-                    <label htmlFor="petType" className="block text-sm font-bold text-gray-700 mb-1">Pet Type <span className="text-red-500">*</span></label>
-                    <select id="petType" required value={editing.petType || 'Dogs'} onChange={e => setEditing({...editing, petType: e.target.value})} className="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all text-sm">
-                      <option value="Dogs">Dogs</option>
-                      <option value="Cats">Cats</option>
-                      <option value="Small Pets">Small Pets</option>
-                      <option value="Birds">Birds</option>
+                    <label htmlFor="petType" className="block text-sm font-bold text-gray-700 mb-1">Food Type <span className="text-red-500">*</span></label>
+                    <select id="petType" required value={editing.petType || 'General'} onChange={e => setEditing({...editing, petType: e.target.value})} className="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all text-sm">
+                      <option value="General">General</option>
+                      <option value="Organic">Organic</option>
+                      <option value="Premium">Premium</option>
+                      <option value="Ayurvedic">Ayurvedic</option>
+                      <option value="Imported">Imported</option>
+                      <option value="Farm Fresh">Farm Fresh</option>
+                      <option value="Roasted">Roasted</option>
+                      <option value="Raw">Raw</option>
                     </select>
                   </div>
 
                   <div className="md:col-span-2">
-                    <label htmlFor="category" className="block text-sm font-bold text-gray-700 mb-1">Sub Category</label>
-                    <input id="category" list="category-list" type="text" placeholder="Select or type sub category (e.g. Dog Bowls)" value={editing.category || ''} onChange={e => setEditing({...editing, category: e.target.value})} className="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all text-sm" />
+                    <label htmlFor="category" className="block text-sm font-bold text-gray-700 mb-1">Category <span className="text-red-500">*</span></label>
+                    <input id="category" list="category-list" required type="text" placeholder="e.g. Spices, Dry Fruit, Seeds" value={editing.category || ''} onChange={e => setEditing({...editing, category: e.target.value})} className="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all text-sm" />
                     <datalist id="category-list">
                       {categories.map(c => <option key={c.label} value={c.label} />)}
                     </datalist>

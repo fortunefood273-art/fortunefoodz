@@ -201,7 +201,7 @@ export default function AdminDeals() {
                   </div>
                   <div>
                     <label className="block text-sm font-bold text-gray-700 mb-1">Subtitle <span className="text-red-500">*</span></label>
-                    <input required type="text" placeholder="e.g. DOG FOOD" value={editing.sub || ''} onChange={e => setEditing({...editing, sub: e.target.value})} className="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all text-sm" />
+                    <input required type="text" placeholder="e.g. DRY FRUITS SALE" value={editing.sub || ''} onChange={e => setEditing({...editing, sub: e.target.value})} className="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all text-sm" />
                   </div>
                   <div>
                     <label className="block text-sm font-bold text-gray-700 mb-1">Badge</label>

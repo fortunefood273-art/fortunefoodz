@@ -181,7 +181,7 @@ export default function AdminCampaigns() {
               type="text"
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
-              placeholder="Huge Festive Sale! 50% Off Dog Food 🐶"
+              placeholder="Huge Festive Sale! 50% Off Dry Fruits 🎉"
               className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-800 focus:outline-none focus:border-[#C9A84C] focus:ring-1 focus:ring-[#C9A84C] transition-all font-semibold"
               required
             />

@@ -18,10 +18,10 @@ export function DataProvider({ children }) {
   const hasRequestedPermission = useRef(false);
 
   const [visitorId] = useState(() => {
-    let vid = localStorage.getItem('prime-pets-vid');
+    let vid = localStorage.getItem('fortune-foodz-vid');
     if (!vid) {
       vid = 'vid_' + Math.random().toString(36).substr(2, 9);
-      localStorage.setItem('prime-pets-vid', vid);
+      localStorage.setItem('fortune-foodz-vid', vid);
     }
     return vid;
   });
