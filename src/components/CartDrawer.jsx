@@ -104,7 +104,7 @@ export default function CartDrawer() {
                     className="bg-white rounded-2xl border border-amber-100 p-3 flex items-center gap-3 shadow-sm hover:border-amber-300 transition-all">
                     {/* Product Image */}
                     <div className="w-16 h-16 rounded-xl overflow-hidden bg-amber-50 flex-shrink-0 border border-amber-200 p-0.5">
-                      <img src={item.img} alt={item.name} className="w-full h-full object-cover rounded-lg" />
+                      <img src={item.img} alt={item.name} className="w-full h-full object-contain object-center rounded-lg" />
                     </div>
 
                     {/* Product Details */}

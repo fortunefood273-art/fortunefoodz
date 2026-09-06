@@ -121,7 +121,7 @@ export default function OffersPage() {
                   <ScrollReveal key={p.id} delay={(idx % 6) * 80} className="h-full">
                     <Link to={`/product/${p.id}`} className="block bg-white rounded-2xl border border-amber-200 overflow-hidden shadow-sm hover:shadow-xl transition-all cursor-pointer h-full flex flex-col">
                       <div className="relative bg-amber-50 overflow-hidden" style={{ height: 135 }}>
-                        <MediaDisplay src={p.img} alt={p.name} className="w-full h-full object-cover" />
+                        <MediaDisplay src={p.img} alt={p.name} className="w-full h-full object-contain object-center" />
                         <span className="absolute top-2 left-2 bg-[#d97706] text-white text-[9px] font-bold px-2 py-0.5 rounded-md">{p.off}</span>
                         <div className="absolute bottom-0 left-0 right-0 bg-stone-900/80 text-amber-300 text-[9px] font-bold text-center py-0.5">
                           Only {p.left} packs left!

@@ -130,7 +130,7 @@ function SiteHeroBannersSection() {
               <MediaDisplay 
                 src={b.mediaUrl} 
                 alt={b.title || 'Site Hero Banner'} 
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-80 group-hover:opacity-90"
+                className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700 opacity-80 group-hover:opacity-90"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-900/40 to-transparent" />
 
@@ -222,7 +222,7 @@ function QuickCategories() {
               <button key={`${cat.label}-${idx}`} onClick={() => navigate('/category', { state: { category: cat.label } })}
                 className="snap-center flex-shrink-0 flex flex-col items-center gap-3 group focus:outline-none w-24 sm:w-32 md:w-44 cursor-pointer">
                 <div className="w-24 h-24 sm:w-32 sm:h-32 md:w-44 md:h-44 rounded-2xl md:rounded-3xl border-2 border-amber-400/40 bg-[#120a05] overflow-hidden shadow-lg group-hover:border-amber-400 group-hover:scale-105 transition-all duration-300 relative">
-                  <img src={cat.img} alt={cat.label} loading="lazy" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                  <img src={cat.img} alt={cat.label} loading="lazy" className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500" />
                 </div>
                 <span className="text-xs md:text-sm font-bold text-amber-100 text-center leading-tight group-hover:text-amber-400 transition-colors">{cat.label}</span>
               </button>
@@ -280,7 +280,7 @@ function ExoticSpicesSection({ cat, products, addToCart, toggleWishlist, isInCar
               </button>
 
               <Link to={`/product/${hero.id}`} className="relative h-48 md:h-60 rounded-xl overflow-hidden mb-4 block">
-                <MediaDisplay src={hero.img} alt={hero.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                <MediaDisplay src={hero.img} alt={hero.name} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500" />
                 <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-transparent to-transparent opacity-80" />
               </Link>
 
@@ -317,7 +317,7 @@ function ExoticSpicesSection({ cat, products, addToCart, toggleWishlist, isInCar
               <ScrollReveal key={p.id} delay={idx * 60} animation="scale-up" className="h-full">
                 <div className="bg-stone-950/70 rounded-2xl border border-amber-500/30 overflow-hidden hover:border-amber-400 transition-all group flex flex-col h-full shadow-lg">
                   <Link to={`/product/${p.id}`} className="relative h-28 md:h-36 bg-stone-900 overflow-hidden block">
-                    <MediaDisplay src={p.img} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                    <MediaDisplay src={p.img} alt={p.name} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" />
                     <div className="absolute top-1.5 left-1.5 bg-amber-500/90 text-stone-950 text-[8px] font-extrabold px-1.5 py-0.5 rounded">{p.tag || '100% PURE'}</div>
                   </Link>
                   <div className="p-2.5 flex flex-col flex-1">
@@ -377,7 +377,7 @@ function DryFruitsSection({ cat, products, addToCart, toggleWishlist, isInCart, 
             <ScrollReveal key={p.id} delay={idx * 70} animation="scale-up" className="h-full">
               <div className="bg-[#170b03]/90 rounded-2xl border border-amber-700/40 overflow-hidden shadow-md hover:border-amber-400 transition-all cursor-pointer group flex flex-col h-full">
                 <Link to={`/product/${p.id}`} className="relative h-32 md:h-40 bg-stone-950 overflow-hidden block">
-                  <MediaDisplay src={p.img} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <MediaDisplay src={p.img} alt={p.name} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" />
                   <span className="absolute top-2 left-2 bg-amber-700/90 text-amber-100 text-[9px] font-bold px-2 py-0.5 rounded shadow">
                     {p.badge || 'HARVEST'}
                   </span>
@@ -453,7 +453,7 @@ function GourmetNutsSection({ cat, products, addToCart, toggleWishlist, isInCart
             {topTwo.map((p) => (
               <div key={p.id} className="bg-stone-950/80 rounded-2xl border border-emerald-500/40 p-4 flex gap-4 items-center shadow-xl group hover:border-emerald-400 transition-all">
                 <Link to={`/product/${p.id}`} className="relative w-24 h-24 md:w-36 md:h-36 rounded-xl overflow-hidden flex-shrink-0 bg-stone-900 block">
-                  <MediaDisplay src={p.img} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <MediaDisplay src={p.img} alt={p.name} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" />
                   <span className="absolute top-1.5 left-1.5 bg-emerald-500 text-stone-950 text-[8px] font-extrabold px-2 py-0.5 rounded">{p.badge || 'ROASTED'}</span>
                 </Link>
 
@@ -489,7 +489,7 @@ function GourmetNutsSection({ cat, products, addToCart, toggleWishlist, isInCart
               <ScrollReveal key={p.id} delay={idx * 60} animation="scale-up" className="h-full">
                 <div className="bg-stone-950/70 rounded-2xl border border-emerald-500/30 overflow-hidden p-3 hover:border-emerald-400 transition-all group flex flex-col h-full shadow-md">
                   <Link to={`/product/${p.id}`} className="relative h-24 md:h-32 rounded-xl overflow-hidden bg-stone-900 block mb-2">
-                    <MediaDisplay src={p.img} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                    <MediaDisplay src={p.img} alt={p.name} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" />
                   </Link>
 
                   <div className="flex flex-col flex-1 justify-between">
@@ -551,7 +551,7 @@ function HealthySeedsSection({ cat, products, addToCart, toggleWishlist, isInCar
             <ScrollReveal key={p.id} delay={idx * 65} animation="scale-up" className="h-full">
               <div className="bg-white rounded-2xl border border-emerald-200 p-3 overflow-hidden shadow-sm hover:shadow-xl transition-all cursor-pointer group flex flex-col h-full">
                 <Link to={`/product/${p.id}`} className="relative h-28 md:h-36 bg-emerald-50 rounded-xl overflow-hidden block mb-2">
-                  <MediaDisplay src={p.img} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <MediaDisplay src={p.img} alt={p.name} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" />
                   <span className="absolute top-1.5 left-1.5 bg-emerald-600 text-white text-[8px] font-bold px-2 py-0.5 rounded-full shadow">
                     {p.badge || 'SUPERFOOD'}
                   </span>
@@ -630,7 +630,7 @@ function PureGheeSection({ cat, products, addToCart, toggleWishlist, isInCart, i
               </div>
 
               <Link to={`/product/${hero.id}`} className="relative h-48 md:h-56 rounded-xl overflow-hidden mb-4 block">
-                <MediaDisplay src={hero.img} alt={hero.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                <MediaDisplay src={hero.img} alt={hero.name} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500" />
               </Link>
 
               <div>
@@ -661,7 +661,7 @@ function PureGheeSection({ cat, products, addToCart, toggleWishlist, isInCart, i
               <ScrollReveal key={p.id} delay={idx * 60} animation="scale-up" className="h-full">
                 <div className="bg-white/90 rounded-2xl border border-amber-300/80 overflow-hidden hover:border-amber-500 transition-all group flex flex-col h-full shadow-sm p-2.5">
                   <Link to={`/product/${p.id}`} className="relative h-28 md:h-32 bg-amber-50 rounded-xl overflow-hidden block mb-2">
-                    <MediaDisplay src={p.img} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                    <MediaDisplay src={p.img} alt={p.name} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" />
                     <span className="absolute top-1 left-1 bg-amber-500 text-stone-950 text-[8px] font-bold px-1.5 py-0.5 rounded">{p.tag || '100% PURE'}</span>
                   </Link>
 
@@ -724,7 +724,7 @@ function FestiveGiftsSection({ cat, products, addToCart, toggleWishlist, isInCar
             <ScrollReveal key={p.id} delay={idx * 70} animation="scale-up" className="h-full">
               <div className="bg-[#200307]/90 rounded-2xl border border-amber-400/40 overflow-hidden shadow-xl hover:border-amber-300 transition-all cursor-pointer group flex flex-col h-full">
                 <Link to={`/product/${p.id}`} className="relative h-32 md:h-40 bg-stone-950 overflow-hidden block">
-                  <MediaDisplay src={p.img} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <MediaDisplay src={p.img} alt={p.name} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" />
                   <div className="absolute top-2 left-2 bg-amber-400 text-stone-950 text-[9px] font-black px-2 py-0.5 rounded shadow flex items-center gap-1">
                     <Sparkles size={10} /> {p.badge || 'ROYAL GIFT'}
                   </div>
@@ -787,7 +787,7 @@ function CategorySectionsGrid() {
   const SmallCard = ({ p }) => (
     <div className="bg-white rounded-2xl border border-amber-100 overflow-hidden shadow-sm hover:shadow-xl transition-all cursor-pointer group flex flex-col">
       <Link to={`/product/${p.id}`} className="relative overflow-hidden block h-28 md:h-36 bg-amber-50/50">
-        <MediaDisplay src={p.img} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+        <MediaDisplay src={p.img} alt={p.name} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" />
         <div className="absolute top-2 left-2 bg-[#d97706] text-white text-[9px] font-bold px-2 py-0.5 rounded-md shadow">{p.tag || 'PURE'}</div>
         <button onClick={e => { e.preventDefault(); e.stopPropagation(); toggleWishlist(p); }}
           className="absolute top-2 right-2 bg-white/90 rounded-full p-1.5 shadow-sm hover:scale-110 transition-transform">
@@ -812,7 +812,7 @@ function CategorySectionsGrid() {
   const HorizontalCard = ({ p }) => (
     <div className="bg-white rounded-2xl border border-amber-100 overflow-hidden shadow-sm hover:shadow-md transition-all cursor-pointer group flex flex-row gap-0">
       <Link to={`/product/${p.id}`} className="relative overflow-hidden block w-24 md:w-32 flex-shrink-0 bg-amber-50/50">
-        <MediaDisplay src={p.img} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+        <MediaDisplay src={p.img} alt={p.name} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" />
       </Link>
       <div className="p-3 flex flex-col flex-1 justify-between">
         <div>
@@ -863,7 +863,7 @@ function CategorySectionsGrid() {
                 {/* Spotlight (first product large) */}
                 {catProducts[0] && (
                   <Link to={`/product/${catProducts[0].id}`} className="relative flex-shrink-0 w-40 md:w-52 rounded-2xl overflow-hidden group shadow-md">
-                    <MediaDisplay src={catProducts[0].img} alt={catProducts[0].name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 min-h-[220px] md:min-h-[260px]" />
+                    <MediaDisplay src={catProducts[0].img} alt={catProducts[0].name} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300 min-h-[220px] md:min-h-[260px]" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
                     <div className="absolute bottom-0 left-0 right-0 p-3">
                       <p className="text-amber-300 text-[9px] font-bold uppercase">{catProducts[0].tag}</p>
@@ -948,7 +948,7 @@ function CategorySectionsGrid() {
                   <div key={p.id + "-" + i} className="flex-shrink-0 w-32 md:w-40 snap-start">
                     <div className="bg-white rounded-2xl border border-pink-100 overflow-hidden shadow-sm hover:shadow-lg transition-all cursor-pointer group flex flex-col text-center">
                       <Link to={`/product/${p.id}`} className="relative overflow-hidden block h-28 bg-pink-50/50">
-                        <MediaDisplay src={p.img} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                        <MediaDisplay src={p.img} alt={p.name} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" />
                       </Link>
                       <div className="p-2">
                         <p className="text-stone-800 text-[10px] font-bold line-clamp-2">{p.name}</p>
@@ -1045,7 +1045,7 @@ function DealsSection() {
                 className="product-card flex-shrink-0 rounded-2xl overflow-hidden cursor-pointer border border-amber-200 shadow-md hover:shadow-xl transition-all mx-2 inline-block text-left"
                 style={{ width: 195, backgroundColor: d.bg }}>
                 <div className="relative overflow-hidden" style={{ height: 140 }}>
-                  <MediaDisplay src={d.img} alt={d.sub} className="w-full h-full object-cover" />
+                  <MediaDisplay src={d.img} alt={d.sub} className="w-full h-full object-contain" />
                   <div className={`absolute inset-0 bg-gradient-to-t ${d.grad} opacity-20`} />
                   <span className="absolute top-2 left-2 bg-white/90 text-stone-900 text-[10px] font-bold px-2 py-0.5 rounded-full shadow">{d.badge}</span>
                 </div>
@@ -1105,7 +1105,7 @@ function FarmOriginSection() {
 
           <div className="relative flex justify-center">
             <div className="w-full max-w-md aspect-video rounded-2xl overflow-hidden border-2 border-amber-400/50 shadow-2xl">
-              <img src="https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&q=80&w=800" alt="Organic Farm" className="w-full h-full object-cover" />
+              <img src="https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&q=80&w=800" alt="Organic Farm" className="w-full h-full object-contain" />
             </div>
           </div>
         </div>
