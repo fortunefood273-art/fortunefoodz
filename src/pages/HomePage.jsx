@@ -998,8 +998,9 @@ function CategorySectionsGrid() {
                           </div>
                         </div>
                       </div>
-                  ))}
-                </AutoScrollWrapper>
+                    ))}
+                  </AutoScrollWrapper>
+                )}
               </div>
             </div>
           </section>

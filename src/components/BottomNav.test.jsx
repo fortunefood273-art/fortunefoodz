@@ -1,25 +1,16 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
-import { MemoryRouter } from 'react-router-dom';
 import BottomNav from './BottomNav';
-import { CartProvider } from '../context/CartContext';
-import { DataContext } from '../context/DataContext';
+import { renderWithProviders } from '../test-utils';
 
 describe('BottomNav Component', () => {
   it('renders all navigation items', () => {
-    render(
-      <MemoryRouter>
-        <DataContext.Provider value={{ frontendSettings: { storeName: 'Fortune Foodz' } }}>
-          <CartProvider>
-            <BottomNav />
-          </CartProvider>
-        </DataContext.Provider>
-      </MemoryRouter>
-    );
-
+    renderWithProviders(<BottomNav />);
+    
+    // BottomNav labels as actually rendered in DOM
     expect(screen.getByText('Home')).toBeInTheDocument();
-    expect(screen.getByText('Catalogue')).toBeInTheDocument();
+    expect(screen.getByText('Browse')).toBeInTheDocument(); // Catalogue displays as Browse
     expect(screen.getByText('Offers')).toBeInTheDocument();
     expect(screen.getByText('Wellness')).toBeInTheDocument();
     expect(screen.getByText('Account')).toBeInTheDocument();

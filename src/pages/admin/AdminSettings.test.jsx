@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent, act } from '@testing-library/react';
+import { screen, fireEvent, act } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import { expect, test, vi } from 'vitest';
 import AdminSettings from './AdminSettings';
@@ -23,16 +23,13 @@ Object.defineProperty(window, 'matchMedia', {
 
 const mockSetFrontendSettings = vi.fn();
 
+import { renderWithProviders } from '../../test-utils';
+
 const renderAdminSettings = () => {
-  return render(
-    <BrowserRouter>
-      <DataContext.Provider value={{ frontendSettings: { storeName: 'Fortune Foodz', tagline: 'Promise of Purity', logoChar: 'F' }, setFrontendSettings: mockSetFrontendSettings }}>
-        <CartProvider>
-          <AdminSettings />
-        </CartProvider>
-      </DataContext.Provider>
-    </BrowserRouter>
-  );
+  return renderWithProviders(<AdminSettings />, {
+    dataValue: { frontendSettings: { storeName: 'Fortune Foodz', tagline: 'Promise of Purity', logoChar: 'F' }, setFrontendSettings: mockSetFrontendSettings },
+    authValue: { user: { email: 'admin@test.com' }, isAuthenticated: true, isAdmin: true }
+  });
 };
 
 test('renders settings form correctly', () => {
@@ -68,3 +65,5 @@ test('changes tabs and updates form data', async () => {
     tagline: 'Promise of Purity'
   }));
 });
+
+

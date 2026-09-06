@@ -207,4 +207,23 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+
+// GET /api/orders/mine - fetch orders for logged-in user by email (requires Firebase auth)
+const authRouter = require('./auth');
+const verifyToken = authRouter.verifyToken;
+router.get('/mine', verifyToken, async (req, res) => {
+  try {
+    const email = req.user.email;
+    if (!email) return res.json({ orders: [] });
+    const orders = await prisma.order.findMany({
+      where: { customerEmail: email },
+      orderBy: { createdAt: 'desc' }
+    });
+    res.json({ orders });
+  } catch (error) {
+    console.error('Error fetching user orders:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
 module.exports = router;
+

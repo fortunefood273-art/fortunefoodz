@@ -81,7 +81,10 @@ export function DataProvider({ children }) {
       setBanners(res.data.banners || []);
       setCategories(res.data.categories || []);
       setDeals(res.data.deals || []);
-      setProducts(res.data.products || []);
+      const prods = res.data.products || [];
+      setProducts(prods);
+      // Make products globally accessible so CartContext can resolve wishlist IDs on login
+      window.__fortuneProducts = prods;
       setFrontendSettings(res.data.frontendSettings || null);
     } catch (error) {
       console.error("Failed to fetch initial data:", error);

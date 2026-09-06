@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { X, ArrowRight, ArrowLeft, CheckCircle2, MapPin, Phone, User, Package, Truck, ChevronDown, ChevronUp, ShieldCheck } from 'lucide-react';
 import axios from 'axios';
 import { useData } from '../context/DataContext';
+import { useAuth } from '../context/AuthContext';
 
 const DELIVERY_THRESHOLD = 999;
 const DELIVERY_CHARGE    = 79;
@@ -200,11 +201,14 @@ function OrderSummary({ cartItems, cartTotal }) {
 
 export default function CheckoutModal({ isOpen, onClose, cartItems, cartTotal, onOrderSuccess }) {
   const { frontendSettings } = useData();
+  const { user } = useAuth();
 
   const [step, setStep]     = useState(0);
   const [direction, setDir] = useState(1);
 
-  const [form, setForm] = useState({ name: '', phone: '', address: '', pincode: '', city: '' });
+  const [form, setForm] = useState({ name: '', phone: '', address: '', pincode: '', city: '', email: '' });
+  // Auto-fill email from logged-in user
+  React.useEffect(() => { if (user?.email) setForm(f => ({ ...f, email: f.email || user.email })); }, [user]);
   const [errors, setErrors] = useState({});
 
   const [payMethod, setPayMethod] = useState('COD');
@@ -605,3 +609,5 @@ export default function CheckoutModal({ isOpen, onClose, cartItems, cartTotal, o
     </div>
   );
 }
+
+

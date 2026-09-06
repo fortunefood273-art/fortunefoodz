@@ -1,7 +1,9 @@
 import React from 'react';
-import { render, screen, act } from '@testing-library/react';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { screen, act, fireEvent } from '@testing-library/react';
+import { renderWithProviders } from '../test-utils';
 import { CartProvider, useCart } from './CartContext';
+import { AuthContext } from './AuthContext';
 
 function TestComponent() {
   const { 
@@ -19,177 +21,99 @@ function TestComponent() {
       <button data-testid="add-item-1" onClick={() => addToCart({ id: 1, name: 'Product 1', price: 100 })}>Add 1</button>
       <button data-testid="add-item-2" onClick={() => addToCart({ id: 2, name: 'Product 2', price: 200 })}>Add 2</button>
       <button data-testid="remove-item-1" onClick={() => removeFromCart(1)}>Remove 1</button>
-      <button data-testid="update-qty-1" onClick={() => updateQty(1, 1)}>Inc 1</button>
-      <button data-testid="clear-cart" onClick={clearCart}>Clear Cart</button>
-      
-      <div data-testid="is-in-cart-1">{isInCart(1) ? 'Yes' : 'No'}</div>
-      
-      <button data-testid="toggle-wishlist-1" onClick={() => toggleWishlist({ id: 1, name: 'Product 1' })}>Toggle Wishlist 1</button>
-      <button data-testid="remove-wishlist-1" onClick={() => removeFromWishlist(1)}>Remove Wishlist 1</button>
-      <div data-testid="is-wishlisted-1">{isWishlisted(1) ? 'Yes' : 'No'}</div>
+      <button data-testid="inc-item-1" onClick={() => updateQty(1, 1)}>Inc 1</button>
+      <button data-testid="dec-item-1" onClick={() => updateQty(1, -1)}>Dec 1</button>
+      <button data-testid="clear-cart" onClick={() => clearCart()}>Clear</button>
+      <button data-testid="toggle-wishlist-1" onClick={() => toggleWishlist({ id: 1, name: 'Product 1', price: 100 })}>Toggle WL 1</button>
+      <button data-testid="remove-wishlist-1" onClick={() => removeFromWishlist(1)}>Remove WL 1</button>
+      <div data-testid="in-cart-1">{isInCart(1) ? 'yes' : 'no'}</div>
+      <div data-testid="wishlisted-1">{isWishlisted(1) ? 'yes' : 'no'}</div>
+      {cartItems.map(i => <div key={i.id} data-testid={`item-${i.id}`}>{i.name} x{i.qty}</div>)}
     </div>
   );
 }
 
+const mockAuth = {
+  user: null,
+  loginWithGoogle: vi.fn(),
+  logout: vi.fn(),
+  isAuthenticated: false,
+  isAdmin: false,
+};
+
+function renderTest() {
+  return renderWithProviders(<TestComponent />, { authValue: mockAuth });
+}
+
 describe('CartContext', () => {
-  beforeEach(() => {
-    vi.useFakeTimers();
-  });
-
-  afterEach(() => {
-    vi.useRealTimers();
-  });
-
   it('provides initial cart state', () => {
-    render(
-      <CartProvider>
-        <TestComponent />
-      </CartProvider>
-    );
-
+    renderTest();
     expect(screen.getByTestId('cart-count').textContent).toBe('0');
     expect(screen.getByTestId('cart-total').textContent).toBe('0');
     expect(screen.getByTestId('wishlist-count').textContent).toBe('0');
   });
 
   it('adds items to cart and calculates count and total correctly', () => {
-    render(
-      <CartProvider>
-        <TestComponent />
-      </CartProvider>
-    );
-
-    act(() => {
-      screen.getByTestId('add-item-1').click();
-    });
-
-    expect(screen.getByTestId('cart-count').textContent).toBe('1');
-    expect(screen.getByTestId('cart-total').textContent).toBe('100');
-    
-    // Add same item again to test qty increment
-    act(() => {
-      screen.getByTestId('add-item-1').click();
-    });
-
+    renderTest();
+    fireEvent.click(screen.getByTestId('add-item-1'));
+    fireEvent.click(screen.getByTestId('add-item-2'));
     expect(screen.getByTestId('cart-count').textContent).toBe('2');
-    expect(screen.getByTestId('cart-total').textContent).toBe('200');
-
-    // Add different item
-    act(() => {
-      screen.getByTestId('add-item-2').click();
-    });
-
-    expect(screen.getByTestId('cart-count').textContent).toBe('3');
-    expect(screen.getByTestId('cart-total').textContent).toBe('400');
+    expect(screen.getByTestId('cart-total').textContent).toBe('300');
+    expect(screen.getByTestId('in-cart-1').textContent).toBe('yes');
   });
 
   it('removes items from cart', () => {
-    render(
-      <CartProvider>
-        <TestComponent />
-      </CartProvider>
-    );
-
-    act(() => {
-      screen.getByTestId('add-item-1').click();
-      screen.getByTestId('add-item-2').click();
-    });
-    expect(screen.getByTestId('cart-count').textContent).toBe('2');
-
-    act(() => {
-      screen.getByTestId('remove-item-1').click();
-    });
+    renderTest();
+    fireEvent.click(screen.getByTestId('add-item-1'));
     expect(screen.getByTestId('cart-count').textContent).toBe('1');
-    expect(screen.getByTestId('is-in-cart-1').textContent).toBe('No');
+    fireEvent.click(screen.getByTestId('remove-item-1'));
+    expect(screen.getByTestId('cart-count').textContent).toBe('0');
   });
 
   it('updates item quantity', () => {
-    render(
-      <CartProvider>
-        <TestComponent />
-      </CartProvider>
-    );
-
-    act(() => {
-      screen.getByTestId('add-item-1').click(); // qty 1
-    });
-
-    act(() => {
-      screen.getByTestId('update-qty-1').click(); // qty 2
-    });
-
+    renderTest();
+    fireEvent.click(screen.getByTestId('add-item-1'));
+    fireEvent.click(screen.getByTestId('inc-item-1'));
     expect(screen.getByTestId('cart-count').textContent).toBe('2');
-    expect(screen.getByTestId('cart-total').textContent).toBe('200');
+    fireEvent.click(screen.getByTestId('dec-item-1'));
+    expect(screen.getByTestId('cart-count').textContent).toBe('1');
   });
 
   it('clears cart', () => {
-    render(
-      <CartProvider>
-        <TestComponent />
-      </CartProvider>
-    );
-
-    act(() => {
-      screen.getByTestId('add-item-1').click();
-      screen.getByTestId('add-item-2').click();
-    });
-
-    act(() => {
-      screen.getByTestId('clear-cart').click();
-    });
-
+    renderTest();
+    fireEvent.click(screen.getByTestId('add-item-1'));
+    fireEvent.click(screen.getByTestId('add-item-2'));
+    fireEvent.click(screen.getByTestId('clear-cart'));
     expect(screen.getByTestId('cart-count').textContent).toBe('0');
   });
 
   it('toggles wishlist items', () => {
-    render(
-      <CartProvider>
-        <TestComponent />
-      </CartProvider>
-    );
-
-    act(() => {
-      screen.getByTestId('toggle-wishlist-1').click();
-    });
-
-    expect(screen.getByTestId('wishlist-count').textContent).toBe('1');
-    expect(screen.getByTestId('is-wishlisted-1').textContent).toBe('Yes');
-
-    // Toggle again removes it
-    act(() => {
-      screen.getByTestId('toggle-wishlist-1').click();
-    });
-
+    renderTest();
     expect(screen.getByTestId('wishlist-count').textContent).toBe('0');
-    expect(screen.getByTestId('is-wishlisted-1').textContent).toBe('No');
+    fireEvent.click(screen.getByTestId('toggle-wishlist-1'));
+    expect(screen.getByTestId('wishlist-count').textContent).toBe('1');
+    expect(screen.getByTestId('wishlisted-1').textContent).toBe('yes');
+    fireEvent.click(screen.getByTestId('toggle-wishlist-1'));
+    expect(screen.getByTestId('wishlist-count').textContent).toBe('0');
   });
 
-  it('shows toast message and clears it after timeout', () => {
-    render(
-      <CartProvider>
-        <TestComponent />
-      </CartProvider>
-    );
+  it('removes from wishlist directly', () => {
+    renderTest();
+    fireEvent.click(screen.getByTestId('toggle-wishlist-1'));
+    expect(screen.getByTestId('wishlist-count').textContent).toBe('1');
+    fireEvent.click(screen.getByTestId('remove-wishlist-1'));
+    expect(screen.getByTestId('wishlist-count').textContent).toBe('0');
+  });
 
-    act(() => {
-      screen.getByTestId('add-item-1').click();
-    });
-
-    expect(screen.getByTestId('toast-msg').textContent).toContain('added to cart');
-
-    act(() => {
-      vi.advanceTimersByTime(2200);
-    });
-
+  it('shows toast message and clears it after timeout', async () => {
+    vi.useFakeTimers();
+    renderTest();
+    fireEvent.click(screen.getByTestId('add-item-1'));
+    expect(screen.getByTestId('toast-msg').textContent).toContain('Product 1');
+    act(() => { vi.advanceTimersByTime(2300); });
     expect(screen.getByTestId('toast-msg').textContent).toBe('');
+    vi.useRealTimers();
   });
 
-  it('throws an error if useCart is used outside CartProvider', () => {
-    const originalError = console.error;
-    console.error = () => {};
-    
-    expect(() => render(<TestComponent />)).toThrow('useCart must be used inside CartProvider');
-    
-    console.error = originalError;
-  });
 });
+

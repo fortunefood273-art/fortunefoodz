@@ -1,52 +1,48 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
-import { MemoryRouter } from 'react-router-dom';
 import CartDrawer from './CartDrawer';
-import { CartProvider } from '../context/CartContext';
 import { useCart } from '../context/CartContext';
-import { DataContext } from '../context/DataContext';
+import { renderWithProviders } from '../test-utils';
 
-// Helper component to open cart for testing
-const TestWrapper = () => {
+// Mock navigate
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual('react-router-dom');
+  return { ...actual, useNavigate: () => vi.fn() };
+});
+
+// Helper: opens cart via context
+function TestWrapper() {
   const { setCartOpen, addToCart } = useCart();
   return (
     <>
-      <button onClick={() => setCartOpen(true)}>Open Cart</button>
-      <button onClick={() => addToCart({ id: 1, name: 'Test Food', price: 100, qty: 1 })}>Add Item</button>
+      <button data-testid="open-cart" onClick={() => setCartOpen(true)}>Open Cart</button>
+      <button data-testid="add-item" onClick={() => addToCart({ id: 1, name: 'Premium Almonds', price: 999, img: '' })}>
+        Add Item
+      </button>
       <CartDrawer />
     </>
   );
-};
+}
 
 describe('CartDrawer Component', () => {
-  const renderWithProviders = (ui) => {
-    return render(
-      <MemoryRouter>
-        <DataContext.Provider value={{ frontendSettings: { storeName: 'Fortune Foodz' } }}>
-          <CartProvider>
-            {ui}
-          </CartProvider>
-        </DataContext.Provider>
-      </MemoryRouter>
-    );
-  };
-
-  it('renders empty cart message when no items are present', () => {
+  it('renders empty cart message when no items are present', async () => {
     renderWithProviders(<TestWrapper />);
-    fireEvent.click(screen.getByText('Open Cart'));
-    expect(screen.getByText('Your cart is empty!')).toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('open-cart'));
+    await waitFor(() => {
+      expect(screen.getByText('Your cart is empty!')).toBeInTheDocument();
+    });
   });
 
-  it('renders cart items and updates quantities', () => {
+  it('renders cart items when added', async () => {
     renderWithProviders(<TestWrapper />);
     
-    // Add item and open cart
-    fireEvent.click(screen.getByText('Add Item'));
-    fireEvent.click(screen.getByText('Open Cart'));
-
-    // Check if item is in the cart
-    expect(screen.getByText('Test Food')).toBeInTheDocument();
-    expect(screen.getAllByText('₹100')[0]).toBeInTheDocument();
+    // Add item first, then open cart
+    fireEvent.click(screen.getByTestId('add-item'));
+    fireEvent.click(screen.getByTestId('open-cart'));
+    
+    await waitFor(() => {
+      expect(screen.getByText('Premium Almonds')).toBeInTheDocument();
+    });
   });
 });

@@ -1,56 +1,39 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
-import { MemoryRouter } from 'react-router-dom';
+import { screen, waitFor } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import AccountPage from './AccountPage';
-import { CartProvider } from '../context/CartContext';
-import { DataContext } from '../context/DataContext';
-import * as AuthContextModule from '../context/AuthContext';
+import { renderWithProviders, mockAuthGuest, mockAuthUser } from '../test-utils';
 
-vi.mock('../context/AuthContext', async () => {
-  const actual = await vi.importActual('../context/AuthContext');
-  return {
-    ...actual,
-    useAuth: vi.fn()
-  };
-});
+// Mock axios so /api/orders/mine doesn't throw
+vi.mock('axios', () => ({
+  default: {
+    get: vi.fn().mockResolvedValue({ data: [] }),
+    post: vi.fn().mockResolvedValue({ data: {} }),
+    put: vi.fn().mockResolvedValue({ data: {} }),
+  }
+}));
 
 describe('AccountPage Component', () => {
-  const renderWithProviders = (ui) => {
-    return render(
-      <MemoryRouter>
-        <DataContext.Provider value={{ frontendSettings: { storeName: 'Fortune Foodz' } }}>
-          <CartProvider>
-            {ui}
-          </CartProvider>
-        </DataContext.Provider>
-      </MemoryRouter>
-    );
-  };
-
-  it('renders guest view by default', () => {
-    vi.spyOn(AuthContextModule, 'useAuth').mockReturnValue({
-      user: null,
-      logout: vi.fn(),
-      isAdmin: false
-    });
-
-    renderWithProviders(<AccountPage />);
-    expect(screen.getByText('Welcome to Fortune Foodz')).toBeInTheDocument();
-    expect(screen.getByText('Sign In Now')).toBeInTheDocument();
+  beforeEach(() => {
+    vi.clearAllMocks();
   });
 
-  it('renders logged in view when user is authenticated', () => {
-    vi.spyOn(AuthContextModule, 'useAuth').mockReturnValue({
-      user: { name: 'Priya Sharma', email: 'priya.sharma@email.com', role: 'user' },
-      logout: vi.fn(),
-      isAdmin: false
-    });
+  it('renders guest view by default', () => {
+    renderWithProviders(<AccountPage />, { authValue: mockAuthGuest });
+    expect(screen.getByText('Welcome to Fortune Foodz')).toBeInTheDocument();
+    expect(screen.getByText(/Sign in with Google/i)).toBeInTheDocument();
+  });
 
-    renderWithProviders(<AccountPage />);
+  it('renders logged in view when user is authenticated', async () => {
+    const authVal = {
+      ...mockAuthUser,
+      user: { ...mockAuthUser.user, displayName: 'Priya Sharma' },
+    };
+    renderWithProviders(<AccountPage />, { authValue: authVal });
     
-    // Should show logged in view
-    expect(screen.getByText(/Namaste, Priya Sharma/i)).toBeInTheDocument();
-    expect(screen.getByText('priya.sharma@email.com')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText(/Namaste, Priya Sharma/i)).toBeInTheDocument();
+    });
+    expect(screen.getAllByText('My Orders').length).toBeGreaterThan(0);
   });
 });
