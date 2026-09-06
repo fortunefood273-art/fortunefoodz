@@ -98,7 +98,7 @@ export default function ProductPage() {
                       onClick={() => setActiveImage(idx)}
                       className={`w-16 h-16 md:w-20 md:h-20 rounded-xl overflow-hidden border-2 flex-shrink-0 transition-all ${activeImage === idx ? 'border-[#d97706] shadow-md' : 'border-amber-100 opacity-70 hover:opacity-100'}`}
                     >
-                      <MediaDisplay src={img} alt={`Thumbnail ${idx}`} className="w-full h-full object-contain object-center bg-amber-50" />
+                      <MediaDisplay src={img} alt={`Thumbnail ${idx}`} className="w-full h-full object-cover bg-amber-50" />
                     </button>
                   ))}
                 </div>
@@ -114,7 +114,7 @@ export default function ProductPage() {
                     onClick={() => toggleWishlist(product)}>
                     <Heart size={20} className={isWishlisted(product.id) ? "fill-red-500 text-red-500" : ""} />
                   </button>
-                  <MediaDisplay src={gallery[activeImage]} alt={product.name} className="w-full h-full object-contain object-center p-2" />
+                  <MediaDisplay src={gallery[activeImage]} alt={product.name} className="w-full h-full object-cover p-2" />
                 </div>
               </div>
             </ScrollReveal>
@@ -282,7 +282,7 @@ export default function ProductPage() {
                   {relatedProducts.map((p, idx) => (
                     <div key={idx} onClick={() => navigate(`/product/${p.id}`)} className="bg-white rounded-2xl p-3 border border-amber-200 shadow-sm hover:shadow-xl transition-all cursor-pointer">
                       <div className="relative bg-amber-50 rounded-xl overflow-hidden aspect-square mb-2">
-                        <img src={p.img} alt={p.name} className="w-full h-full object-contain object-center" />
+                        <img src={p.img} alt={p.name} className="w-full h-full object-cover" />
                       </div>
                       <p className="text-xs font-bold text-[#d97706]">{p.brand}</p>
                       <h4 className="font-bold text-stone-800 text-xs line-clamp-1 mt-0.5">{p.name}</h4>

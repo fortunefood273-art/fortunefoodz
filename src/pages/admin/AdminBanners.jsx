@@ -161,7 +161,8 @@ export default function AdminBanners() {
                 </div>
                 <div className="flex-1 space-y-3">
                   <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-1">Background Image <span className="text-red-500">*</span></label>
+                    <label className="block text-sm font-bold text-gray-700 mb-0">Background Image <span className="text-red-500">*</span></label>
+                    <p className="text-[10px] text-gray-500 mb-2 font-normal">Recommended: 800x400px (landscape)</p>
                     <div className="flex gap-2">
                       <input type="url" placeholder="Paste URL..." value={editing.mediaUrl || ''} onChange={e => updateEditing({...editingRef.current, mediaUrl: e.target.value})} className="flex-1 p-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all text-sm" />
                       <span className="text-sm text-gray-500 flex items-center">OR</span>

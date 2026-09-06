@@ -224,7 +224,7 @@ export default function CategoryPage() {
                     <ScrollReveal key={p.id} delay={(idx % 8) * 80} className="h-full">
                       <Link to={`/product/${p.id}`} className="product-card block bg-white rounded-2xl border border-amber-100 overflow-hidden shadow-sm hover:shadow-xl hover:border-amber-300 transition-all cursor-pointer group h-full flex flex-col">
                         <div className="relative bg-amber-50/50 overflow-hidden flex-shrink-0" style={{ height: 160 }}>
-                          <MediaDisplay src={p.img} alt={p.name} className="w-full h-full object-contain object-center group-hover:scale-105 transition-transform duration-300" />
+                          <MediaDisplay src={p.img} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                           <div className="absolute top-2 left-2 bg-[#d97706] text-white text-[9px] font-bold px-2 py-0.5 rounded-md">{p.tag || '100% PURE'}</div>
                           <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleWishlist(p); }} className="absolute top-2 right-2 bg-white/90 rounded-full p-1.5 shadow-sm hover:scale-110 transition-transform">
                             <Heart size={13} className={isWishlisted(p.id) ? 'fill-red-500 text-red-500' : 'text-stone-400'} />
