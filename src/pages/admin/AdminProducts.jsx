@@ -366,25 +366,76 @@ export default function AdminProducts() {
                   </div>
                   
                   {/* Variants UI */}
-                  <div className="md:col-span-2 mt-4 p-4 border border-gray-200 rounded-xl bg-gray-50/50">
-                    <div className="flex justify-between items-center mb-3">
-                      <label className="block text-sm font-bold text-gray-700">Pack Sizes & Rates (Variants)</label>
-                      <button type="button" onClick={() => setEditing({...editing, variants: [...(editing.variants || []), {label: '', price: 0, mrp: 0}]})} className="text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded font-bold hover:bg-orange-200 transition-colors">+ Add Size</button>
+                  <div className="md:col-span-2 mt-4 p-4 border border-amber-200 rounded-xl bg-amber-50/30">
+                    <div className="flex justify-between items-center mb-2">
+                      <div>
+                        <label className="block text-sm font-bold text-gray-800">Pack Sizes &amp; Rates</label>
+                        <p className="text-[10px] text-gray-500 mt-0.5">These appear as selectable buttons on the product page</p>
+                      </div>
+                      <div className="flex gap-2">
+                        {editing.variants && editing.variants.length > 0 && (
+                          <button type="button" onClick={() => setEditing({...editing, variants: []})} className="text-xs text-red-500 hover:text-red-700 px-2 py-1 rounded border border-red-200 hover:bg-red-50 transition-colors">Clear All</button>
+                        )}
+                        <button type="button" onClick={() => setEditing({...editing, variants: [...(editing.variants || []), {label: '', price: '', mrp: ''}]})} className="text-xs bg-orange-500 text-white px-3 py-1 rounded-lg font-bold hover:bg-orange-600 transition-colors">+ Add Size</button>
+                      </div>
                     </div>
-                    {(!editing.variants || editing.variants.length === 0) && <p className="text-xs text-gray-500 italic">No pack sizes defined. Product will be sold as a single unit using Base Price.</p>}
+
+                    {/* Quick Preset Buttons */}
+                    <div className="mb-3">
+                      <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wide mb-1.5">Quick Presets — click to apply standard sizes (uses base price as 250g):</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {[
+                          { name: 'Dry Fruits', sizes: ['100g','250g','500g','1kg'], mults: [0.45,1,1.75,3.0] },
+                          { name: 'Seeds', sizes: ['100g','250g','500g'], mults: [0.45,1,1.75] },
+                          { name: 'Spices', sizes: ['50g','100g','250g','500g'], mults: [0.35,0.65,1,1.7] },
+                          { name: 'Makhana', sizes: ['100g','200g','500g'], mults: [0.55,1,2.2] },
+                          { name: 'Beverages', sizes: ['500ml','750ml','1L'], mults: [1,1.4,1.75] },
+                          { name: 'Ghee/Oil', sizes: ['200ml','500ml','1L'], mults: [0.45,1,1.75] },
+                          { name: 'Saffron', sizes: ['1g','2g','5g','10g'], mults: [0.25,0.45,1,1.8] },
+                        ].map(preset => (
+                          <button
+                            key={preset.name}
+                            type="button"
+                            onClick={() => {
+                              const base = Number(editing.price) || 199;
+                              const mrpBase = Number(editing.mrp) || Math.round(base * 1.22);
+                              const ratio = mrpBase / base;
+                              const newVariants = preset.sizes.map((label, idx) => ({
+                                label,
+                                price: Math.round(base * preset.mults[idx]),
+                                mrp: Math.round(base * preset.mults[idx] * ratio),
+                              }));
+                              setEditing({...editing, variants: newVariants});
+                            }}
+                            className="text-[10px] bg-white border border-amber-300 text-amber-800 px-2.5 py-1 rounded-full font-bold hover:bg-amber-100 hover:border-amber-500 transition-colors"
+                          >
+                            {preset.name} ({preset.sizes.join(' · ')})
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {(!editing.variants || editing.variants.length === 0) && (
+                      <p className="text-xs text-gray-400 italic text-center py-2">No pack sizes defined — product sold at Base Price only.</p>
+                    )}
                     <div className="space-y-2">
                       {(editing.variants || []).map((v, i) => (
-                        <div key={i} className="flex gap-2 items-center bg-white p-2 border rounded-lg">
-                          <input type="text" placeholder="Size (e.g. 1L, 500g)" value={v.label} onChange={e => { const newV = [...editing.variants]; newV[i].label = e.target.value; setEditing({...editing, variants: newV}); }} className="flex-1 p-1.5 border rounded text-sm focus:ring-1 focus:ring-orange-500 outline-none" required />
-                          <div className="relative w-24">
-                            <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 text-xs">₹</span>
-                            <input type="number" placeholder="Price" value={v.price === 0 ? '' : v.price} onChange={e => { const newV = [...editing.variants]; newV[i].price = Number(e.target.value); setEditing({...editing, variants: newV}); }} className="w-full pl-6 p-1.5 border rounded text-sm focus:ring-1 focus:ring-orange-500 outline-none" required />
+                        <div key={i} className="flex gap-2 items-center bg-white p-2.5 border border-gray-200 rounded-xl shadow-sm">
+                          <div className="flex-1">
+                            <p className="text-[9px] text-gray-400 font-bold uppercase mb-0.5">Label</p>
+                            <input type="text" placeholder="e.g. 250g, 500ml, 1kg" value={v.label} onChange={e => { const newV = [...editing.variants]; newV[i] = {...newV[i], label: e.target.value}; setEditing({...editing, variants: newV}); }} className="w-full p-1.5 border border-gray-200 rounded-lg text-sm focus:ring-1 focus:ring-orange-400 outline-none" />
                           </div>
-                          <div className="relative w-24">
-                            <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 text-xs">₹</span>
-                            <input type="number" placeholder="MRP" value={v.mrp === 0 ? '' : v.mrp} onChange={e => { const newV = [...editing.variants]; newV[i].mrp = Number(e.target.value); setEditing({...editing, variants: newV}); }} className="w-full pl-6 p-1.5 border rounded text-sm focus:ring-1 focus:ring-orange-500 outline-none" required />
+                          <div className="w-24">
+                            <p className="text-[9px] text-gray-400 font-bold uppercase mb-0.5">Price (₹)</p>
+                            <input type="number" placeholder="199" value={v.price === 0 ? '' : v.price} onChange={e => { const newV = [...editing.variants]; newV[i] = {...newV[i], price: Number(e.target.value)}; setEditing({...editing, variants: newV}); }} className="w-full p-1.5 border border-gray-200 rounded-lg text-sm focus:ring-1 focus:ring-orange-400 outline-none" />
                           </div>
-                          <button type="button" onClick={() => setEditing({...editing, variants: editing.variants.filter((_, idx) => idx !== i)})} className="text-red-500 hover:text-red-700 p-1 bg-red-50 hover:bg-red-100 rounded"><X size={16}/></button>
+                          <div className="w-24">
+                            <p className="text-[9px] text-gray-400 font-bold uppercase mb-0.5">MRP (₹)</p>
+                            <input type="number" placeholder="243" value={v.mrp === 0 ? '' : v.mrp} onChange={e => { const newV = [...editing.variants]; newV[i] = {...newV[i], mrp: Number(e.target.value)}; setEditing({...editing, variants: newV}); }} className="w-full p-1.5 border border-gray-200 rounded-lg text-sm focus:ring-1 focus:ring-orange-400 outline-none" />
+                          </div>
+                          <div className="pt-4">
+                            <button type="button" onClick={() => setEditing({...editing, variants: editing.variants.filter((_, idx) => idx !== i)})} className="text-red-400 hover:text-red-600 p-1.5 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"><X size={15}/></button>
+                          </div>
                         </div>
                       ))}
                     </div>
