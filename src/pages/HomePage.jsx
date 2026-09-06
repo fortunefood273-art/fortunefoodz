@@ -989,25 +989,43 @@ function CategorySectionsGrid() {
 
         if (layoutVariant === 1) return (
           <section key={cat.label} className="relative z-10 max-w-[1600px] mx-auto w-full px-4 md:px-6">
-            <div className={`glass-panel rounded-3xl p-4 md:p-5 ${bg}`}>
-              <SectionHeader cat={cat} count={catProducts.length} />
-              <AutoScrollWrapper direction={sectionIdx % 2 === 0 ? 'right' : 'left'}>
-                {[...catProducts, ...catProducts, ...catProducts].map((p, i) => (
-                  <div key={p.id + '-' + i} className="flex-shrink-0 w-36 md:w-44 snap-start">
-                    <SmallCard p={p} />
-                  </div>
-                ))}
-              </AutoScrollWrapper>
+            <div className={`${cat.label === 'Dried Fruit' ? 'bg-driedberries' : ''} relative overflow-hidden glass-panel rounded-3xl p-4 md:p-5 ${bg}`}>
+              {cat.label === 'Dried Fruit' && (
+                <>
+                  <div className="ff-orb ff-orb-1"/><div className="ff-orb ff-orb-2"/><div className="ff-orb ff-orb-3"/>
+                  <div className="ff-shimmer-layer"/><div className="ff-ring ff-ring1"/><div className="ff-ring ff-ring2"/>
+                  <div className="ff-sparkle ff-sp1"/><div className="ff-sparkle ff-sp2"/><div className="ff-sparkle ff-sp3"/>
+                </>
+              )}
+              <div className="relative z-10">
+                <SectionHeader cat={cat} count={catProducts.length} />
+                <AutoScrollWrapper direction={sectionIdx % 2 === 0 ? 'right' : 'left'}>
+                  {[...catProducts, ...catProducts, ...catProducts].map((p, i) => (
+                    <div key={p.id + '-' + i} className="flex-shrink-0 w-36 md:w-44 snap-start">
+                      <SmallCard p={p} />
+                    </div>
+                  ))}
+                </AutoScrollWrapper>
+              </div>
             </div>
           </section>
         );
 
         if (layoutVariant === 2) return (
           <section key={cat.label} className="relative z-10 max-w-[1600px] mx-auto w-full px-4 md:px-6">
-            <div className={`glass-panel rounded-3xl p-4 md:p-5 ${bg}`}>
-              <SectionHeader cat={cat} count={catProducts.length} />
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3">
-                {catProducts.map(p => <HorizontalCard key={p.id} p={p} />)}
+            <div className={`${cat.label === 'Dried Fruit' ? 'bg-driedberries' : ''} relative overflow-hidden glass-panel rounded-3xl p-4 md:p-5 ${bg}`}>
+              {cat.label === 'Dried Fruit' && (
+                <>
+                  <div className="ff-orb ff-orb-1"/><div className="ff-orb ff-orb-2"/><div className="ff-orb ff-orb-3"/>
+                  <div className="ff-shimmer-layer"/><div className="ff-ring ff-ring1"/><div className="ff-ring ff-ring2"/>
+                  <div className="ff-sparkle ff-sp1"/><div className="ff-sparkle ff-sp2"/><div className="ff-sparkle ff-sp3"/>
+                </>
+              )}
+              <div className="relative z-10">
+                <SectionHeader cat={cat} count={catProducts.length} />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3">
+                  {catProducts.map(p => <HorizontalCard key={p.id} p={p} />)}
+                </div>
               </div>
             </div>
           </section>
@@ -1016,10 +1034,19 @@ function CategorySectionsGrid() {
         // default: compact 3-col grid
         return (
           <section key={cat.label} className="relative z-10 max-w-[1600px] mx-auto w-full px-4 md:px-6">
-            <div className={`glass-panel rounded-3xl p-4 md:p-5 ${bg}`}>
-              <SectionHeader cat={cat} count={catProducts.length} />
-              <div className="grid grid-cols-3 md:grid-cols-6 gap-2 md:gap-3">
-                {catProducts.map(p => <SmallCard key={p.id} p={p} />)}
+            <div className={`${cat.label === 'Dried Fruit' ? 'bg-driedberries' : ''} relative overflow-hidden glass-panel rounded-3xl p-4 md:p-5 ${bg}`}>
+              {cat.label === 'Dried Fruit' && (
+                <>
+                  <div className="ff-orb ff-orb-1"/><div className="ff-orb ff-orb-2"/><div className="ff-orb ff-orb-3"/>
+                  <div className="ff-shimmer-layer"/><div className="ff-ring ff-ring1"/><div className="ff-ring ff-ring2"/>
+                  <div className="ff-sparkle ff-sp1"/><div className="ff-sparkle ff-sp2"/><div className="ff-sparkle ff-sp3"/>
+                </>
+              )}
+              <div className="relative z-10">
+                <SectionHeader cat={cat} count={catProducts.length} />
+                <div className="grid grid-cols-3 md:grid-cols-6 gap-2 md:gap-3">
+                  {catProducts.map(p => <SmallCard key={p.id} p={p} />)}
+                </div>
               </div>
             </div>
           </section>
