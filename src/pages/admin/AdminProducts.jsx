@@ -20,16 +20,26 @@ export default function AdminProducts() {
   const [isUploadingGallery, setIsUploadingGallery] = useState(false);
 
   const defaultProduct = {
-    name: '', brand: 'Fortune Foodz', petType: 'General', category: '', price: '', mrp: '', rating: 4.5, reviews: 0, img: '', images: [], tag: '', badge: ''
+    name: '', brand: 'Fortune Foodz', petType: 'General', category: '', price: '', mrp: '', rating: 4.5, reviews: 0, img: '', images: [], tag: '', badge: '', variants: []
   };
 
   const uniqueBrands = [...new Set((products || []).map(p => p.brand).filter(Boolean))];
+
+  const handleEditClick = (p) => {
+    let images = [];
+    try { if (p.images) images = typeof p.images === 'string' ? JSON.parse(p.images) : p.images; } catch(e) {}
+    let variants = [];
+    try { if (p.variants) variants = typeof p.variants === 'string' ? JSON.parse(p.variants) : p.variants; } catch(e) {}
+    setEditing({ ...p, images: Array.isArray(images) ? images : [], variants: Array.isArray(variants) ? variants : [] });
+    setIsModalOpen(true);
+  };
+
 
   const handleSave = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      const payload = { ...editing, price: Number(editing.price), mrp: Number(editing.mrp) };
+      const payload = { ...editing, price: Number(editing.price), mrp: Number(editing.mrp), variants: JSON.stringify(editing.variants || []) };
       if (editing.id) {
         await axios.put(`/api/products/${editing.id}`, payload).catch(err => console.warn('API error:', err));
         if (typeof setProducts === 'function') {
@@ -165,7 +175,7 @@ export default function AdminProducts() {
                     </td>
                     <td className="p-4 pr-6">
                       <div className="flex items-center justify-end gap-2 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button title="Edit Product" data-testid={`edit-btn-${p.id}`} onClick={() => { setEditing(p); setIsModalOpen(true); }} className="p-2 text-blue-500 hover:bg-blue-100 rounded-xl transition-colors">
+                        <button title="Edit Product" data-testid={`edit-btn-${p.id}`} onClick={() => handleEditClick(p)} className="p-2 text-blue-500 hover:bg-blue-100 rounded-xl transition-colors">
                           <Edit2 size={18} />
                         </button>
                         <button title="Delete Product" data-testid={`del-btn-${p.id}`} onClick={() => handleDelete(p.id)} className="p-2 text-red-500 hover:bg-red-100 rounded-xl transition-colors">
@@ -227,7 +237,7 @@ export default function AdminProducts() {
                               setIsUploadingPrimary(true);
                               try {
                                 const base64 = await handleImageUpload(e.target.files[0]);
-                                setEditing({...editing, img: base64});
+                                setEditing(prev => ({...prev, img: base64}));
                               } catch(err) {
                                 console.error("Upload failed", err);
                                 alert("Image upload failed");
@@ -272,7 +282,7 @@ export default function AdminProducts() {
                             setIsUploadingGallery(true);
                             try {
                               const base64 = await handleImageUpload(e.target.files[0]);
-                              setEditing({ ...editing, images: [...(editing.images || []), base64] });
+                              setEditing(prev => ({ ...prev, images: [...(prev.images || []), base64] }));
                             } catch(err) {
                               console.error("Upload failed", err);
                               alert("Image upload failed");
@@ -351,6 +361,31 @@ export default function AdminProducts() {
                         <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-medium">₹</span>
                         <input id="mrp" required min="0" type="number" step="any" value={editing.mrp === 0 ? 0 : (editing.mrp || '')} onChange={e => setEditing({...editing, mrp: e.target.value})} className="w-full pl-7 p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all text-sm" />
                       </div>
+                    </div>
+                  </div>
+                  
+                  {/* Variants UI */}
+                  <div className="md:col-span-2 mt-4 p-4 border border-gray-200 rounded-xl bg-gray-50/50">
+                    <div className="flex justify-between items-center mb-3">
+                      <label className="block text-sm font-bold text-gray-700">Pack Sizes & Rates (Variants)</label>
+                      <button type="button" onClick={() => setEditing({...editing, variants: [...(editing.variants || []), {label: '', price: 0, mrp: 0}]})} className="text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded font-bold hover:bg-orange-200 transition-colors">+ Add Size</button>
+                    </div>
+                    {(!editing.variants || editing.variants.length === 0) && <p className="text-xs text-gray-500 italic">No pack sizes defined. Product will be sold as a single unit using Base Price.</p>}
+                    <div className="space-y-2">
+                      {(editing.variants || []).map((v, i) => (
+                        <div key={i} className="flex gap-2 items-center bg-white p-2 border rounded-lg">
+                          <input type="text" placeholder="Size (e.g. 1L, 500g)" value={v.label} onChange={e => { const newV = [...editing.variants]; newV[i].label = e.target.value; setEditing({...editing, variants: newV}); }} className="flex-1 p-1.5 border rounded text-sm focus:ring-1 focus:ring-orange-500 outline-none" required />
+                          <div className="relative w-24">
+                            <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 text-xs">₹</span>
+                            <input type="number" placeholder="Price" value={v.price === 0 ? '' : v.price} onChange={e => { const newV = [...editing.variants]; newV[i].price = Number(e.target.value); setEditing({...editing, variants: newV}); }} className="w-full pl-6 p-1.5 border rounded text-sm focus:ring-1 focus:ring-orange-500 outline-none" required />
+                          </div>
+                          <div className="relative w-24">
+                            <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 text-xs">₹</span>
+                            <input type="number" placeholder="MRP" value={v.mrp === 0 ? '' : v.mrp} onChange={e => { const newV = [...editing.variants]; newV[i].mrp = Number(e.target.value); setEditing({...editing, variants: newV}); }} className="w-full pl-6 p-1.5 border rounded text-sm focus:ring-1 focus:ring-orange-500 outline-none" required />
+                          </div>
+                          <button type="button" onClick={() => setEditing({...editing, variants: editing.variants.filter((_, idx) => idx !== i)})} className="text-red-500 hover:text-red-700 p-1 bg-red-50 hover:bg-red-100 rounded"><X size={16}/></button>
+                        </div>
+                      ))}
                     </div>
                   </div>
 

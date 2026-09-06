@@ -61,7 +61,7 @@ export default function AdminDeals() {
       <div className="p-6 border-b border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-gray-50/30">
         <div>
           <h2 className="text-xl font-bold text-gray-800">Deals & Offers</h2>
-          <p className="text-sm text-gray-500">Manage promotional banners</p>
+          <p className="text-sm text-gray-500">Manage scrolling flash deals</p>
         </div>
         <div className="flex items-center gap-3 w-full sm:w-auto">
           <div className="relative w-full sm:w-64">
@@ -178,7 +178,7 @@ export default function AdminDeals() {
                                 setIsUploading(true);
                                 try {
                                   const base64 = await handleImageUpload(e.target.files[0]);
-                                  setEditing({...editing, img: base64});
+                                  setEditing(prev => ({...prev, img: base64}));
                                 } catch(err) {
                                   console.error("Upload failed", err);
                                   alert("Image upload failed");

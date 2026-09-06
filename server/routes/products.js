@@ -22,16 +22,16 @@ router.get('/', async (req, res) => {
 // POST new product
 router.post('/', async (req, res) => {
   try {
-    const { name, brand, price, mrp, rating, reviews, img, images, tag, badge, category, petType, description } = req.body;
+    const { name, brand, price, mrp, rating, reviews, img, images, tag, badge, category, petType, description, variants } = req.body;
     
     // Upload main image to Cloudinary if it's base64
-    const uploadedImg = await uploadToCloudinary(img, 'prime_pets/products');
+    const uploadedImg = await uploadToCloudinary(img, 'fortune_foodz/products');
     
     // Upload additional images
     const uploadedImages = [];
     if (images && Array.isArray(images)) {
         for (const image of images) {
-            const up = await uploadToCloudinary(image, 'prime_pets/products');
+            const up = await uploadToCloudinary(image, 'fortune_foodz/products');
             if (up) uploadedImages.push(up);
         }
     }
@@ -49,8 +49,9 @@ router.post('/', async (req, res) => {
         tag,
         badge,
         category: category || '',
-        petType: petType || 'Dogs',
-        description
+        petType: petType || 'General',
+        description,
+        variants
       }
     });
     
@@ -66,16 +67,16 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, brand, price, mrp, rating, reviews, img, images, tag, badge, category, petType, description } = req.body;
+    const { name, brand, price, mrp, rating, reviews, img, images, tag, badge, category, petType, description, variants } = req.body;
     
     // Upload main image if it's base64 (newly uploaded)
-    const uploadedImg = await uploadToCloudinary(img, 'prime_pets/products');
+    const uploadedImg = await uploadToCloudinary(img, 'fortune_foodz/products');
     
     // Upload additional images if any are base64
     const uploadedImages = [];
     if (images && Array.isArray(images)) {
         for (const image of images) {
-            const up = await uploadToCloudinary(image, 'prime_pets/products');
+            const up = await uploadToCloudinary(image, 'fortune_foodz/products');
             if (up) uploadedImages.push(up);
         }
     }
@@ -94,8 +95,9 @@ router.put('/:id', async (req, res) => {
         tag,
         badge,
         category: category || '',
-        petType: petType || 'Dogs',
-        description
+        petType: petType || 'General',
+        description,
+        variants
       }
     });
     

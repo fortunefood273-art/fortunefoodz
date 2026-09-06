@@ -174,7 +174,7 @@ export default function AdminCategories() {
                                 setIsUploading(true);
                                 try {
                                   const base64 = await handleImageUpload(e.target.files[0]);
-                                  setEditing({...editing, img: base64});
+                                  setEditing(prev => ({...prev, img: base64}));
                                 } catch(err) {
                                   console.error("Upload failed", err);
                                   alert("Image upload failed");

@@ -56,7 +56,7 @@ function HeroCarousel() {
           <MediaDisplay
             src={s.heroImage}
             alt="Hero Banner"
-            className="hidden md:block w-full h-[340px] md:h-[420px] lg:h-[500px] object-cover"
+            className="hidden md:block w-full h-auto object-contain"
             loading="eager"
           />
         )}
@@ -66,7 +66,7 @@ function HeroCarousel() {
           <MediaDisplay
             src={s.mobileImage || s.heroImage}
             alt="Hero Banner"
-            className="block md:hidden w-full h-[260px] object-cover"
+            className="block md:hidden w-full h-auto object-contain"
             loading="eager"
           />
         ) : (
@@ -80,29 +80,8 @@ function HeroCarousel() {
           </div>
         )}
 
-        {/* Dark overlay for text readability on images */}
-        {(s.heroImage || s.mobileImage) && (
-          <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/20 to-transparent pointer-events-none" />
-        )}
 
-        {/* Text overlay — shows when slide has content */}
-        {(s.title || s.subtitle) && (
-          <div className="absolute inset-0 flex flex-col justify-center px-8 md:px-16 z-10 pointer-events-none">
-            {s.badge && (
-              <span className="inline-flex items-center gap-1.5 bg-amber-500/90 text-white text-xs font-bold px-3 py-1 rounded-full mb-3 w-fit backdrop-blur-sm shadow">
-                {s.badge}
-              </span>
-            )}
-            {s.tag && <p className="text-amber-300/90 text-xs font-bold tracking-widest uppercase mb-1">{s.tag}</p>}
-            {s.title && <h2 className="text-white font-black text-2xl md:text-4xl lg:text-5xl leading-tight drop-shadow-lg max-w-lg">{s.title}</h2>}
-            {s.subtitle && <p className="text-white/80 text-sm md:text-base mt-2 max-w-sm drop-shadow">{s.subtitle}</p>}
-            {s.cta && (
-              <button className="pointer-events-auto mt-5 w-fit bg-amber-500 hover:bg-amber-400 text-white font-bold px-6 py-2.5 rounded-full shadow-lg shadow-amber-500/30 transition-all hover:-translate-y-0.5 text-sm">
-                {s.cta} →
-              </button>
-            )}
-          </div>
-        )}
+
 
         {/* Navigation Arrows */}
         <button onClick={prev} className="absolute left-2 md:left-6 top-1/2 -translate-y-1/2 bg-white/90 backdrop-blur-md rounded-full p-2 md:p-3 shadow-lg hover:bg-amber-500 hover:text-white transition-all z-20">
@@ -238,7 +217,7 @@ function QuickCategories() {
             <ChevronLeft size={24} />
           </button>
 
-          <div ref={scrollRef} className="flex gap-4 md:gap-6 overflow-x-auto scrollbar-hide snap-x px-2 md:px-12 py-3">
+          <AutoScrollWrapper direction="left" className="flex gap-4 md:gap-6 overflow-x-auto scrollbar-hide snap-x px-2 md:px-12 py-3">
             {infiniteCategories.map((cat, idx) => (
               <button key={`${cat.label}-${idx}`} onClick={() => navigate('/category', { state: { category: cat.label } })}
                 className="snap-center flex-shrink-0 flex flex-col items-center gap-3 group focus:outline-none w-24 sm:w-32 md:w-44 cursor-pointer">
@@ -248,7 +227,7 @@ function QuickCategories() {
                 <span className="text-xs md:text-sm font-bold text-amber-100 text-center leading-tight group-hover:text-amber-400 transition-colors">{cat.label}</span>
               </button>
             ))}
-          </div>
+          </AutoScrollWrapper>
 
           <button onClick={() => scroll('right')} 
             className="absolute right-2 top-1/2 -translate-y-1/2 z-20 w-11 h-11 flex items-center justify-center rounded-full bg-stone-900/80 border border-amber-400 text-amber-300 transition-all hover:bg-amber-500 hover:text-stone-900 hidden md:flex">
@@ -907,13 +886,13 @@ function CategorySectionsGrid() {
           <section key={cat.label} className="relative z-10 max-w-[1600px] mx-auto w-full px-4 md:px-6">
             <div className="glass-panel rounded-3xl p-4 md:p-5 bg-gradient-to-br from-stone-50/80 to-amber-50/60">
               <SectionHeader cat={cat} count={catProducts.length} />
-              <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1 snap-x snap-mandatory scrollbar-none">
-                {catProducts.map(p => (
-                  <div key={p.id} className="flex-shrink-0 w-36 md:w-44 snap-start">
+              <AutoScrollWrapper direction={sectionIdx % 2 === 0 ? 'right' : 'left'}>
+                {[...catProducts, ...catProducts, ...catProducts].map((p, i) => (
+                  <div key={p.id + '-' + i} className="flex-shrink-0 w-36 md:w-44 snap-start">
                     <SmallCard p={p} />
                   </div>
                 ))}
-              </div>
+              </AutoScrollWrapper>
             </div>
           </section>
         );
@@ -964,9 +943,9 @@ function CategorySectionsGrid() {
           <section key={cat.label} className="relative z-10 max-w-[1600px] mx-auto w-full px-4 md:px-6">
             <div className="glass-panel rounded-3xl p-4 md:p-5 bg-gradient-to-br from-pink-50/60 to-rose-50/40">
               <SectionHeader cat={cat} count={catProducts.length} />
-              <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1 snap-x snap-mandatory scrollbar-none">
-                {catProducts.map(p => (
-                  <div key={p.id} className="flex-shrink-0 w-32 md:w-40 snap-start">
+              <AutoScrollWrapper direction={sectionIdx % 2 === 0 ? 'right' : 'left'}>
+                {[...catProducts, ...catProducts, ...catProducts].map((p, i) => (
+                  <div key={p.id + "-" + i} className="flex-shrink-0 w-32 md:w-40 snap-start">
                     <div className="bg-white rounded-2xl border border-pink-100 overflow-hidden shadow-sm hover:shadow-lg transition-all cursor-pointer group flex flex-col text-center">
                       <Link to={`/product/${p.id}`} className="relative overflow-hidden block h-28 bg-pink-50/50">
                         <MediaDisplay src={p.img} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
@@ -981,7 +960,7 @@ function CategorySectionsGrid() {
                     </div>
                   </div>
                 ))}
-              </div>
+              </AutoScrollWrapper>
             </div>
           </section>
         );
@@ -1002,13 +981,13 @@ function CategorySectionsGrid() {
           <section key={cat.label} className="relative z-10 max-w-[1600px] mx-auto w-full px-4 md:px-6">
             <div className={`glass-panel rounded-3xl p-4 md:p-5 ${bg}`}>
               <SectionHeader cat={cat} count={catProducts.length} />
-              <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1 snap-x snap-mandatory scrollbar-none">
-                {catProducts.map(p => (
-                  <div key={p.id} className="flex-shrink-0 w-36 md:w-44 snap-start">
+              <AutoScrollWrapper direction={sectionIdx % 2 === 0 ? 'right' : 'left'}>
+                {[...catProducts, ...catProducts, ...catProducts].map((p, i) => (
+                  <div key={p.id + '-' + i} className="flex-shrink-0 w-36 md:w-44 snap-start">
                     <SmallCard p={p} />
                   </div>
                 ))}
-              </div>
+              </AutoScrollWrapper>
             </div>
           </section>
         );
@@ -1171,9 +1150,9 @@ function Footer() {
   const navigate = useNavigate();
 
   return (
-    <footer className="hidden md:block relative bg-[#1c0f05] text-amber-50 mt-6 overflow-hidden border-t border-amber-900/60">
+    <footer className="relative bg-[#1c0f05] text-amber-50 mt-6 overflow-hidden border-t border-amber-900/60 pb-24 md:pb-0">
       <div className="relative z-10 max-w-[1600px] mx-auto px-6 py-10">
-        <div className="grid grid-cols-4 gap-8 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           {/* Brand info */}
           <div>
             <div className="flex items-center gap-3 mb-3 cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
@@ -1247,6 +1226,39 @@ function Footer() {
 }
 
 /* ── HOME PAGE ── */
+/* AUTO SCROLL WRAPPER */
+function AutoScrollWrapper({ children, direction = 'left', speed = 0.5, className = "flex gap-3 overflow-x-auto pb-2 -mx-1 px-1 snap-x snap-mandatory scrollbar-none" }) {
+  const scrollRef = React.useRef(null);
+  const [isPaused, setIsPaused] = React.useState(false);
+  React.useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    let rafId;
+    let lastTime = performance.now();
+    const scroll = (time) => {
+      if (isPaused) { lastTime = time; rafId = requestAnimationFrame(scroll); return; }
+      const deltaTime = time - lastTime;
+      lastTime = time;
+      const movePixels = speed * (deltaTime / 16);
+      if (direction === 'left') {
+        el.scrollLeft += movePixels;
+        if (el.scrollLeft >= el.scrollWidth / 2) { el.scrollLeft -= el.scrollWidth / 2; }
+      } else {
+        if (el.scrollLeft <= 0) { el.scrollLeft += el.scrollWidth / 2; }
+        el.scrollLeft -= movePixels;
+      }
+      rafId = requestAnimationFrame(scroll);
+    };
+    rafId = requestAnimationFrame(scroll);
+    return () => cancelAnimationFrame(rafId);
+  }, [direction, speed, isPaused]);
+  return (
+    <div ref={scrollRef} className={className} onMouseEnter={() => setIsPaused(true)} onMouseLeave={() => setIsPaused(false)} onTouchStart={() => setIsPaused(true)} onTouchEnd={() => setIsPaused(false)}>
+      {children}
+    </div>
+  );
+}
+
 export default function HomePage() {
   return (
     <div className="min-h-screen mesh-bg">
@@ -1276,7 +1288,6 @@ export default function HomePage() {
       </main>
 
       <Footer />
-      <div className="h-24 md:hidden" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }} />
     </div>
   );
 }

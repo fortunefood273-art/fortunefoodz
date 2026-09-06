@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Star, Heart, ShoppingBag, ChevronRight, ShieldCheck, Truck, RotateCcw, Plus, Minus, Award, Sparkles, CheckCircle2 } from 'lucide-react';
 import Header from '../components/Header';
@@ -14,10 +14,32 @@ export default function ProductPage() {
   const { addToCart, toggleWishlist, isWishlisted, setCartOpen } = useCart();
   
   const product = products.find(p => String(p.id) === String(id));
+  
+  const parsedVariants = useMemo(() => {
+    if (!product) return [];
+    try {
+      if (product.variants && typeof product.variants === 'string') {
+        const v = JSON.parse(product.variants);
+        if (Array.isArray(v) && v.length > 0) return v;
+      }
+    } catch(e){}
+    return [];
+  }, [product]);
+
   const [activeImage, setActiveImage] = useState(0);
-  const [selectedWeight, setSelectedWeight] = useState('250g');
+  const [selectedWeight, setSelectedWeight] = useState(parsedVariants.length > 0 ? parsedVariants[0].label : '');
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState('description');
+
+  useEffect(() => {
+    if (parsedVariants.length > 0) {
+      if (!parsedVariants.find(v => v.label === selectedWeight)) {
+        setSelectedWeight(parsedVariants[0].label);
+      }
+    } else {
+      setSelectedWeight('');
+    }
+  }, [parsedVariants, selectedWeight]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -38,18 +60,9 @@ export default function ProductPage() {
     );
   }
 
-  // Pack Weight Multipliers
-  const weightOptions = [
-    { label: '100g', multiplier: 0.5 },
-    { label: '250g', multiplier: 1.0 },
-    { label: '500g', multiplier: 1.85 },
-    { label: '1kg', multiplier: 3.5 },
-    { label: '5kg Box', multiplier: 16.0 },
-  ];
-
-  const currentMultiplier = weightOptions.find(w => w.label === selectedWeight)?.multiplier || 1.0;
-  const computedPrice = Math.round(product.price * currentMultiplier);
-  const computedMrp   = product.mrp ? Math.round(product.mrp * currentMultiplier) : Math.round(computedPrice * 1.3);
+  const activeVariant = parsedVariants.find(v => v.label === selectedWeight);
+  const computedPrice = activeVariant ? Number(activeVariant.price) : Number(product.price || 0);
+  const computedMrp   = activeVariant ? Number(activeVariant.mrp) : Number(product.mrp || Math.round(computedPrice * 1.3));
 
   const gallery = [product.img, ...(product.images ? (typeof product.images === 'string' ? JSON.parse(product.images) : product.images) : [])];
   const relatedProducts = products.filter(p => p.category === product.category && p.id !== product.id).slice(0, 4);
@@ -134,27 +147,29 @@ export default function ProductPage() {
                 </div>
 
                 {/* Pack Size / Weight Variable Selector */}
-                <div className="mb-6">
-                  <p className="text-xs font-bold text-stone-700 uppercase tracking-wide mb-2 flex items-center justify-between">
-                    <span>Select Weight / Pack Size</span>
-                    <span className="text-[#d97706]">{selectedWeight}</span>
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {weightOptions.map(w => (
-                      <button
-                        key={w.label}
-                        onClick={() => setSelectedWeight(w.label)}
-                        className={`px-4 py-2 rounded-xl text-xs font-bold border transition-all ${
-                          selectedWeight === w.label
-                            ? 'bg-[#5c3110] text-amber-200 border-[#5c3110] shadow-md scale-105'
-                            : 'bg-white text-stone-700 border-amber-200 hover:border-[#d97706]'
-                        }`}
-                      >
-                        {w.label}
-                      </button>
-                    ))}
+                {parsedVariants.length > 0 && (
+                  <div className="mb-6">
+                    <p className="text-xs font-bold text-stone-700 uppercase tracking-wide mb-2 flex items-center justify-between">
+                      <span>Select Pack Size</span>
+                      <span className="text-[#d97706]">{selectedWeight}</span>
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {parsedVariants.map(w => (
+                        <button
+                          key={w.label}
+                          onClick={() => setSelectedWeight(w.label)}
+                          className={`px-4 py-2 rounded-xl text-xs font-bold border transition-all ${
+                            selectedWeight === w.label
+                              ? 'bg-[#5c3110] text-amber-200 border-[#5c3110] shadow-md scale-105'
+                              : 'bg-white text-stone-700 border-amber-200 hover:border-[#d97706]'
+                          }`}
+                        >
+                          {w.label}
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {/* Quantity modifier */}
                 <div className="mb-8 flex items-center justify-between border-t border-b border-amber-100 py-4">
@@ -290,7 +305,7 @@ export default function ProductPage() {
         <div className="flex items-center justify-between">
           <div className="flex-1 min-w-0 pr-2">
             <p className="text-xs font-bold text-stone-800 truncate">{product.name}</p>
-            <p className="font-black text-[#5c3110] text-base leading-tight">₹{computedPrice} <span className="text-xs text-amber-800 font-bold bg-amber-100 px-1.5 py-0.5 rounded">{selectedWeight}</span></p>
+            <p className="font-black text-[#5c3110] text-base leading-tight">₹{computedPrice} {selectedWeight && <span className="text-xs text-amber-800 font-bold bg-amber-100 px-1.5 py-0.5 rounded ml-1">{selectedWeight}</span>}</p>
           </div>
           <div className="flex items-center border border-amber-200 rounded-lg overflow-hidden flex-shrink-0 h-9 bg-amber-50">
             <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="px-2.5 text-stone-600 font-bold"><Minus size={13}/></button>

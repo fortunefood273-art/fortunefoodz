@@ -1,6 +1,7 @@
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["driverAdapters"]
+  binaryTargets   = ["native", "rhel-openssl-3.0.x", "rhel-openssl-1.0.x"]
 }
 
 datasource db {
@@ -33,6 +34,7 @@ model Product {
   category    String
   petType     String
   description String?
+  variants    String?
 }
 
 model Category {
@@ -101,6 +103,7 @@ model Order {
   id            Int      @id @default(autoincrement())
   visitorId     String?
   customerName  String
+  customerEmail String?
   customerPhone String
   customerAddress String
   items         String   // JSON string of cart items

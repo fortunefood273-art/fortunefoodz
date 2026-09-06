@@ -129,19 +129,19 @@ export default function ChatBot() {
               style={{ height: '75vh' }}
             >
               {/* Header */}
-              <div className="bg-gradient-to-r from-[#5c3110] via-[#d97706] to-[#b45309] p-4 flex items-center justify-between shadow-md flex-shrink-0">
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full border-2 border-amber-300 bg-white p-0.5 flex items-center justify-center overflow-hidden flex-shrink-0">
+              <div className="bg-gradient-to-r from-[#5c3110] via-[#d97706] to-[#b45309] p-4 flex items-center justify-between shadow-md flex-shrink-0 w-full overflow-hidden">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-9 h-9 min-w-9 min-h-9 rounded-full border-2 border-amber-300 bg-white p-0.5 flex items-center justify-center overflow-hidden flex-shrink-0">
                     <img src="/logo.png" alt="Logo" className="w-full h-full object-contain" />
                   </div>
-                  <div>
-                    <h3 className="text-amber-50 font-bold leading-tight font-cinzel text-sm">Fortune Foodz Assistant</h3>
-                    <p className="text-amber-200 text-[10px] uppercase font-bold tracking-wider flex items-center gap-1">
-                      <ShieldCheck size={11} className="text-emerald-400" /> Purity Verified
+                  <div className="min-w-0">
+                    <h3 className="text-amber-50 font-bold leading-tight font-cinzel text-sm truncate">Fortune Foodz Assistant</h3>
+                    <p className="text-amber-200 text-[10px] uppercase font-bold tracking-wider flex items-center gap-1 truncate">
+                      <ShieldCheck size={11} className="text-emerald-400 flex-shrink-0" /> <span className="truncate">Purity Verified</span>
                     </p>
                   </div>
                 </div>
-                <button onClick={() => setIsOpen(false)} className="text-amber-100 hover:text-white p-1 bg-black/20 rounded-full">
+                <button onClick={() => setIsOpen(false)} className="text-amber-100 hover:text-white p-1 bg-black/20 rounded-full flex-shrink-0 ml-2">
                   <X size={18} />
                 </button>
               </div>
@@ -199,19 +199,19 @@ export default function ChatBot() {
               style={{ height: '520px', maxHeight: '82vh' }}
             >
               {/* Header */}
-              <div className="bg-gradient-to-r from-[#5c3110] via-[#d97706] to-[#b45309] p-4 flex items-center justify-between shadow-md">
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full border-2 border-amber-300 bg-white p-0.5 flex items-center justify-center overflow-hidden flex-shrink-0">
+              <div className="bg-gradient-to-r from-[#5c3110] via-[#d97706] to-[#b45309] p-4 flex items-center justify-between shadow-md w-full overflow-hidden">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-9 h-9 min-w-9 min-h-9 rounded-full border-2 border-amber-300 bg-white p-0.5 flex items-center justify-center overflow-hidden flex-shrink-0">
                     <img src="/logo.png" alt="Fortune Foodz Logo" className="w-full h-full object-contain" />
                   </div>
-                  <div>
-                    <h3 className="text-amber-50 font-bold leading-tight font-cinzel text-sm">Fortune Foodz Assistant</h3>
-                    <p className="text-amber-200 text-[10px] uppercase font-bold tracking-wider flex items-center gap-1">
-                      <ShieldCheck size={11} className="text-emerald-400" /> Purity Verified
+                  <div className="min-w-0">
+                    <h3 className="text-amber-50 font-bold leading-tight font-cinzel text-sm truncate">Fortune Foodz Assistant</h3>
+                    <p className="text-amber-200 text-[10px] uppercase font-bold tracking-wider flex items-center gap-1 truncate">
+                      <ShieldCheck size={11} className="text-emerald-400 flex-shrink-0" /> <span className="truncate">Purity Verified</span>
                     </p>
                   </div>
                 </div>
-                <button onClick={() => setIsOpen(false)} className="text-amber-100 hover:text-white transition-colors p-1 bg-black/20 rounded-full hover:bg-black/40">
+                <button onClick={() => setIsOpen(false)} className="text-amber-100 hover:text-white transition-colors p-1 bg-black/20 rounded-full hover:bg-black/40 flex-shrink-0 ml-2">
                   <X size={18} />
                 </button>
               </div>

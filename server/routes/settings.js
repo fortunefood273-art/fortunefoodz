@@ -25,7 +25,7 @@ router.put('/', async (req, res) => {
     } = req.body;
     
     // Upload logo to Cloudinary if it's new (base64)
-    const uploadedLogo = await uploadToCloudinary(logoBase64, 'prime_pets/settings');
+    const uploadedLogo = await uploadToCloudinary(logoBase64, 'fortune_foodz/settings');
 
     let settings = await prisma.frontendSetting.findFirst();
 

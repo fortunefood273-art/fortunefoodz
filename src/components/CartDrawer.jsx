@@ -100,7 +100,7 @@ export default function CartDrawer() {
                 </div>
               ) : (
                 cartItems.map(item => (
-                  <div key={item.id}
+                  <div key={item.cartItemId || item.id}
                     className="bg-white rounded-2xl border border-amber-100 p-3 flex items-center gap-3 shadow-sm hover:border-amber-300 transition-all">
                     {/* Product Image */}
                     <div className="w-16 h-16 rounded-xl overflow-hidden bg-amber-50 flex-shrink-0 border border-amber-200 p-0.5">
@@ -127,18 +127,18 @@ export default function CartDrawer() {
                       {/* Quantity Controls */}
                       <div className="flex items-center gap-2 mt-2">
                         <div className="flex items-center border border-amber-200 rounded-lg overflow-hidden bg-amber-50/50">
-                          <button onClick={() => updateQty(item.id, -1)}
+                          <button onClick={() => updateQty(item.cartItemId || item.id, -1)}
                             className="w-6 h-6 flex items-center justify-center hover:bg-amber-200 text-stone-700 transition-colors">
                             <Minus size={11} />
                           </button>
                           <span className="w-7 text-center text-xs font-bold text-stone-800">{item.qty}</span>
-                          <button onClick={() => updateQty(item.id, 1)}
+                          <button onClick={() => updateQty(item.cartItemId || item.id, 1)}
                             className="w-6 h-6 flex items-center justify-center hover:bg-amber-200 text-[#d97706] transition-colors">
                             <Plus size={11} />
                           </button>
                         </div>
                         <span className="text-stone-500 text-xs">= <span className="font-bold text-stone-800">₹{item.price * item.qty}</span></span>
-                        <button onClick={() => removeFromCart(item.id)}
+                        <button onClick={() => removeFromCart(item.cartItemId || item.id)}
                           className="ml-auto p-1.5 rounded-lg hover:bg-red-50 hover:text-red-600 text-stone-300 transition-colors">
                           <Trash2 size={13} />
                         </button>

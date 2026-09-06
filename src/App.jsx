@@ -32,6 +32,7 @@ const AdminProducts = lazy(() => import('./pages/admin/AdminProducts'));
 const AdminCategories = lazy(() => import('./pages/admin/AdminCategories'));
 const AdminSlides = lazy(() => import('./pages/admin/AdminSlides'));
 const AdminDeals = lazy(() => import('./pages/admin/AdminDeals'));
+const AdminBanners = lazy(() => import('./pages/admin/AdminBanners'));
 const AdminSettings = lazy(() => import('./pages/admin/AdminSettings'));
 const AdminCustomers = lazy(() => import('./pages/admin/AdminCustomers'));
 const AdminOrders = lazy(() => import('./pages/admin/AdminOrders'));
@@ -90,7 +91,7 @@ function AppInner() {
   }, []);
 
   return (
-    <div className="min-h-screen mesh-bg text-gray-800 font-sans overflow-x-hidden max-w-full relative">
+    <div className="min-h-screen mesh-bg text-gray-800 font-sans relative">
       <PageLoader 
         skip={false}
         dataReady={!loading}
@@ -123,6 +124,7 @@ function AppInner() {
                   <Route path="categories" element={<AdminCategories />} />
                   <Route path="slides" element={<AdminSlides />} />
                   <Route path="deals" element={<AdminDeals />} />
+                  <Route path="banners" element={<AdminBanners />} />
                   <Route path="orders" element={<AdminOrders />} />
                   <Route path="customers" element={<AdminCustomers />} />
                   <Route path="payment" element={<AdminPayment />} />

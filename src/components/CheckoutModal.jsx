@@ -141,7 +141,7 @@ function MiniOrderSummary({ cartItems, cartTotal }) {
           >
             <div className="px-4 pb-3 space-y-1.5 border-t border-amber-200/60 pt-2">
               {cartItems.map(item => (
-                <div key={item.id} className="flex justify-between text-xs text-stone-700">
+                <div key={item.cartItemId || item.id} className="flex justify-between text-xs text-stone-700">
                   <span className="line-clamp-1 flex-1 mr-2">{item.name} {item.selectedWeight ? `(${item.selectedWeight})` : ''} <span className="text-stone-400">×{item.qty}</span></span>
                   <span className="font-bold flex-shrink-0">₹{item.price * item.qty}</span>
                 </div>
@@ -174,7 +174,7 @@ function OrderSummary({ cartItems, cartTotal }) {
       <p className="text-xs font-bold text-stone-800 uppercase tracking-wide font-cinzel">Fortune Foodz Summary</p>
       <div className="space-y-1.5 max-h-36 overflow-y-auto pr-1">
         {cartItems.map(item => (
-          <div key={item.id} className="flex justify-between text-xs">
+          <div key={item.cartItemId || item.id} className="flex justify-between text-xs">
             <span className="text-stone-700 line-clamp-1 flex-1 mr-2">
               {item.name} {item.selectedWeight ? `(${item.selectedWeight})` : ''} <span className="text-stone-400">×{item.qty}</span>
             </span>
