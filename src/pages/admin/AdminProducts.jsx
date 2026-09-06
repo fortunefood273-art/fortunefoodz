@@ -226,7 +226,8 @@ export default function AdminProducts() {
                     )}
                   </div>
                   <div className="flex-1">
-                    <label htmlFor="img" className="block text-sm font-bold text-gray-700 mb-1">Primary Image <span className="text-red-500">*</span></label>
+                    <label htmlFor="img" className="block text-sm font-bold text-gray-700 mb-0">Primary Image <span className="text-red-500">*</span></label>
+                    <p className="text-[10px] text-gray-500 mb-2">Recommended: 400×400px · Square · JPG/PNG/WebP</p>
                     <div className="flex gap-2">
                       <input id="img" type="url" placeholder="Paste URL here..." value={editing.img || ''} onChange={e => setEditing({...editing, img: e.target.value})} className="flex-1 p-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all text-sm" />
                       <span className="text-sm text-gray-500 flex items-center">OR</span>
@@ -248,13 +249,13 @@ export default function AdminProducts() {
                         }} />
                       </label>
                     </div>
-                    <p className="text-xs text-gray-500 mt-1">Recommended size: 400x400px (1:1 Square)</p>
                   </div>
                 </div>
 
                 {/* Additional Images */}
                 <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100 space-y-3">
-                  <label className="block text-sm font-bold text-gray-700">Additional Images (Gallery)</label>
+                  <label className="block text-sm font-bold text-gray-700 mb-0">Additional Images (Gallery)</label>
+                  <p className="text-[10px] text-gray-500 mb-2">Recommended: 400×400px · Square · JPG/PNG</p>
                   <div className="flex gap-2">
                     <input 
                       type="url" 

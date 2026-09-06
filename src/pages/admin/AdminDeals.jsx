@@ -167,7 +167,8 @@ export default function AdminDeals() {
                   </div>
                   <div className="flex-1 space-y-3">
                     <div>
-                      <label className="block text-sm font-bold text-gray-700 mb-1">Image <span className="text-red-500">*</span></label>
+                      <label className="block text-sm font-bold text-gray-700 mb-0">Image <span className="text-red-500">*</span></label>
+                      <p className="text-[10px] text-gray-500 mb-2">Recommended: 400×300px · Transparent PNG</p>
                       <div className="flex gap-2">
                         <input type="url" placeholder="Paste URL here..." value={editing.img || ''} onChange={e => setEditing({...editing, img: e.target.value})} className="flex-1 p-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all text-sm" />
                         <span className="text-sm text-gray-500 flex items-center">OR</span>
@@ -189,7 +190,6 @@ export default function AdminDeals() {
                           }} />
                         </label>
                       </div>
-                      <p className="text-[10px] text-gray-500 mt-1">Recommended size: 400x300px (Transparent PNG)</p>
                     </div>
                   </div>
                 </div>
