@@ -26,6 +26,7 @@ router.put('/', async (req, res) => {
     
     // Upload logo to Cloudinary if it's new (base64)
     const uploadedLogo = await uploadToCloudinary(logoBase64, 'fortune_foodz/settings');
+    const uploadedAudio = siteAudioUrl && siteAudioUrl.startsWith('data:') ? await uploadToCloudinary(siteAudioUrl, 'fortune_foodz/audio') : siteAudioUrl;
 
     let settings = await prisma.frontendSetting.findFirst();
 
@@ -40,7 +41,7 @@ router.put('/', async (req, res) => {
       whatsappNumber: whatsappNumber || '',
       razorpayKeyId: razorpayKeyId !== undefined ? razorpayKeyId : null,
       whatsappOrderNumber: whatsappOrderNumber !== undefined ? whatsappOrderNumber : null,
-      siteAudioUrl: siteAudioUrl !== undefined ? siteAudioUrl : null,
+      siteAudioUrl: uploadedAudio !== undefined ? uploadedAudio : null,
       contactEmail: contactEmail !== undefined ? contactEmail : null,
       contactPhone: contactPhone !== undefined ? contactPhone : null,
     };

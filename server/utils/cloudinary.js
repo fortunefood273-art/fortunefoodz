@@ -25,7 +25,7 @@ const uploadToCloudinary = async (file, folder = 'prime_pets') => {
   
   try {
     const result = await cloudinary.uploader.upload(file, {
-      folder: folder,
+      folder: folder, resource_type: 'auto',
     });
     return result.secure_url;
   } catch (error) {
