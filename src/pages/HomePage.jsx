@@ -912,9 +912,23 @@ function CategorySectionsGrid() {
           <section key={cat.label} className="relative z-10 max-w-[1600px] mx-auto w-full px-4 md:px-6">
             <div className="glass-panel rounded-3xl p-4 md:p-5 bg-gradient-to-br from-green-50/60 to-emerald-50/40">
               <SectionHeader cat={cat} count={catProducts.length} />
-              <div className="grid grid-cols-3 md:grid-cols-6 gap-2 md:gap-3">
-                {catProducts.map(p => <SmallCard key={p.id} p={p} />)}
-              </div>
+              {catProducts.length <= 4 ? (
+                  <div className="flex gap-2 md:gap-3 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-hide">
+                    {catProducts.map((p) => (
+                      <div key={p.id} className="flex-shrink-0 w-36 md:w-44">
+                        <SmallCard p={p} />
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <AutoScrollWrapper direction={sectionIdx % 2 === 0 ? 'right' : 'left'} speed={0.4}>
+                    {[...catProducts, ...catProducts, ...catProducts, ...catProducts].map((p, i) => (
+                      <div key={p.id + '-' + i} className="flex-shrink-0 w-36 md:w-44 snap-start">
+                        <SmallCard p={p} />
+                      </div>
+                    ))}
+                  </AutoScrollWrapper>
+                )}
             </div>
           </section>
         );
@@ -1085,9 +1099,23 @@ function CategorySectionsGrid() {
               )}
               <div className="relative z-10">
                 <SectionHeader cat={cat} count={catProducts.length} />
-                <div className="grid grid-cols-3 md:grid-cols-6 gap-2 md:gap-3">
-                  {catProducts.map(p => <SmallCard key={p.id} p={p} />)}
-                </div>
+                {catProducts.length <= 4 ? (
+                  <div className="flex gap-2 md:gap-3 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-hide">
+                    {catProducts.map((p) => (
+                      <div key={p.id} className="flex-shrink-0 w-36 md:w-44">
+                        <SmallCard p={p} />
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <AutoScrollWrapper direction={sectionIdx % 2 === 0 ? 'right' : 'left'} speed={0.4}>
+                    {[...catProducts, ...catProducts, ...catProducts, ...catProducts].map((p, i) => (
+                      <div key={p.id + '-' + i} className="flex-shrink-0 w-36 md:w-44 snap-start">
+                        <SmallCard p={p} />
+                      </div>
+                    ))}
+                  </AutoScrollWrapper>
+                )}
               </div>
             </div>
           </section>
