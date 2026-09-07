@@ -217,10 +217,10 @@ function QuickCategories() {
             <ChevronLeft size={24} />
           </button>
 
-          <AutoScrollWrapper direction="left" className="flex gap-4 md:gap-6 overflow-x-auto scrollbar-hide snap-x px-2 md:px-12 py-3">
+          <AutoScrollWrapper direction="left" className="px-2 md:px-12 py-3">
             {infiniteCategories.map((cat, idx) => (
               <button key={`${cat.label}-${idx}`} onClick={() => navigate('/category', { state: { category: cat.label } })}
-                className="snap-center flex-shrink-0 flex flex-col items-center gap-3 group focus:outline-none w-24 sm:w-32 md:w-44 cursor-pointer">
+                className=" flex-shrink-0 flex flex-col items-center gap-3 group focus:outline-none w-24 sm:w-32 md:w-44 cursor-pointer">
                 <div className="w-24 h-24 sm:w-32 sm:h-32 md:w-44 md:h-44 rounded-2xl md:rounded-3xl border-2 border-amber-400/40 bg-[#120a05] overflow-hidden shadow-lg group-hover:border-amber-400 group-hover:scale-105 transition-all duration-300 relative">
                   <img src={cat.img} alt={cat.label} loading="lazy" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                 </div>
@@ -897,7 +897,7 @@ function CategorySectionsGrid() {
               ) : (
                 <AutoScrollWrapper direction={sectionIdx % 2 === 0 ? 'right' : 'left'}>
                   {[...catProducts, ...catProducts, ...catProducts].map((p, i) => (
-                    <div key={p.id + '-' + i} className="flex-shrink-0 w-36 md:w-44 snap-start">
+                    <div key={p.id + '-' + i} className="flex-shrink-0 w-36 md:w-44 ">
                       <SmallCard p={p} />
                     </div>
                   ))}
@@ -923,7 +923,7 @@ function CategorySectionsGrid() {
                 ) : (
                   <AutoScrollWrapper direction={sectionIdx % 2 === 0 ? 'right' : 'left'} speed={0.4}>
                     {[...catProducts, ...catProducts, ...catProducts, ...catProducts].map((p, i) => (
-                      <div key={p.id + '-' + i} className="flex-shrink-0 w-36 md:w-44 snap-start">
+                      <div key={p.id + '-' + i} className="flex-shrink-0 w-36 md:w-44 ">
                         <SmallCard p={p} />
                       </div>
                     ))}
@@ -998,7 +998,7 @@ function CategorySectionsGrid() {
                 ) : (
                   <AutoScrollWrapper direction={sectionIdx % 2 === 0 ? 'right' : 'left'}>
                     {[...catProducts, ...catProducts, ...catProducts].map((p, i) => (
-                      <div key={p.id + "-" + i} className="flex-shrink-0 w-32 md:w-40 snap-start">
+                      <div key={p.id + "-" + i} className="flex-shrink-0 w-32 md:w-40 ">
                         <div className="bg-white rounded-2xl border border-pink-100 overflow-hidden shadow-sm hover:shadow-lg transition-all cursor-pointer group flex flex-col text-center">
                           <Link to={`/product/${p.id}`} className="relative overflow-hidden block h-28 bg-pink-50/50">
                             <MediaDisplay src={p.img} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
@@ -1055,7 +1055,7 @@ function CategorySectionsGrid() {
                 ) : (
                   <AutoScrollWrapper direction={sectionIdx % 2 === 0 ? 'right' : 'left'}>
                     {[...catProducts, ...catProducts, ...catProducts].map((p, i) => (
-                      <div key={p.id + '-' + i} className="flex-shrink-0 w-36 md:w-44 snap-start">
+                      <div key={p.id + '-' + i} className="flex-shrink-0 w-36 md:w-44 ">
                         <SmallCard p={p} />
                       </div>
                     ))}
@@ -1110,7 +1110,7 @@ function CategorySectionsGrid() {
                 ) : (
                   <AutoScrollWrapper direction={sectionIdx % 2 === 0 ? 'right' : 'left'} speed={0.4}>
                     {[...catProducts, ...catProducts, ...catProducts, ...catProducts].map((p, i) => (
-                      <div key={p.id + '-' + i} className="flex-shrink-0 w-36 md:w-44 snap-start">
+                      <div key={p.id + '-' + i} className="flex-shrink-0 w-36 md:w-44 ">
                         <SmallCard p={p} />
                       </div>
                     ))}
@@ -1333,37 +1333,21 @@ function Footer() {
 
 /* ── HOME PAGE ── */
 /* AUTO SCROLL WRAPPER */
-function AutoScrollWrapper({ children, direction = 'left', speed = 0.5, className = "flex gap-3 overflow-x-auto pb-2 -mx-1 px-1 snap-x snap-mandatory scrollbar-none" }) {
-  const scrollRef = React.useRef(null);
-  const [isPaused, setIsPaused] = React.useState(false);
-  React.useEffect(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    let rafId;
-    let lastTime = performance.now();
-    const scroll = (time) => {
-      if (isPaused) { lastTime = time; rafId = requestAnimationFrame(scroll); return; }
-      const deltaTime = time - lastTime;
-      lastTime = time;
-      const movePixels = speed * (deltaTime / 16);
-      if (direction === 'left') {
-        el.scrollLeft += movePixels;
-        if (el.scrollLeft >= el.scrollWidth / 2) { el.scrollLeft -= el.scrollWidth / 2; }
-      } else {
-        if (el.scrollLeft <= 0) { el.scrollLeft += el.scrollWidth / 2; }
-        el.scrollLeft -= movePixels;
-      }
-      rafId = requestAnimationFrame(scroll);
-    };
-    rafId = requestAnimationFrame(scroll);
-    return () => cancelAnimationFrame(rafId);
-  }, [direction, speed, isPaused]);
-  return (
-    <div ref={scrollRef} className={className} onMouseEnter={() => setIsPaused(true)} onMouseLeave={() => setIsPaused(false)} onTouchStart={() => setIsPaused(true)} onTouchEnd={() => setIsPaused(false)}>
-      {children}
-    </div>
-  );
-}
+function AutoScrollWrapper({ children, direction = 'left', speed = 0.5, className = "pb-2 -mx-1 px-1" }) {
+    const dir = direction === 'right' ? 'reverse' : 'normal';
+    const duration = speed > 0 ? (17.5 / speed).toFixed(1) + 's' : '35s';
+    
+    return (
+      <div className={`overflow-hidden whitespace-nowrap w-full ${className}`}>
+        <div 
+          className="animate-marquee inline-flex gap-3 items-stretch" 
+          style={{ animationDirection: dir, animationDuration: duration }}
+        >
+          {children}
+        </div>
+      </div>
+    );
+  }
 
 export default function HomePage() {
   return (
