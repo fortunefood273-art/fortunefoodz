@@ -43,8 +43,8 @@ const stepVariants = {
   exit:   (dir) => ({ x: dir > 0 ? -60 : 60, opacity: 0, transition: { duration: 0.2, ease: 'easeIn' } }),
 };
 
-function StepProgress({ step }) {
-  const steps = ['Address', 'Payment', 'Order Placed'];
+function StepProgress({ step, stepsList }) {
+  const steps = stepsList || ['Address', 'Payment', 'Order Placed'];
   return (
     <div className="flex items-center justify-center gap-0 px-5 py-3 bg-amber-50/50 border-b border-amber-200">
       {steps.map((label, i) => {
@@ -201,14 +201,17 @@ function OrderSummary({ cartItems, cartTotal }) {
 
 export default function CheckoutModal({ isOpen, onClose, cartItems, cartTotal, onOrderSuccess }) {
   const { frontendSettings } = useData();
-  const { user } = useAuth();
+  const { user, loginWithGoogle } = useAuth();
+
+  const stepsList = user ? ['Address', 'Payment', 'Order Placed'] : ['Sign In', 'Address', 'Payment', 'Order Placed'];
+  const currentStepName = stepsList[step];
 
   const [step, setStep]     = useState(0);
   const [direction, setDir] = useState(1);
 
   const [form, setForm] = useState({ name: '', phone: '', address: '', pincode: '', city: '', email: '' });
   // Auto-fill email from logged-in user
-  React.useEffect(() => { if (user?.email) setForm(f => ({ ...f, email: f.email || user.email })); }, [user]);
+  React.useEffect(() => { if (user) setForm(f => ({ ...f, email: f.email || user.email || '', name: f.name || user.displayName || '' })); }, [user]);
   const [errors, setErrors] = useState({});
 
   const [payMethod, setPayMethod] = useState('COD');
@@ -245,7 +248,7 @@ export default function CheckoutModal({ isOpen, onClose, cartItems, cartTotal, o
   }
 
   function handleContinue() {
-    if (validateForm()) goTo(1);
+    if (validateForm()) goTo(stepsList.indexOf('Payment'));
   }
 
   async function placeCOD() {
@@ -268,7 +271,7 @@ export default function CheckoutModal({ isOpen, onClose, cartItems, cartTotal, o
       setConfirmedOrder({ orderId, paymentMethod: 'Cash on Delivery (COD)' });
       setOrderStep('whatsapp');
       await new Promise(r => setTimeout(r, 500));
-      goTo(2);
+      goTo(stepsList.indexOf('Order Placed'));
       onOrderSuccess && onOrderSuccess(orderId);
       const phone   = (frontendSettings?.whatsappOrderNumber || '919876543210').replace(/\D/g, '');
       const message = buildWhatsAppMessage(orderId, form, cartItems, grandTotal(cartTotal), 'COD');
@@ -313,7 +316,7 @@ export default function CheckoutModal({ isOpen, onClose, cartItems, cartTotal, o
             });
             const orderId = saveRes.data?.orderId || saveRes.data?.order?.id || saveRes.data?.id || `FORTUNE${Date.now()}`;
             setConfirmedOrder({ orderId, paymentMethod: 'Online Payment' });
-            goTo(2);
+            goTo(stepsList.indexOf('Order Placed'));
             onOrderSuccess && onOrderSuccess(orderId);
           } catch (verifyErr) {
             showToast('Payment successful but order saving failed. Contact customer care.');
@@ -371,7 +374,7 @@ export default function CheckoutModal({ isOpen, onClose, cartItems, cartTotal, o
         </div>
 
         {/* Progress steps */}
-        {step < 2 && <StepProgress step={step} />}
+        {step < 2 && <StepProgress step={step} stepsList={stepsList} />}
 
         <AnimatePresence>
           {toast && <Toast key="toast" message={toast.message} type={toast.type} />}
@@ -381,8 +384,51 @@ export default function CheckoutModal({ isOpen, onClose, cartItems, cartTotal, o
         <div className="flex-1 overflow-y-auto relative">
           <AnimatePresence mode="wait" custom={direction}>
 
-            {/* Step 0: Address Details */}
-            {step === 0 && (
+            {/* Step: Sign In */}
+            {currentStepName === 'Sign In' && (
+              <motion.div
+                key="step-signin"
+                custom={direction}
+                variants={stepVariants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                className="p-6 flex flex-col items-center justify-center space-y-5"
+              >
+                <div className="w-16 h-16 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mb-2">
+                  <User size={32} />
+                </div>
+                <div className="text-center space-y-1">
+                  <h3 className="text-lg font-cinzel font-bold text-stone-900">Sign in to Checkout</h3>
+                  <p className="text-xs text-stone-500">Save your orders and wishlist for next time!</p>
+                </div>
+                <button
+                  onClick={async () => {
+                    try { await loginWithGoogle(); } catch(e) { console.error(e); }
+                  }}
+                  className="w-full bg-white text-stone-900 font-bold py-3.5 rounded-2xl shadow-md border border-stone-200 hover:shadow-lg transition-all flex items-center justify-center gap-3"
+                >
+                  <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-5 h-5" />
+                  Continue with Google
+                </button>
+                
+                <div className="flex items-center gap-3 w-full my-2">
+                  <div className="h-px bg-stone-200 flex-1"></div>
+                  <span className="text-[10px] text-stone-400 font-bold uppercase tracking-wider">OR</span>
+                  <div className="h-px bg-stone-200 flex-1"></div>
+                </div>
+
+                <button
+                  onClick={() => goTo(step + 1)}
+                  className="w-full text-[#d97706] font-bold text-sm py-3.5 rounded-2xl hover:bg-amber-50 transition-all"
+                >
+                  Continue as Guest
+                </button>
+              </motion.div>
+            )}
+
+            {/* Step: Address Details */}
+            {currentStepName === 'Address' && (
               <motion.div
                 key="step-info"
                 custom={direction}
@@ -464,7 +510,7 @@ export default function CheckoutModal({ isOpen, onClose, cartItems, cartTotal, o
             )}
 
             {/* Step 1: Payment Selection */}
-            {step === 1 && (
+            {currentStepName === 'Payment' && (
               <motion.div
                 key="step-payment"
                 custom={direction}
@@ -475,7 +521,7 @@ export default function CheckoutModal({ isOpen, onClose, cartItems, cartTotal, o
                 className="p-5 space-y-4"
               >
                 <button
-                  onClick={() => goTo(0)}
+                  onClick={() => goTo(stepsList.indexOf('Address'))}
                   className="flex items-center gap-1 text-xs text-[#d97706] font-bold hover:underline"
                 >
                   <ArrowLeft size={13} /> Edit Address
@@ -541,7 +587,7 @@ export default function CheckoutModal({ isOpen, onClose, cartItems, cartTotal, o
             )}
 
             {/* Step 2: Order Confirmation */}
-            {step === 2 && confirmedOrder && (
+            {currentStepName === 'Order Placed' && confirmedOrder && (
               <motion.div
                 key="step-confirm"
                 custom={direction}
