@@ -96,7 +96,13 @@ export default function AdminMusic() {
   const handleSave = async () => {
     setStatus('saving');
     try {
-      const newUrl = previewUrl === DEFAULT_AUDIO_URL ? null : previewUrl;
+      let finalUrl = previewUrl;
+      if (inputMode === 'url' && urlInput.trim() !== '' && urlInput.trim() !== previewUrl) {
+        finalUrl = urlInput.trim();
+        setPreviewUrl(finalUrl);
+      }
+
+      const newUrl = finalUrl === DEFAULT_AUDIO_URL ? null : finalUrl;
       await axios.put('/api/settings', {
         ...frontendSettings,
         siteAudioUrl: newUrl,

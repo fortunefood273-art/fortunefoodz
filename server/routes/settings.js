@@ -25,35 +25,35 @@ router.put('/', async (req, res) => {
     } = req.body;
     
     // Upload logo to Cloudinary if it's new (base64)
-    const uploadedLogo = await uploadToCloudinary(logoBase64, 'fortune_foodz/settings');
+    const uploadedLogo = logoBase64 && logoBase64.startsWith('data:') ? await uploadToCloudinary(logoBase64, 'fortune_foodz/settings') : logoBase64;
     const uploadedAudio = siteAudioUrl && siteAudioUrl.startsWith('data:') ? await uploadToCloudinary(siteAudioUrl, 'fortune_foodz/audio', 'video') : siteAudioUrl;
 
     let settings = await prisma.frontendSetting.findFirst();
 
-    const data = {
-      storeName: storeName || '',
-      tagline: tagline || '',
-      logoChar: logoChar || '',
-      footerDescription: footerDescription || '',
-      facebookUrl: facebookUrl || '',
-      instagramUrl: instagramUrl || '',
-      youtubeUrl: youtubeUrl || '',
-      whatsappNumber: whatsappNumber || '',
-      razorpayKeyId: razorpayKeyId !== undefined ? razorpayKeyId : null,
-      whatsappOrderNumber: whatsappOrderNumber !== undefined ? whatsappOrderNumber : null,
-      siteAudioUrl: uploadedAudio !== undefined ? uploadedAudio : null,
-      contactEmail: contactEmail !== undefined ? contactEmail : null,
-      contactPhone: contactPhone !== undefined ? contactPhone : null,
-    };
+    const data = {};
+    if (storeName !== undefined) data.storeName = storeName || '';
+    if (tagline !== undefined) data.tagline = tagline || '';
+    if (logoChar !== undefined) data.logoChar = logoChar || '';
+    if (footerDescription !== undefined) data.footerDescription = footerDescription || '';
+    if (facebookUrl !== undefined) data.facebookUrl = facebookUrl || '';
+    if (instagramUrl !== undefined) data.instagramUrl = instagramUrl || '';
+    if (youtubeUrl !== undefined) data.youtubeUrl = youtubeUrl || '';
+    if (whatsappNumber !== undefined) data.whatsappNumber = whatsappNumber || '';
+    if (razorpayKeyId !== undefined) data.razorpayKeyId = razorpayKeyId;
+    if (whatsappOrderNumber !== undefined) data.whatsappOrderNumber = whatsappOrderNumber;
+    if (siteAudioUrl !== undefined) data.siteAudioUrl = uploadedAudio;
+    if (contactEmail !== undefined) data.contactEmail = contactEmail;
+    if (contactPhone !== undefined) data.contactPhone = contactPhone;
+    if (logoBase64 !== undefined) {
+       data.logoBase64 = uploadedLogo || (settings ? settings.logoBase64 : '');
+    }
 
     if (settings) {
-      data.logoBase64 = uploadedLogo || settings.logoBase64;
       settings = await prisma.frontendSetting.update({
         where: { id: settings.id },
         data
       });
     } else {
-      data.logoBase64 = uploadedLogo || '';
       settings = await prisma.frontendSetting.create({ data });
     }
     
