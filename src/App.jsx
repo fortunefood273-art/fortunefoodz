@@ -65,6 +65,24 @@ function AppInner() {
     window.scrollTo(0, 0);
   }, [location.pathname]);
 
+  // Handle first user interaction to start background music
+  useEffect(() => {
+    const handleFirstInteraction = () => {
+      const audio = audioRef.current;
+      if (audio && !isMuted && audio.paused) {
+        audio.play().catch(() => {});
+      }
+      window.removeEventListener('click', handleFirstInteraction);
+      window.removeEventListener('touchstart', handleFirstInteraction);
+    };
+    window.addEventListener('click', handleFirstInteraction);
+    window.addEventListener('touchstart', handleFirstInteraction);
+    return () => {
+      window.removeEventListener('click', handleFirstInteraction);
+      window.removeEventListener('touchstart', handleFirstInteraction);
+    };
+  }, [isMuted]);
+
   // Update audio source when settings change
   useEffect(() => {
     const audio = audioRef.current;
@@ -156,13 +174,23 @@ function AppInner() {
         id="site-bg-audio"
         src={frontendSettings?.siteAudioUrl || '/background.mp3'}
         loop
-        preload="none"
+        autoPlay
+        preload="auto"
         muted={isMuted}
       />
       
       <button
-        onClick={() => setIsMuted(!isMuted)}
-        title={isMuted ? 'Unmute Music' : 'Mute Music'}
+          onClick={() => {
+            const audio = audioRef.current;
+            if (audio) {
+              if (isMuted) {
+                // We are unmuting, make sure it plays
+                audio.play().catch(() => {});
+              }
+            }
+            setIsMuted(!isMuted);
+          }}
+          title={isMuted ? 'Unmute Music' : 'Mute Music'}
         className="md:bottom-6 fixed bottom-[100px] left-4 z-[75] group bg-[#5c3110]/90 hover:bg-[#d07e20] text-orange-100 p-2.5 rounded-full backdrop-blur shadow-lg transition-all duration-200 border border-[#d07e20]/30 hover:scale-110 hover:shadow-[0_0_20px_rgba(208,126,32,0.5)]"
         aria-label="Toggle Mute"
       >

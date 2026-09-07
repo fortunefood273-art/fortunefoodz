@@ -14,9 +14,10 @@ try {
  * Uploads a base64 string or file path to Cloudinary.
  * @param {string} file - The base64 string or path.
  * @param {string} folder - Optional folder name.
+ * @param {string} resourceType - Resource type (image, video, raw, auto).
  * @returns {Promise<string>} - The secure URL of the uploaded image.
  */
-const uploadToCloudinary = async (file, folder = 'prime_pets') => {
+const uploadToCloudinary = async (file, folder = 'prime_pets', resourceType = 'auto') => {
   if (!file) return null;
   // If it's already a URL (e.g. from a previous upload), just return it
   if (file.startsWith('http://') || file.startsWith('https://')) {
@@ -25,12 +26,12 @@ const uploadToCloudinary = async (file, folder = 'prime_pets') => {
   
   try {
     const result = await cloudinary.uploader.upload(file, {
-      folder: folder, resource_type: 'auto',
+      folder: folder, resource_type: resourceType,
     });
     return result.secure_url;
   } catch (error) {
     console.error('Cloudinary upload error:', error);
-    throw new Error('Image upload failed');
+    throw new Error('Upload failed');
   }
 };
 

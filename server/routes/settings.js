@@ -26,7 +26,7 @@ router.put('/', async (req, res) => {
     
     // Upload logo to Cloudinary if it's new (base64)
     const uploadedLogo = await uploadToCloudinary(logoBase64, 'fortune_foodz/settings');
-    const uploadedAudio = siteAudioUrl && siteAudioUrl.startsWith('data:') ? await uploadToCloudinary(siteAudioUrl, 'fortune_foodz/audio') : siteAudioUrl;
+    const uploadedAudio = siteAudioUrl && siteAudioUrl.startsWith('data:') ? await uploadToCloudinary(siteAudioUrl, 'fortune_foodz/audio', 'video') : siteAudioUrl;
 
     let settings = await prisma.frontendSetting.findFirst();
 
