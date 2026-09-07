@@ -22,7 +22,7 @@ router.get('/', async (req, res) => {
 // POST new product
 router.post('/', async (req, res) => {
   try {
-    const { name, brand, price, mrp, rating, reviews, img, images, tag, badge, category, petType, description, variants } = req.body;
+    const { name, brand, price, mrp, rating, reviews, img, images, tag, badge, category, petType, description, variants, details } = req.body;
     
     // Upload main image to Cloudinary if it's base64
     const uploadedImg = await uploadToCloudinary(img, 'fortune_foodz/products');
