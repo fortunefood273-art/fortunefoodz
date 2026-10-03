@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   User, Package, Heart, MapPin, CreditCard, Bell, Gift, HelpCircle,
-  Shield, ChevronRight, Star, ShoppingBag, LogOut, Plus, Trash2, CheckCircle, Clock, Settings,
-  Sparkles, Award, ShieldCheck
+  Shield, ShieldCheck, ChevronRight, Star, ShoppingBag, LogOut, Plus, Trash2
 } from 'lucide-react';
 import Header from '../components/Header';
 import { useCart } from '../context/CartContext';
@@ -33,7 +32,7 @@ export default function AccountPage() {
   const navigate = useNavigate();
   const { user, logout, isAdmin, loginWithGoogle } = useAuth();
   const [activeTab, setActiveTab] = useState('My Orders');
-  const { wishlistItems, removeFromWishlist, addToCart } = useCart();
+  const { wishlistItems, addToCart } = useCart();
   const [orders, setOrders] = useState([]);
   const [ordersLoading, setOrdersLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
