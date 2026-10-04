@@ -19,7 +19,7 @@ router.post('/', async (req, res) => {
   try {
     const { label, emoji, img, bg } = req.body;
     
-    const uploadedImg = await uploadToCloudinary(img, 'prime_pets/categories');
+    const uploadedImg = await uploadToCloudinary(img, 'fortune_foodz/categories');
 
     const category = await prisma.category.create({
       data: {
@@ -43,7 +43,7 @@ router.put('/:id', async (req, res) => {
     const { id } = req.params;
     const { label, emoji, img, bg } = req.body;
     
-    const uploadedImg = await uploadToCloudinary(img, 'prime_pets/categories');
+    const uploadedImg = await uploadToCloudinary(img, 'fortune_foodz/categories');
 
     const category = await prisma.category.update({
       where: { id: Number(id) },

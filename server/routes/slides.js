@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const prisma = require('../db');
-const { uploadToCloudinary } = require('../utils/cloudinary');
 
 // GET all slides
 router.get('/', async (req, res) => {
@@ -17,26 +16,15 @@ router.get('/', async (req, res) => {
 // POST new slide
 router.post('/', async (req, res) => {
   try {
-    const { gradient, tag, badge, title, subtitle, cta, dog, cat, heroImage } = req.body;
-    
-    const uploadedDog = await uploadToCloudinary(dog, 'prime_pets/slides');
-    const uploadedCat = await uploadToCloudinary(cat, 'prime_pets/slides');
-    const uploadedHeroImage = await uploadToCloudinary(heroImage, 'prime_pets/slides');
+    const { heroImage, mobileImage } = req.body;
 
     const slide = await prisma.slide.create({
       data: {
-        gradient: gradient || '',
-        tag: tag || '',
-        badge: badge || '',
-        title: title || '',
-        subtitle: subtitle || '',
-        cta: cta || '',
-        dog: uploadedDog || '',
-        cat: uploadedCat || '',
-        heroImage: uploadedHeroImage || ''
+        heroImage: heroImage || '',
+        mobileImage: mobileImage || ''
       }
     });
-    
+
     res.status(201).json(slide);
   } catch (error) {
     console.error('Error creating slide:', error);
@@ -48,27 +36,16 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { gradient, tag, badge, title, subtitle, cta, dog, cat, heroImage } = req.body;
-    
-    const uploadedDog = await uploadToCloudinary(dog, 'prime_pets/slides');
-    const uploadedCat = await uploadToCloudinary(cat, 'prime_pets/slides');
-    const uploadedHeroImage = await uploadToCloudinary(heroImage, 'prime_pets/slides');
+    const { heroImage, mobileImage } = req.body;
 
     const slide = await prisma.slide.update({
       where: { id: Number(id) },
       data: {
-        gradient: gradient || '',
-        tag: tag || '',
-        badge: badge || '',
-        title: title || '',
-        subtitle: subtitle || '',
-        cta: cta || '',
-        dog: uploadedDog || '',
-        cat: uploadedCat || '',
-        heroImage: uploadedHeroImage || ''
+        heroImage: heroImage || '',
+        mobileImage: mobileImage !== undefined ? mobileImage : ''
       }
     });
-    
+
     res.json(slide);
   } catch (error) {
     console.error('Error updating slide:', error);

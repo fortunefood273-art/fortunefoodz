@@ -103,7 +103,7 @@ export default function CategoryPage() {
         <ScrollReveal>
           <div className="bg-gradient-to-r from-[#5c3110] via-[#d97706] to-[#b45309] text-amber-50 border-b border-amber-400/40 shadow-lg">
             <div className="max-w-7xl mx-auto px-4 md:px-6 py-8 md:py-12">
-              <h1 className="font-cinzel font-bold text-2xl md:text-4xl">Fortune Food Store Catalogue</h1>
+              <h1 className="font-cinzel font-bold text-2xl md:text-4xl">Fortune Foodz Store Catalogue</h1>
               <p className="text-amber-200 text-sm md:text-base mt-1">100% Pure Organic Saffron, Jumbo Dry Fruits & Exotic Spices</p>
               
               <div className="flex items-center gap-2 mt-4 max-w-xl">
@@ -231,7 +231,7 @@ export default function CategoryPage() {
                           </button>
                         </div>
                         <div className="p-3 flex flex-col flex-1">
-                          <p className="text-[10px] text-[#d97706] font-bold uppercase">{p.brand || 'Fortune Food'}</p>
+                          <p className="text-[10px] text-[#d97706] font-bold uppercase">{p.brand || 'Fortune Foodz'}</p>
                           <p className="text-stone-800 text-xs font-bold leading-tight mt-0.5 line-clamp-2">{p.name}</p>
                           <div className="flex items-center gap-1 mt-1">
                             <div className="flex items-center bg-emerald-600 rounded px-1.5 py-0.5 gap-0.5">

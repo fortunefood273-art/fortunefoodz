@@ -18,10 +18,10 @@ export function DataProvider({ children }) {
   const hasRequestedPermission = useRef(false);
 
   const [visitorId] = useState(() => {
-    let vid = localStorage.getItem('prime-pets-vid');
+    let vid = localStorage.getItem('fortune-foodz-vid');
     if (!vid) {
       vid = 'vid_' + Math.random().toString(36).substr(2, 9);
-      localStorage.setItem('prime-pets-vid', vid);
+      localStorage.setItem('fortune-foodz-vid', vid);
     }
     return vid;
   });
@@ -81,7 +81,10 @@ export function DataProvider({ children }) {
       setBanners(res.data.banners || []);
       setCategories(res.data.categories || []);
       setDeals(res.data.deals || []);
-      setProducts(res.data.products || []);
+      const prods = res.data.products || [];
+      setProducts(prods);
+      // Make products globally accessible so CartContext can resolve wishlist IDs on login
+      window.__fortuneProducts = prods;
       setFrontendSettings(res.data.frontendSettings || null);
     } catch (error) {
       console.error("Failed to fetch initial data:", error);

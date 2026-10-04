@@ -302,4 +302,76 @@ router.get('/retention', async (req, res) => {
   }
 });
 
+// Deep Web Traffic Analysis
+router.get('/traffic', async (req, res) => {
+  try {
+    // 1. Get recent visits for pageview counts
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    
+    const visits = await prisma.siteVisit.findMany({
+      where: { createdAt: { gte: thirtyDaysAgo } }
+    });
+
+    const pageViews = {};
+    visits.forEach(v => {
+      const p = v.page || '/';
+      pageViews[p] = (pageViews[p] || 0) + 1;
+    });
+
+    const topPages = Object.entries(pageViews)
+      .map(([page, views]) => ({ name: page, views }))
+      .sort((a, b) => b.views - a.views)
+      .slice(0, 10);
+
+    // 2. Get visitors for device/os/browser breakdown
+    const visitors = await prisma.visitor.findMany({
+      where: { createdAt: { gte: thirtyDaysAgo } }
+    });
+
+    const devices = { Desktop: 0, Mobile: 0, Tablet: 0, Other: 0 };
+    const browsers = { Chrome: 0, Safari: 0, Firefox: 0, Edge: 0, Other: 0 };
+    const osData = { Windows: 0, macOS: 0, iOS: 0, Android: 0, Other: 0 };
+
+    visitors.forEach(v => {
+      // Device
+      if (v.device?.toLowerCase().includes('mobile')) devices.Mobile++;
+      else if (v.device?.toLowerCase().includes('tablet')) devices.Tablet++;
+      else if (v.device?.toLowerCase().includes('desktop') || !v.device) devices.Desktop++;
+      else devices.Other++;
+
+      // Browser
+      if (v.browser?.includes('Chrome')) browsers.Chrome++;
+      else if (v.browser?.includes('Safari') && !v.browser?.includes('Chrome')) browsers.Safari++;
+      else if (v.browser?.includes('Firefox')) browsers.Firefox++;
+      else if (v.browser?.includes('Edge')) browsers.Edge++;
+      else browsers.Other++;
+
+      // OS
+      if (v.os?.includes('Windows')) osData.Windows++;
+      else if (v.os?.includes('Mac OS') || v.os?.includes('macOS')) osData.macOS++;
+      else if (v.os?.includes('iOS')) osData.iOS++;
+      else if (v.os?.includes('Android')) osData.Android++;
+      else osData.Other++;
+    });
+
+    // Formatting for charts
+    const deviceChart = Object.entries(devices).map(([name, value]) => ({ name, value })).filter(d => d.value > 0);
+    const browserChart = Object.entries(browsers).map(([name, value]) => ({ name, value })).filter(d => d.value > 0);
+    const osChart = Object.entries(osData).map(([name, value]) => ({ name, value })).filter(d => d.value > 0);
+
+    res.json({
+      totalPageViews: visits.length,
+      uniqueVisitors: visitors.length,
+      topPages,
+      devices: deviceChart,
+      browsers: browserChart,
+      os: osChart
+    });
+  } catch (error) {
+    console.error('Error fetching traffic analytics:', error);
+    res.status(500).json({ error: 'Failed to fetch traffic analytics' });
+  }
+});
+
 module.exports = router;

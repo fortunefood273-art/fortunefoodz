@@ -32,6 +32,7 @@ const AdminProducts = lazy(() => import('./pages/admin/AdminProducts'));
 const AdminCategories = lazy(() => import('./pages/admin/AdminCategories'));
 const AdminSlides = lazy(() => import('./pages/admin/AdminSlides'));
 const AdminDeals = lazy(() => import('./pages/admin/AdminDeals'));
+const AdminBanners = lazy(() => import('./pages/admin/AdminBanners'));
 const AdminSettings = lazy(() => import('./pages/admin/AdminSettings'));
 const AdminCustomers = lazy(() => import('./pages/admin/AdminCustomers'));
 const AdminOrders = lazy(() => import('./pages/admin/AdminOrders'));
@@ -39,6 +40,11 @@ const AdminPayment = lazy(() => import('./pages/admin/AdminPayment'));
 const AdminMusic = lazy(() => import('./pages/admin/AdminMusic'));
 const AdminLive = lazy(() => import('./pages/admin/AdminLive'));
 const AdminRetention = lazy(() => import('./pages/admin/AdminRetention'));
+const FeedsPage = lazy(() => import('./pages/FeedsPage'));
+const AdminInstagram = lazy(() => import('./pages/admin/AdminInstagram'));
+const AdminSiteEditor = lazy(() => import('./pages/admin/AdminSiteEditor'));
+const AdminNotifications = lazy(() => import('./pages/admin/AdminNotifications'));
+const AdminCampaigns = lazy(() => import('./pages/admin/AdminCampaigns'));
 
 // Protected Admin Route Component
 const ProtectedAdminRoute = ({ children }) => {
@@ -58,6 +64,24 @@ function AppInner() {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [location.pathname]);
+
+  // Handle first user interaction to start background music
+  useEffect(() => {
+    const handleFirstInteraction = () => {
+      const audio = audioRef.current;
+      if (audio && !isMuted && audio.paused) {
+        audio.play().catch(() => {});
+      }
+      window.removeEventListener('click', handleFirstInteraction);
+      window.removeEventListener('touchstart', handleFirstInteraction);
+    };
+    window.addEventListener('click', handleFirstInteraction);
+    window.addEventListener('touchstart', handleFirstInteraction);
+    return () => {
+      window.removeEventListener('click', handleFirstInteraction);
+      window.removeEventListener('touchstart', handleFirstInteraction);
+    };
+  }, [isMuted]);
 
   // Update audio source when settings change
   useEffect(() => {
@@ -85,7 +109,7 @@ function AppInner() {
   }, []);
 
   return (
-    <div className="min-h-screen mesh-bg text-gray-800 font-sans">
+    <div className="min-h-screen mesh-bg text-gray-800 font-sans relative">
       <PageLoader 
         skip={false}
         dataReady={!loading}
@@ -104,6 +128,7 @@ function AppInner() {
                 <Route path="/"         element={<PageTransition><HomePage /></PageTransition>} />
                 <Route path="/category" element={<PageTransition><CategoryPage /></PageTransition>} />
                 <Route path="/offers"   element={<PageTransition><OffersPage /></PageTransition>} />
+                <Route path="/feeds"    element={<PageTransition><FeedsPage /></PageTransition>} />
                 <Route path="/hub"      element={<PageTransition><HubPage /></PageTransition>} />
                 <Route path="/account"  element={<PageTransition><AccountPage /></PageTransition>} />
                 <Route path="/login"    element={<PageTransition><LoginPage /></PageTransition>} />
@@ -117,12 +142,17 @@ function AppInner() {
                   <Route path="categories" element={<AdminCategories />} />
                   <Route path="slides" element={<AdminSlides />} />
                   <Route path="deals" element={<AdminDeals />} />
+                  <Route path="banners" element={<AdminBanners />} />
                   <Route path="orders" element={<AdminOrders />} />
                   <Route path="customers" element={<AdminCustomers />} />
                   <Route path="payment" element={<AdminPayment />} />
                   <Route path="music" element={<AdminMusic />} />
                   <Route path="settings" element={<AdminSettings />} />
                   <Route path="retention" element={<AdminRetention />} />
+                  <Route path="instagram" element={<AdminInstagram />} />
+                  <Route path="site-editor" element={<AdminSiteEditor />} />
+                  <Route path="notifications" element={<AdminNotifications />} />
+                  <Route path="campaigns" element={<AdminCampaigns />} />
                 </Route>
               </Routes>
             </Suspense>
@@ -144,13 +174,23 @@ function AppInner() {
         id="site-bg-audio"
         src={frontendSettings?.siteAudioUrl || '/background.mp3'}
         loop
-        preload="none"
+        autoPlay
+        preload="auto"
         muted={isMuted}
       />
       
       <button
-        onClick={() => setIsMuted(!isMuted)}
-        title={isMuted ? 'Unmute Music' : 'Mute Music'}
+          onClick={() => {
+            const audio = audioRef.current;
+            if (audio) {
+              if (isMuted) {
+                // We are unmuting, make sure it plays
+                audio.play().catch(() => {});
+              }
+            }
+            setIsMuted(!isMuted);
+          }}
+          title={isMuted ? 'Unmute Music' : 'Mute Music'}
         className="md:bottom-6 fixed bottom-[100px] left-4 z-[75] group bg-[#5c3110]/90 hover:bg-[#d07e20] text-orange-100 p-2.5 rounded-full backdrop-blur shadow-lg transition-all duration-200 border border-[#d07e20]/30 hover:scale-110 hover:shadow-[0_0_20px_rgba(208,126,32,0.5)]"
         aria-label="Toggle Mute"
       >

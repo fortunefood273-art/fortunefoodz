@@ -32,7 +32,7 @@ describe('AdminDashboard', () => {
       </BrowserRouter>
     );
     
-    expect(screen.getByText(/Fortune Food Admin Hub/i)).toBeInTheDocument();
+    expect(screen.getByText(/Fortune Foodz Admin Hub/i)).toBeInTheDocument();
     expect(screen.getByText(/Premium Dry Fruit Harvests/i)).toBeInTheDocument();
     expect(screen.getByText(/Purity Club Customers/i)).toBeInTheDocument();
     expect(screen.getByText(/Active Festive Offers/i)).toBeInTheDocument();

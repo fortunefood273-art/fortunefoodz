@@ -87,10 +87,10 @@ export default function Header() {
           {/* Brand Logo */}
           <button onClick={() => navigate('/')} className="flex-shrink-0 flex items-center gap-3 group">
             <div className="w-14 h-14 md:w-16 md:h-16 flex items-center justify-center overflow-hidden rounded-full border-2 border-amber-400 shadow-md bg-amber-50 p-1 group-hover:scale-105 transition-transform duration-300">
-              <img src="/logo.png" alt="Fortune Food Logo" className="w-full h-full object-contain" />
+              <img src="/logo.png" alt="Fortune Foodz Logo" className="w-full h-full object-contain" />
             </div>
             <div className="flex flex-col leading-none text-left hidden sm:flex">
-              <span className="text-[#5c3110] font-cinzel font-bold text-lg md:text-xl tracking-tight group-hover:text-[#d97706] transition-colors">FORTUNE FOOD</span>
+              <span className="text-[#5c3110] font-cinzel font-bold text-lg md:text-xl tracking-tight group-hover:text-[#d97706] transition-colors">FORTUNE FOODZ</span>
               <span className="text-[9px] md:text-[10px] text-[#2563eb] font-bold tracking-wider uppercase mt-0.5">Promise of Purity</span>
             </div>
           </button>

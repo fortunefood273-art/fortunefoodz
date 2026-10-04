@@ -3,7 +3,8 @@ const path = require('path');
 require('dotenv').config({ path: path.resolve(__dirname, '.env') });
 process.env.DATABASE_URL = process.env.DATABASE_URL || "file:./dev.db";
 
-const prisma = new PrismaClient();
+process.env.USE_TURSO = 'true'; // Force Turso for seeding
+const prisma = require('./db.js');
 
 const INITIAL_SLIDES = [
   {
@@ -4181,7 +4182,7 @@ const INITIAL_PRODUCTS = [
   {
     "id": 247,
     "name": "Royal Shahi Kashmiri Saffron & Nuts Wooden Chest",
-    "brand": "Fortune Food",
+    "brand": "Fortune Foodz",
     "price": 2499,
     "mrp": 3199,
     "rating": 5.0,
@@ -4197,7 +4198,7 @@ const INITIAL_PRODUCTS = [
   {
     "id": 248,
     "name": "Grand Festive Harvest Dry Fruit Celebration Hamper",
-    "brand": "Fortune Food",
+    "brand": "Fortune Foodz",
     "price": 1899,
     "mrp": 2399,
     "rating": 4.9,
@@ -4213,7 +4214,7 @@ const INITIAL_PRODUCTS = [
   {
     "id": 249,
     "name": "Maharajah Velvet Dry Fruit & Spices Luxury Trunk",
-    "brand": "Fortune Food",
+    "brand": "Fortune Foodz",
     "price": 3499,
     "mrp": 4499,
     "rating": 5.0,
@@ -4229,7 +4230,7 @@ const INITIAL_PRODUCTS = [
   {
     "id": 250,
     "name": "Organic Wellness & Seeds Golden Gourmet Tray",
-    "brand": "Fortune Food",
+    "brand": "Fortune Foodz",
     "price": 1299,
     "mrp": 1699,
     "rating": 4.8,
@@ -4245,7 +4246,7 @@ const INITIAL_PRODUCTS = [
   {
     "id": 251,
     "name": "Corporate Platinum Gourmet Dry Fruit Gift Box",
-    "brand": "Fortune Food",
+    "brand": "Fortune Foodz",
     "price": 1499,
     "mrp": 1899,
     "rating": 4.9,
@@ -4261,7 +4262,7 @@ const INITIAL_PRODUCTS = [
   {
     "id": 252,
     "name": "Shahi Saffron & Wooden Spice Treasury Box",
-    "brand": "Fortune Food",
+    "brand": "Fortune Foodz",
     "price": 2999,
     "mrp": 3899,
     "rating": 5.0,
@@ -4422,10 +4423,10 @@ const INITIAL_PRODUCTS = [
 
 const INITIAL_SETTINGS = {
   "id": 1,
-  "storeName": "Fortune Food",
+  "storeName": "Fortune Foodz",
   "tagline": "Promise of Purity",
   "logoChar": "F",
-  "footerDescription": "Fortune Food brings you 100% pure organic dry fruits, Kashmiri saffron, jumbo gourmet nuts, and authentic spices harvested direct from certified organic farms.",
+  "footerDescription": "Fortune Foodz brings you 100% pure organic dry fruits, Kashmiri saffron, jumbo gourmet nuts, and authentic spices harvested direct from certified organic farms.",
   "facebookUrl": "https://facebook.com",
   "instagramUrl": "https://instagram.com",
   "youtubeUrl": "https://youtube.com",
@@ -4434,7 +4435,7 @@ const INITIAL_SETTINGS = {
 };
 
 async function main() {
-  console.log('Seeding Fortune Food database...');
+  console.log('Seeding Fortune Foodz database...');
   
   try { await prisma.slide.deleteMany(); } catch (e) {}
   try { await prisma.banner.deleteMany(); } catch (e) {}
@@ -4453,7 +4454,7 @@ async function main() {
     await prisma.frontendSetting.create({ data: INITIAL_SETTINGS });
   }
 
-  console.log('Fortune Food Database seeded successfully with 36 products (6 per category) and site hero banners!');
+  console.log('Fortune Foodz Database seeded successfully with 36 products (6 per category) and site hero banners!');
 }
 
 main()

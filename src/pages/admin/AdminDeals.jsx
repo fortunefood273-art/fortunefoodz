@@ -61,7 +61,7 @@ export default function AdminDeals() {
       <div className="p-6 border-b border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-gray-50/30">
         <div>
           <h2 className="text-xl font-bold text-gray-800">Deals & Offers</h2>
-          <p className="text-sm text-gray-500">Manage promotional banners</p>
+          <p className="text-sm text-gray-500">Manage scrolling flash deals</p>
         </div>
         <div className="flex items-center gap-3 w-full sm:w-auto">
           <div className="relative w-full sm:w-64">
@@ -167,7 +167,8 @@ export default function AdminDeals() {
                   </div>
                   <div className="flex-1 space-y-3">
                     <div>
-                      <label className="block text-sm font-bold text-gray-700 mb-1">Image <span className="text-red-500">*</span></label>
+                      <label className="block text-sm font-bold text-gray-700 mb-0">Image <span className="text-red-500">*</span></label>
+                      <p className="text-[10px] text-gray-500 mb-2">Recommended: 400×300px · Transparent PNG</p>
                       <div className="flex gap-2">
                         <input type="url" placeholder="Paste URL here..." value={editing.img || ''} onChange={e => setEditing({...editing, img: e.target.value})} className="flex-1 p-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all text-sm" />
                         <span className="text-sm text-gray-500 flex items-center">OR</span>
@@ -178,7 +179,7 @@ export default function AdminDeals() {
                                 setIsUploading(true);
                                 try {
                                   const base64 = await handleImageUpload(e.target.files[0]);
-                                  setEditing({...editing, img: base64});
+                                  setEditing(prev => ({...prev, img: base64}));
                                 } catch(err) {
                                   console.error("Upload failed", err);
                                   alert("Image upload failed");
@@ -189,7 +190,6 @@ export default function AdminDeals() {
                           }} />
                         </label>
                       </div>
-                      <p className="text-[10px] text-gray-500 mt-1">Recommended size: 400x300px (Transparent PNG)</p>
                     </div>
                   </div>
                 </div>
@@ -201,7 +201,7 @@ export default function AdminDeals() {
                   </div>
                   <div>
                     <label className="block text-sm font-bold text-gray-700 mb-1">Subtitle <span className="text-red-500">*</span></label>
-                    <input required type="text" placeholder="e.g. DOG FOOD" value={editing.sub || ''} onChange={e => setEditing({...editing, sub: e.target.value})} className="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all text-sm" />
+                    <input required type="text" placeholder="e.g. DRY FRUITS SALE" value={editing.sub || ''} onChange={e => setEditing({...editing, sub: e.target.value})} className="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all text-sm" />
                   </div>
                   <div>
                     <label className="block text-sm font-bold text-gray-700 mb-1">Badge</label>

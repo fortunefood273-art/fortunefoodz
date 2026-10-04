@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent, act } from '@testing-library/react';
+import { screen, fireEvent, act } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import { expect, test, vi } from 'vitest';
 import AdminSettings from './AdminSettings';
@@ -23,30 +23,27 @@ Object.defineProperty(window, 'matchMedia', {
 
 const mockSetFrontendSettings = vi.fn();
 
+import { renderWithProviders } from '../../test-utils';
+
 const renderAdminSettings = () => {
-  return render(
-    <BrowserRouter>
-      <DataContext.Provider value={{ frontendSettings: { storeName: 'Fortune Food', tagline: 'Promise of Purity', logoChar: 'F' }, setFrontendSettings: mockSetFrontendSettings }}>
-        <CartProvider>
-          <AdminSettings />
-        </CartProvider>
-      </DataContext.Provider>
-    </BrowserRouter>
-  );
+  return renderWithProviders(<AdminSettings />, {
+    dataValue: { frontendSettings: { storeName: 'Fortune Foodz', tagline: 'Promise of Purity', logoChar: 'F' }, setFrontendSettings: mockSetFrontendSettings },
+    authValue: { user: { email: 'admin@test.com' }, isAuthenticated: true, isAdmin: true }
+  });
 };
 
 test('renders settings form correctly', () => {
   renderAdminSettings();
   expect(screen.getByText('Frontend Settings')).toBeInTheDocument();
-  expect(screen.getByDisplayValue('Fortune Food')).toBeInTheDocument();
+  expect(screen.getByDisplayValue('Fortune Foodz')).toBeInTheDocument();
 });
 
 test('changes tabs and updates form data', async () => {
   renderAdminSettings();
   
   // Update general info
-  const storeNameInput = screen.getByDisplayValue('Fortune Food');
-  fireEvent.change(storeNameInput, { target: { value: 'Fortune Food Pure' } });
+  const storeNameInput = screen.getByDisplayValue('Fortune Foodz');
+  fireEvent.change(storeNameInput, { target: { value: 'Fortune Foodz Pure' } });
   
   // Switch tab
   const footerTab = screen.getByText('Footer & Text');
@@ -64,7 +61,9 @@ test('changes tabs and updates form data', async () => {
   });
   
   expect(mockSetFrontendSettings).toHaveBeenCalledWith(expect.objectContaining({
-    storeName: 'Fortune Food Pure',
+    storeName: 'Fortune Foodz Pure',
     tagline: 'Promise of Purity'
   }));
 });
+
+

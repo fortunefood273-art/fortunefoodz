@@ -1,0 +1,76 @@
+/* FORTUNE FOODZ — ANIMATED SECTION BACKGROUNDS */
+@keyframes ff-float { 0%,100%{transform:translateY(0) scale(1);opacity:.6}50%{transform:translateY(-28px) scale(1.08);opacity:.85} }
+@keyframes ff-float2 { 0%,100%{transform:translateY(0) translateX(0);opacity:.4}50%{transform:translateY(-20px) translateX(15px);opacity:.7} }
+@keyframes ff-pulse { 0%,100%{transform:scale(1);opacity:.4}50%{transform:scale(1.25);opacity:.75} }
+@keyframes ff-drift { 0%{transform:translate(0,0)}25%{transform:translate(15px,-12px)}50%{transform:translate(25px,5px)}75%{transform:translate(8px,18px)}100%{transform:translate(0,0)} }
+@keyframes ff-shimmer { 0%{background-position:-200% center}100%{background-position:200% center} }
+@keyframes ff-rotate-slow { from{transform:rotate(0deg)}to{transform:rotate(360deg)} }
+@keyframes ff-wave { 0%,100%{transform:scaleX(1) scaleY(1)}50%{transform:scaleX(1.04) scaleY(.97)} }
+@keyframes ff-particle-rise { 0%{transform:translateY(0) translateX(0) scale(1);opacity:.8}100%{transform:translateY(-110px) translateX(var(--drift,15px)) scale(0);opacity:0} }
+@keyframes ff-sparkle { 0%,100%{opacity:0;transform:scale(0) rotate(0deg)}50%{opacity:1;transform:scale(1) rotate(180deg)} }
+.ff-orb,.ff-particle,.ff-ring{position:absolute;border-radius:50%;pointer-events:none}
+.ff-shimmer-layer{position:absolute;inset:0;pointer-events:none;background-size:200% 100%;animation:ff-shimmer 6s linear infinite}
+
+/* 1. EXOTIC SPICES — volcanic ember */
+.bg-spices>.ff-orb-1{width:340px;height:340px;top:-90px;left:-70px;background:radial-gradient(circle,rgba(239,68,68,.22) 0%,transparent 70%);animation:ff-float 9s ease-in-out infinite}
+.bg-spices>.ff-orb-2{width:240px;height:240px;bottom:-60px;right:8%;background:radial-gradient(circle,rgba(251,146,60,.28) 0%,transparent 70%);animation:ff-float2 12s ease-in-out infinite 2s}
+.bg-spices>.ff-orb-3{width:160px;height:160px;top:35%;right:22%;background:radial-gradient(circle,rgba(253,186,116,.18) 0%,transparent 70%);animation:ff-pulse 7s ease-in-out infinite 1s}
+.bg-spices>.ff-shimmer-layer{background-image:linear-gradient(105deg,transparent 40%,rgba(251,146,60,.06) 50%,transparent 60%)}
+.bg-spices>.ff-p1{width:4px;height:4px;left:15%;top:72%;background:rgba(251,146,60,.8);animation:ff-particle-rise 4s ease-in infinite;--drift:12px}
+.bg-spices>.ff-p2{width:3px;height:3px;left:38%;top:82%;background:rgba(239,68,68,.7);animation:ff-particle-rise 5.5s ease-in infinite 1.5s;--drift:-8px}
+.bg-spices>.ff-p3{width:5px;height:5px;left:65%;top:76%;background:rgba(253,186,116,.6);animation:ff-particle-rise 6s ease-in infinite .8s;--drift:20px}
+.bg-spices>.ff-p4{width:3px;height:3px;left:82%;top:88%;background:rgba(251,146,60,.8);animation:ff-particle-rise 4.5s ease-in infinite 2s;--drift:-15px}
+.bg-spices>.ff-grid{position:absolute;inset:0;pointer-events:none;opacity:.04;background-image:linear-gradient(rgba(251,146,60,.5) 1px,transparent 1px),linear-gradient(90deg,rgba(251,146,60,.5) 1px,transparent 1px);background-size:40px 40px}
+
+/* 2. DRY FRUITS — warm golden bokeh */
+.bg-dryfruits>.ff-orb-1{width:420px;height:420px;top:-110px;right:-90px;background:radial-gradient(circle,rgba(217,119,6,.18) 0%,transparent 70%);animation:ff-float 13s ease-in-out infinite}
+.bg-dryfruits>.ff-orb-2{width:260px;height:260px;bottom:-70px;left:4%;background:radial-gradient(circle,rgba(180,83,9,.22) 0%,transparent 70%);animation:ff-float2 10s ease-in-out infinite 3s}
+.bg-dryfruits>.ff-orb-3{width:190px;height:190px;top:40%;left:42%;background:radial-gradient(circle,rgba(251,191,36,.14) 0%,transparent 70%);animation:ff-drift 16s ease-in-out infinite}
+.bg-dryfruits>.ff-shimmer-layer{background-image:linear-gradient(115deg,transparent 35%,rgba(217,119,6,.07) 50%,transparent 65%);animation-duration:8s}
+.bg-dryfruits>.ff-ring1{width:520px;height:520px;top:-210px;right:-160px;border:1px solid rgba(217,119,6,.09);animation:ff-rotate-slow 32s linear infinite}
+.bg-dryfruits>.ff-ring2{width:300px;height:300px;bottom:-130px;left:-80px;border:1px solid rgba(180,83,9,.08);animation:ff-rotate-slow 22s linear infinite reverse}
+.bg-dryfruits>.ff-sp1{position:absolute;pointer-events:none;top:18%;left:8%;font-size:14px;color:rgba(251,191,36,.3);animation:ff-sparkle 3.5s ease-in-out infinite}
+.bg-dryfruits>.ff-sp2{position:absolute;pointer-events:none;top:65%;right:12%;font-size:14px;color:rgba(251,191,36,.3);animation:ff-sparkle 3.5s ease-in-out infinite 1.2s}
+.bg-dryfruits>.ff-sp3{position:absolute;pointer-events:none;top:82%;left:52%;font-size:14px;color:rgba(251,191,36,.3);animation:ff-sparkle 3.5s ease-in-out infinite 2.4s}
+
+/* 3. HEALTHY SEEDS — botanical green */
+.bg-seeds>.ff-orb-1{width:360px;height:360px;top:-100px;right:-65px;background:radial-gradient(circle,rgba(16,185,129,.18) 0%,transparent 70%);animation:ff-float 11s ease-in-out infinite}
+.bg-seeds>.ff-orb-2{width:210px;height:210px;bottom:-55px;left:8%;background:radial-gradient(circle,rgba(5,150,105,.22) 0%,transparent 70%);animation:ff-float2 9s ease-in-out infinite 1s}
+.bg-seeds>.ff-orb-3{width:145px;height:145px;top:50%;left:55%;background:radial-gradient(circle,rgba(52,211,153,.18) 0%,transparent 70%);animation:ff-pulse 6s ease-in-out infinite .5s}
+.bg-seeds>.ff-wave{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 70% 120%,rgba(16,185,129,.1) 0%,transparent 60%);animation:ff-wave 8s ease-in-out infinite}
+.bg-seeds>.ff-p1{width:6px;height:6px;left:18%;top:62%;background:rgba(16,185,129,.55);animation:ff-particle-rise 5s ease-in infinite;--drift:10px}
+.bg-seeds>.ff-p2{width:4px;height:4px;left:48%;top:78%;background:rgba(52,211,153,.65);animation:ff-particle-rise 6.5s ease-in infinite 2s;--drift:-12px}
+.bg-seeds>.ff-p3{width:5px;height:5px;left:72%;top:68%;background:rgba(5,150,105,.55);animation:ff-particle-rise 4.5s ease-in infinite 1s;--drift:18px}
+.bg-seeds>.ff-grid{position:absolute;inset:0;pointer-events:none;opacity:.035;background-image:repeating-linear-gradient(45deg,rgba(16,185,129,.5) 0,rgba(16,185,129,.5) 1px,transparent 0,transparent 50%);background-size:22px 22px}
+
+/* 4. DRIED FRUITS & BERRIES — berry aurora */
+.bg-driedberries>.ff-orb-1{width:390px;height:390px;top:-105px;left:-85px;background:radial-gradient(circle,rgba(167,139,250,.22) 0%,transparent 70%);animation:ff-float 14s ease-in-out infinite}
+.bg-driedberries>.ff-orb-2{width:270px;height:270px;bottom:-80px;right:4%;background:radial-gradient(circle,rgba(236,72,153,.18) 0%,transparent 70%);animation:ff-float2 11s ease-in-out infinite 2s}
+.bg-driedberries>.ff-orb-3{width:185px;height:185px;top:38%;right:32%;background:radial-gradient(circle,rgba(192,132,252,.18) 0%,transparent 70%);animation:ff-drift 18s ease-in-out infinite}
+.bg-driedberries>.ff-shimmer-layer{background-image:linear-gradient(120deg,transparent 35%,rgba(167,139,250,.07) 50%,transparent 65%);animation-duration:7s}
+.bg-driedberries>.ff-ring1{width:620px;height:620px;top:-260px;right:-210px;border:1px solid rgba(167,139,250,.09);animation:ff-rotate-slow 42s linear infinite reverse}
+.bg-driedberries>.ff-ring2{width:410px;height:410px;bottom:-190px;left:-110px;border:1px solid rgba(236,72,153,.07);animation:ff-rotate-slow 27s linear infinite}
+.bg-driedberries>.ff-sp1,.bg-driedberries>.ff-sp2,.bg-driedberries>.ff-sp3{position:absolute;pointer-events:none;width:7px;height:7px;border-radius:50%;background:rgba(236,72,153,.3);animation:ff-sparkle 4s ease-in-out infinite}
+.bg-driedberries>.ff-sp1{top:22%;right:18%}
+.bg-driedberries>.ff-sp2{top:68%;left:22%;animation-delay:1.5s}
+.bg-driedberries>.ff-sp3{top:48%;right:4%;animation-delay:3s}
+
+/* 5. HEALTHY SNACKS & MAKHANA — lime energy */
+.bg-snacks>.ff-orb-1{width:310px;height:310px;top:-75px;right:-55px;background:radial-gradient(circle,rgba(132,204,22,.22) 0%,transparent 70%);animation:ff-float 8s ease-in-out infinite}
+.bg-snacks>.ff-orb-2{width:205px;height:205px;bottom:-55px;left:12%;background:radial-gradient(circle,rgba(163,230,53,.18) 0%,transparent 70%);animation:ff-float2 13s ease-in-out infinite 1.5s}
+.bg-snacks>.ff-orb-3{width:130px;height:130px;top:45%;left:38%;background:radial-gradient(circle,rgba(101,163,13,.15) 0%,transparent 70%);animation:ff-pulse 5s ease-in-out infinite}
+.bg-snacks>.ff-shimmer-layer{background-image:linear-gradient(100deg,transparent 40%,rgba(132,204,22,.06) 50%,transparent 60%);animation-duration:5s}
+.bg-snacks>.ff-p1{width:5px;height:5px;left:8%;top:68%;background:rgba(132,204,22,.75);animation:ff-particle-rise 3.5s ease-in infinite;--drift:8px}
+.bg-snacks>.ff-p2{width:4px;height:4px;left:32%;top:76%;background:rgba(163,230,53,.7);animation:ff-particle-rise 5s ease-in infinite 1s;--drift:-10px}
+.bg-snacks>.ff-p3{width:6px;height:6px;left:62%;top:72%;background:rgba(101,163,13,.6);animation:ff-particle-rise 4s ease-in infinite .5s;--drift:15px}
+.bg-snacks>.ff-p4{width:3px;height:3px;left:88%;top:82%;background:rgba(132,204,22,.75);animation:ff-particle-rise 6s ease-in infinite 2.5s;--drift:-8px}
+
+/* 6. SHARBAT & BEVERAGES — aqua ripples */
+.bg-sharbat>.ff-orb-1{width:360px;height:360px;top:-85px;left:-65px;background:radial-gradient(circle,rgba(56,189,248,.18) 0%,transparent 70%);animation:ff-float 10s ease-in-out infinite}
+.bg-sharbat>.ff-orb-2{width:255px;height:255px;bottom:-72px;right:6%;background:radial-gradient(circle,rgba(99,102,241,.18) 0%,transparent 70%);animation:ff-float2 15s ease-in-out infinite 3s}
+.bg-sharbat>.ff-orb-3{width:165px;height:165px;top:42%;right:26%;background:radial-gradient(circle,rgba(14,165,233,.16) 0%,transparent 70%);animation:ff-pulse 8s ease-in-out infinite 1s}
+.bg-sharbat>.ff-shimmer-layer{background-image:linear-gradient(110deg,transparent 38%,rgba(56,189,248,.08) 50%,transparent 62%);animation-duration:6s}
+.bg-sharbat>.ff-wave{position:absolute;bottom:0;left:0;right:0;height:70px;pointer-events:none;background:radial-gradient(ellipse at 50% 150%,rgba(56,189,248,.14) 0%,transparent 70%);animation:ff-wave 5s ease-in-out infinite}
+.bg-sharbat>.ff-b1{width:10px;height:10px;left:18%;bottom:22%;border:1.5px solid rgba(56,189,248,.4);animation:ff-particle-rise 4s ease-in infinite;--drift:5px}
+.bg-sharbat>.ff-b2{width:7px;height:7px;left:52%;bottom:28%;border:1.5px solid rgba(99,102,241,.35);animation:ff-particle-rise 5.5s ease-in infinite 1.5s;--drift:-8px}
+.bg-sharbat>.ff-b3{width:12px;height:12px;left:78%;bottom:18%;border:1.5px solid rgba(14,165,233,.3);animation:ff-particle-rise 3.5s ease-in infinite .8s;--drift:12px}

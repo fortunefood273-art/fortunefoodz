@@ -20,16 +20,26 @@ export default function AdminProducts() {
   const [isUploadingGallery, setIsUploadingGallery] = useState(false);
 
   const defaultProduct = {
-    name: '', brand: '', petType: 'Dogs', category: '', price: '', mrp: '', rating: 4.5, reviews: 0, img: '', images: [], tag: '', badge: ''
+    name: '', brand: 'Fortune Foodz', petType: 'General', category: '', price: '', mrp: '', rating: 4.5, reviews: 0, img: '', images: [], tag: '', badge: '', variants: []
   };
 
   const uniqueBrands = [...new Set((products || []).map(p => p.brand).filter(Boolean))];
+
+  const handleEditClick = (p) => {
+    let images = [];
+    try { if (p.images) images = typeof p.images === 'string' ? JSON.parse(p.images) : p.images; } catch(e) {}
+    let variants = [];
+    try { if (p.variants) variants = typeof p.variants === 'string' ? JSON.parse(p.variants) : p.variants; } catch(e) {}
+    setEditing({ ...p, images: Array.isArray(images) ? images : [], variants: Array.isArray(variants) ? variants : [] });
+    setIsModalOpen(true);
+  };
+
 
   const handleSave = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      const payload = { ...editing, price: Number(editing.price), mrp: Number(editing.mrp) };
+      const payload = { ...editing, price: Number(editing.price), mrp: Number(editing.mrp), variants: JSON.stringify(editing.variants || []) };
       if (editing.id) {
         await axios.put(`/api/products/${editing.id}`, payload).catch(err => console.warn('API error:', err));
         if (typeof setProducts === 'function') {
@@ -165,7 +175,7 @@ export default function AdminProducts() {
                     </td>
                     <td className="p-4 pr-6">
                       <div className="flex items-center justify-end gap-2 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button title="Edit Product" data-testid={`edit-btn-${p.id}`} onClick={() => { setEditing(p); setIsModalOpen(true); }} className="p-2 text-blue-500 hover:bg-blue-100 rounded-xl transition-colors">
+                        <button title="Edit Product" data-testid={`edit-btn-${p.id}`} onClick={() => handleEditClick(p)} className="p-2 text-blue-500 hover:bg-blue-100 rounded-xl transition-colors">
                           <Edit2 size={18} />
                         </button>
                         <button title="Delete Product" data-testid={`del-btn-${p.id}`} onClick={() => handleDelete(p.id)} className="p-2 text-red-500 hover:bg-red-100 rounded-xl transition-colors">
@@ -216,7 +226,8 @@ export default function AdminProducts() {
                     )}
                   </div>
                   <div className="flex-1">
-                    <label htmlFor="img" className="block text-sm font-bold text-gray-700 mb-1">Primary Image <span className="text-red-500">*</span></label>
+                    <label htmlFor="img" className="block text-sm font-bold text-gray-700 mb-0">Primary Image <span className="text-red-500">*</span></label>
+                    <p className="text-[10px] text-gray-500 mb-2">Recommended: 400×400px · Square · JPG/PNG/WebP</p>
                     <div className="flex gap-2">
                       <input id="img" type="url" placeholder="Paste URL here..." value={editing.img || ''} onChange={e => setEditing({...editing, img: e.target.value})} className="flex-1 p-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all text-sm" />
                       <span className="text-sm text-gray-500 flex items-center">OR</span>
@@ -227,7 +238,7 @@ export default function AdminProducts() {
                               setIsUploadingPrimary(true);
                               try {
                                 const base64 = await handleImageUpload(e.target.files[0]);
-                                setEditing({...editing, img: base64});
+                                setEditing(prev => ({...prev, img: base64}));
                               } catch(err) {
                                 console.error("Upload failed", err);
                                 alert("Image upload failed");
@@ -238,13 +249,13 @@ export default function AdminProducts() {
                         }} />
                       </label>
                     </div>
-                    <p className="text-xs text-gray-500 mt-1">Recommended size: 400x400px (1:1 Square)</p>
                   </div>
                 </div>
 
                 {/* Additional Images */}
                 <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100 space-y-3">
-                  <label className="block text-sm font-bold text-gray-700">Additional Images (Gallery)</label>
+                  <label className="block text-sm font-bold text-gray-700 mb-0">Additional Images (Gallery)</label>
+                  <p className="text-[10px] text-gray-500 mb-2">Recommended: 400×400px · Square · JPG/PNG</p>
                   <div className="flex gap-2">
                     <input 
                       type="url" 
@@ -272,7 +283,7 @@ export default function AdminProducts() {
                             setIsUploadingGallery(true);
                             try {
                               const base64 = await handleImageUpload(e.target.files[0]);
-                              setEditing({ ...editing, images: [...(editing.images || []), base64] });
+                              setEditing(prev => ({ ...prev, images: [...(prev.images || []), base64] }));
                             } catch(err) {
                               console.error("Upload failed", err);
                               alert("Image upload failed");
@@ -304,30 +315,34 @@ export default function AdminProducts() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div className="md:col-span-2">
                     <label htmlFor="name" className="block text-sm font-bold text-gray-700 mb-1">Product Name <span className="text-red-500">*</span></label>
-                    <input id="name" required type="text" placeholder="e.g. Pedigree Adult Dog Food" value={editing.name || ''} onChange={e => setEditing({...editing, name: e.target.value})} className="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all text-sm" />
+                    <input id="name" required type="text" placeholder="e.g. Kashmiri Mongra Saffron 5g" value={editing.name || ''} onChange={e => setEditing({...editing, name: e.target.value})} className="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all text-sm" />
                   </div>
                   
                   <div>
                     <label htmlFor="brand" className="block text-sm font-bold text-gray-700 mb-1">Brand <span className="text-red-500">*</span></label>
-                    <input id="brand" list="brand-list" required type="text" placeholder="Select or type brand" value={editing.brand || ''} onChange={e => setEditing({...editing, brand: e.target.value})} className="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all text-sm" />
+                    <input id="brand" list="brand-list" required type="text" placeholder="e.g. Fortune Foodz" value={editing.brand || ''} onChange={e => setEditing({...editing, brand: e.target.value})} className="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all text-sm" />
                     <datalist id="brand-list">
                       {uniqueBrands.map(b => <option key={b} value={b} />)}
                     </datalist>
                   </div>
 
                   <div>
-                    <label htmlFor="petType" className="block text-sm font-bold text-gray-700 mb-1">Pet Type <span className="text-red-500">*</span></label>
-                    <select id="petType" required value={editing.petType || 'Dogs'} onChange={e => setEditing({...editing, petType: e.target.value})} className="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all text-sm">
-                      <option value="Dogs">Dogs</option>
-                      <option value="Cats">Cats</option>
-                      <option value="Small Pets">Small Pets</option>
-                      <option value="Birds">Birds</option>
+                    <label htmlFor="petType" className="block text-sm font-bold text-gray-700 mb-1">Food Type <span className="text-red-500">*</span></label>
+                    <select id="petType" required value={editing.petType || 'General'} onChange={e => setEditing({...editing, petType: e.target.value})} className="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all text-sm">
+                      <option value="General">General</option>
+                      <option value="Organic">Organic</option>
+                      <option value="Premium">Premium</option>
+                      <option value="Ayurvedic">Ayurvedic</option>
+                      <option value="Imported">Imported</option>
+                      <option value="Farm Fresh">Farm Fresh</option>
+                      <option value="Roasted">Roasted</option>
+                      <option value="Raw">Raw</option>
                     </select>
                   </div>
 
                   <div className="md:col-span-2">
-                    <label htmlFor="category" className="block text-sm font-bold text-gray-700 mb-1">Sub Category</label>
-                    <input id="category" list="category-list" type="text" placeholder="Select or type sub category (e.g. Dog Bowls)" value={editing.category || ''} onChange={e => setEditing({...editing, category: e.target.value})} className="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all text-sm" />
+                    <label htmlFor="category" className="block text-sm font-bold text-gray-700 mb-1">Category <span className="text-red-500">*</span></label>
+                    <input id="category" list="category-list" required type="text" placeholder="e.g. Spices, Dry Fruit, Seeds" value={editing.category || ''} onChange={e => setEditing({...editing, category: e.target.value})} className="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all text-sm" />
                     <datalist id="category-list">
                       {categories.map(c => <option key={c.label} value={c.label} />)}
                     </datalist>
@@ -347,6 +362,82 @@ export default function AdminProducts() {
                         <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-medium">₹</span>
                         <input id="mrp" required min="0" type="number" step="any" value={editing.mrp === 0 ? 0 : (editing.mrp || '')} onChange={e => setEditing({...editing, mrp: e.target.value})} className="w-full pl-7 p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all text-sm" />
                       </div>
+                    </div>
+                  </div>
+                  
+                  {/* Variants UI */}
+                  <div className="md:col-span-2 mt-4 p-4 border border-amber-200 rounded-xl bg-amber-50/30">
+                    <div className="flex justify-between items-center mb-2">
+                      <div>
+                        <label className="block text-sm font-bold text-gray-800">Pack Sizes &amp; Rates</label>
+                        <p className="text-[10px] text-gray-500 mt-0.5">These appear as selectable buttons on the product page</p>
+                      </div>
+                      <div className="flex gap-2">
+                        {editing.variants && editing.variants.length > 0 && (
+                          <button type="button" onClick={() => setEditing({...editing, variants: []})} className="text-xs text-red-500 hover:text-red-700 px-2 py-1 rounded border border-red-200 hover:bg-red-50 transition-colors">Clear All</button>
+                        )}
+                        <button type="button" onClick={() => setEditing({...editing, variants: [...(editing.variants || []), {label: '', price: '', mrp: ''}]})} className="text-xs bg-orange-500 text-white px-3 py-1 rounded-lg font-bold hover:bg-orange-600 transition-colors">+ Add Size</button>
+                      </div>
+                    </div>
+
+                    {/* Quick Preset Buttons */}
+                    <div className="mb-3">
+                      <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wide mb-1.5">Quick Presets — click to apply standard sizes (uses base price as 250g):</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {[
+                          { name: 'Dry Fruits', sizes: ['100g','250g','500g','1kg'], mults: [0.45,1,1.75,3.0] },
+                          { name: 'Seeds', sizes: ['100g','250g','500g'], mults: [0.45,1,1.75] },
+                          { name: 'Spices', sizes: ['50g','100g','250g','500g'], mults: [0.35,0.65,1,1.7] },
+                          { name: 'Makhana', sizes: ['100g','200g','500g'], mults: [0.55,1,2.2] },
+                          { name: 'Beverages', sizes: ['500ml','750ml','1L'], mults: [1,1.4,1.75] },
+                          { name: 'Ghee/Oil', sizes: ['200ml','500ml','1L'], mults: [0.45,1,1.75] },
+                          { name: 'Saffron', sizes: ['1g','2g','5g','10g'], mults: [0.25,0.45,1,1.8] },
+                        ].map(preset => (
+                          <button
+                            key={preset.name}
+                            type="button"
+                            onClick={() => {
+                              const base = Number(editing.price) || 199;
+                              const mrpBase = Number(editing.mrp) || Math.round(base * 1.22);
+                              const ratio = mrpBase / base;
+                              const newVariants = preset.sizes.map((label, idx) => ({
+                                label,
+                                price: Math.round(base * preset.mults[idx]),
+                                mrp: Math.round(base * preset.mults[idx] * ratio),
+                              }));
+                              setEditing({...editing, variants: newVariants});
+                            }}
+                            className="text-[10px] bg-white border border-amber-300 text-amber-800 px-2.5 py-1 rounded-full font-bold hover:bg-amber-100 hover:border-amber-500 transition-colors"
+                          >
+                            {preset.name} ({preset.sizes.join(' · ')})
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {(!editing.variants || editing.variants.length === 0) && (
+                      <p className="text-xs text-gray-400 italic text-center py-2">No pack sizes defined — product sold at Base Price only.</p>
+                    )}
+                    <div className="space-y-2">
+                      {(editing.variants || []).map((v, i) => (
+                        <div key={i} className="flex gap-2 items-center bg-white p-2.5 border border-gray-200 rounded-xl shadow-sm">
+                          <div className="flex-1">
+                            <p className="text-[9px] text-gray-400 font-bold uppercase mb-0.5">Label</p>
+                            <input type="text" placeholder="e.g. 250g, 500ml, 1kg" value={v.label} onChange={e => { const newV = [...editing.variants]; newV[i] = {...newV[i], label: e.target.value}; setEditing({...editing, variants: newV}); }} className="w-full p-1.5 border border-gray-200 rounded-lg text-sm focus:ring-1 focus:ring-orange-400 outline-none" />
+                          </div>
+                          <div className="w-24">
+                            <p className="text-[9px] text-gray-400 font-bold uppercase mb-0.5">Price (₹)</p>
+                            <input type="number" placeholder="199" value={v.price === 0 ? '' : v.price} onChange={e => { const newV = [...editing.variants]; newV[i] = {...newV[i], price: Number(e.target.value)}; setEditing({...editing, variants: newV}); }} className="w-full p-1.5 border border-gray-200 rounded-lg text-sm focus:ring-1 focus:ring-orange-400 outline-none" />
+                          </div>
+                          <div className="w-24">
+                            <p className="text-[9px] text-gray-400 font-bold uppercase mb-0.5">MRP (₹)</p>
+                            <input type="number" placeholder="243" value={v.mrp === 0 ? '' : v.mrp} onChange={e => { const newV = [...editing.variants]; newV[i] = {...newV[i], mrp: Number(e.target.value)}; setEditing({...editing, variants: newV}); }} className="w-full p-1.5 border border-gray-200 rounded-lg text-sm focus:ring-1 focus:ring-orange-400 outline-none" />
+                          </div>
+                          <div className="pt-4">
+                            <button type="button" onClick={() => setEditing({...editing, variants: editing.variants.filter((_, idx) => idx !== i)})} className="text-red-400 hover:text-red-600 p-1.5 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"><X size={15}/></button>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
 

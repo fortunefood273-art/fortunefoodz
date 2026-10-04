@@ -51,7 +51,7 @@ const renderWithContext = (ui) => {
 describe('CategoryPage', () => {
   it('renders store catalogue header', () => {
     renderWithContext(<CategoryPage />);
-    expect(screen.getByText('Fortune Food Store Catalogue')).toBeInTheDocument();
+    expect(screen.getByText('Fortune Foodz Store Catalogue')).toBeInTheDocument();
   });
 
   it('renders products', () => {

@@ -76,7 +76,7 @@ export default function AdminDashboard() {
             <div className="flex items-center gap-2 text-amber-200 text-xs font-bold uppercase tracking-wider mb-2">
               <Sparkles size={16} /> Premium Organic Dry Fruits HQ
             </div>
-            <h2 className="font-cinzel font-bold text-3xl mb-1">Fortune Food Admin Hub ✨</h2>
+            <h2 className="font-cinzel font-bold text-3xl mb-1">Fortune Foodz Admin Hub ✨</h2>
             <p className="text-amber-100/90 text-sm max-w-lg">
               Manage Kashmiri Saffron stock, organic dry fruit inventory, harvest deals, and lab purity certifications.
             </p>

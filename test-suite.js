@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 
 async function runTestSuite() {
   console.log('\n==================================================');
-  console.log('  FORTUNE FOOD - UNIT & INTEGRATION TEST SUITE   ');
+  console.log('  FORTUNE FOODZ - UNIT & INTEGRATION TEST SUITE   ');
   console.log('==================================================\n');
 
   let passed = 0;

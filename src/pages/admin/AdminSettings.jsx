@@ -55,7 +55,7 @@ export default function AdminSettings() {
       const keysToRemove = [];
       for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
-        if (key && key.startsWith('prime-pets-')) {
+        if (key && key.startsWith('fortune-foodz-')) {
           keysToRemove.push(key);
         }
       }

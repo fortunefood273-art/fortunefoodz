@@ -1,6 +1,7 @@
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["driverAdapters"]
+  binaryTargets   = ["native", "rhel-openssl-3.0.x", "rhel-openssl-1.0.x"]
 }
 
 datasource db {
@@ -15,6 +16,7 @@ model User {
   phone     String?  @unique
   name      String
   role      String   @default("user")
+  wishlist  String?  // JSON array of product IDs
   createdAt DateTime @default(now())
 }
 
@@ -33,6 +35,8 @@ model Product {
   category    String
   petType     String
   description String?
+  variants    String?
+  details     String?
 }
 
 model Category {
@@ -57,16 +61,17 @@ model Deal {
 }
 
 model Slide {
-  id       Int     @id @default(autoincrement())
-  gradient String
-  tag      String
-  badge    String
-  title    String
-  subtitle String
-  cta      String
-  dog      String?
-  cat      String?
-  heroImage String?
+  id          Int     @id @default(autoincrement())
+  gradient    String
+  tag         String
+  badge       String
+  title       String
+  subtitle    String
+  cta         String
+  dog         String?
+  cat         String?
+  heroImage   String?
+  mobileImage String?
 }
 
 model FrontendSetting {
@@ -100,6 +105,7 @@ model Order {
   id            Int      @id @default(autoincrement())
   visitorId     String?
   customerName  String
+  customerEmail String?
   customerPhone String
   customerAddress String
   items         String   // JSON string of cart items

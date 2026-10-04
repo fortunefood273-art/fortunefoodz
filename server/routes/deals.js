@@ -19,7 +19,7 @@ router.post('/', async (req, res) => {
   try {
     const { title, sub, badge, tag, img, grad, bg, border, save } = req.body;
     
-    const uploadedImg = await uploadToCloudinary(img, 'prime_pets/deals');
+    const uploadedImg = await uploadToCloudinary(img, 'fortune_foodz/deals');
 
     const deal = await prisma.deal.create({
       data: {
@@ -48,7 +48,7 @@ router.put('/:id', async (req, res) => {
     const { id } = req.params;
     const { title, sub, badge, tag, img, grad, bg, border, save } = req.body;
     
-    const uploadedImg = await uploadToCloudinary(img, 'prime_pets/deals');
+    const uploadedImg = await uploadToCloudinary(img, 'fortune_foodz/deals');
 
     const deal = await prisma.deal.update({
       where: { id: Number(id) },

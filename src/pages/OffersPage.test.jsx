@@ -33,7 +33,7 @@ const renderWithContext = (ui) => {
   return render(
     <BrowserRouter>
       <AuthProvider>
-        <DataContext.Provider value={{ products: [], categories: [], deals: [], banners: [], frontendSettings: { storeName: 'Fortune Food' } }}>
+        <DataContext.Provider value={{ products: [], categories: [], deals: [], banners: [], frontendSettings: { storeName: 'Fortune Foodz' } }}>
           <CartProvider>
             {ui}
           </CartProvider>

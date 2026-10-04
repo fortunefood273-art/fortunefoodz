@@ -6,7 +6,7 @@ import { MessageSquare, X, Send, Sparkles, ShieldCheck } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 
 export default function ChatBot() {
-  const { user, login, register, checkUserExists, isAuthenticated } = useAuth();
+  const { user, loginWithGoogle, isAuthenticated } = useAuth();
   const { frontendSettings } = useData();
   const settings = frontendSettings || {};
   const navigate = useNavigate();
@@ -45,12 +45,12 @@ export default function ChatBot() {
       if (isAuthenticated) {
         setStep('MAIN_MENU');
         setMessages([
-          { sender: 'bot', text: `Welcome back to Fortune Food, ${user?.name?.split(' ')[0]}! ✨ How can I assist you with your organic dry fruits or spices today?`, isMenu: true }
+          { sender: 'bot', text: `Welcome back to Fortune Foodz, ${user?.name?.split(' ')[0]}! ✨ How can I assist you with your organic dry fruits or spices today?`, isMenu: true }
         ]);
       } else {
         setStep('ASK_NAME');
         setMessages([
-          { sender: 'bot', text: `Greetings! I am your Fortune Food Purity Assistant. May I know your name to recommend our fresh organic harvest?` }
+          { sender: 'bot', text: `Greetings! I am your Fortune Foodz Purity Assistant. May I know your name to recommend our fresh organic harvest?` }
         ]);
       }
     }
@@ -73,52 +73,8 @@ export default function ChatBot() {
 
     if (step === 'ASK_NAME') {
       setCapturedName(input);
-      setStep('ASK_CONTACT');
-      setTimeout(() => {
-        addMessage(`Pleasure to meet you, ${input}! Please share your phone or email so we can save your purity preferences.`, 'bot');
-      }, 500);
-      return;
-    }
-
-    if (step === 'ASK_CONTACT') {
-      setCapturedContact(input);
-      setLoading(true);
-      
-      try {
-        const exists = await checkUserExists(input);
-        if (exists) {
-          setAuthMode('login');
-          setStep('VERIFY_AUTH');
-          addMessage('Welcome back! Please enter your password to access your Fortune Rewards account.', 'bot');
-        } else {
-          setAuthMode('register');
-          setStep('VERIFY_AUTH');
-          addMessage("Welcome to the Fortune Food family! Create a password to claim your welcome purity discount.", 'bot');
-        }
-      } catch (err) {
-        console.error(err);
-        addMessage("Something went wrong. Please try again.", 'bot');
-      } finally {
-        setLoading(false);
-      }
-      return;
-    }
-
-    if (step === 'VERIFY_AUTH') {
-      setLoading(true);
-      try {
-        if (authMode === 'login') {
-          await login(capturedContact, input);
-        } else {
-          await register(capturedName, capturedContact, input);
-        }
-        setStep('MAIN_MENU');
-        addMessage("You are successfully logged in! How can I serve you today?", 'bot', true);
-      } catch (err) {
-        addMessage(err.message + ". Please try again.", 'bot');
-      } finally {
-        setLoading(false);
-      }
+      setStep('MAIN_MENU');
+      addMessage(`Pleasure to meet you, ${input}! How can I serve you today?`, 'bot', true);
       return;
     }
   };
@@ -139,9 +95,99 @@ export default function ChatBot() {
     }
   };
 
+  const handleGoogleSignIn = async () => {
+    setLoading(true);
+    try {
+      await loginWithGoogle();
+      setStep('MAIN_MENU');
+      addMessage("You are successfully logged in! How can I serve you today?", 'bot', true);
+    } catch (err) {
+      addMessage(err.message + ". Please try again.", 'bot');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <>
-      <div className="fixed bottom-24 md:bottom-6 right-5 z-[110]">
+      {/* ── MOBILE: bottom-sheet overlay ── */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="md:hidden fixed inset-0 z-[200] bg-black/40 backdrop-blur-sm flex flex-col justify-end"
+            onClick={(e) => { if (e.target === e.currentTarget) setIsOpen(false); }}
+          >
+            <motion.div
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{ type: 'spring', stiffness: 350, damping: 30 }}
+              className="w-full bg-white rounded-t-3xl overflow-hidden flex flex-col"
+              style={{ height: '75vh' }}
+            >
+              {/* Header */}
+              <div className="bg-gradient-to-r from-[#5c3110] via-[#d97706] to-[#b45309] p-4 flex items-center justify-between shadow-md flex-shrink-0 w-full overflow-hidden">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-9 h-9 min-w-9 min-h-9 rounded-full border-2 border-amber-300 bg-white p-0.5 flex items-center justify-center overflow-hidden flex-shrink-0">
+                    <img src="/logo.png" alt="Logo" className="w-full h-full object-contain" />
+                  </div>
+                  <div className="min-w-0">
+                    <h3 className="text-amber-50 font-bold leading-tight font-cinzel text-sm truncate">Fortune Foodz Assistant</h3>
+                    <p className="text-amber-200 text-[10px] uppercase font-bold tracking-wider flex items-center gap-1 truncate">
+                      <ShieldCheck size={11} className="text-emerald-400 flex-shrink-0" /> <span className="truncate">Purity Verified</span>
+                    </p>
+                  </div>
+                </div>
+                <button onClick={() => setIsOpen(false)} className="text-amber-100 hover:text-white p-1 bg-black/20 rounded-full flex-shrink-0 ml-2">
+                  <X size={18} />
+                </button>
+              </div>
+              {/* Messages */}
+              <div className="flex-1 overflow-y-auto p-4 bg-amber-50/40 flex flex-col gap-3">
+                {messages.map((msg, idx) => (
+                  <div key={idx} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+                    <div className={`max-w-[85%] p-3 rounded-2xl text-sm shadow-sm ${msg.sender === 'user' ? 'bg-[#5c3110] text-amber-100 font-medium' : 'bg-white border border-amber-200/80 text-stone-800'}`}>
+                      {msg.text}
+                      {msg.isMenu && (
+                        <div className="mt-3 flex flex-col gap-2">
+                          {[['🛒','shop','Shop Dry Fruits & Spices'],['✨','purity','Purity Testing & Recipes'],['🎁','offers','Festive Offers & Bundles'],['📦','track','Track My Order']].map(([emoji, action, label]) => (
+                            <button key={action} onClick={() => handleMenuAction(action)} className="w-full bg-amber-50 hover:bg-amber-100 text-[#5c3110] border border-amber-200 py-2 px-3 rounded-xl text-xs font-bold text-left flex items-center gap-2 transition-colors">
+                              <span>{emoji}</span> {label}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+                {loading && (
+                  <div className="flex justify-start">
+                    <div className="bg-white border border-amber-200 p-3 rounded-2xl flex items-center gap-2">
+                      {[0, 0.15, 0.3].map((d, i) => <div key={i} className="w-2 h-2 bg-[#d97706] rounded-full animate-bounce" style={{ animationDelay: `${d}s` }} />)}
+                    </div>
+                  </div>
+                )}
+                <div ref={messagesEndRef} />
+              </div>
+              {/* Input */}
+              {step !== 'MAIN_MENU' && (
+                <div className="p-3 bg-white border-t border-amber-200 flex-shrink-0 pb-[env(safe-area-inset-bottom)]">
+                  <div className="flex items-center gap-2">
+                    <input type={step === 'VERIFY_AUTH' ? 'password' : 'text'} value={inputValue} onChange={(e) => setInputValue(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSend()} disabled={loading} placeholder={step === 'VERIFY_AUTH' ? 'Enter password...' : 'Type your message...'} className="flex-1 bg-amber-50/50 border border-amber-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#d97706] disabled:opacity-50" />
+                    <button onClick={handleSend} disabled={!inputValue.trim() || loading} className="bg-[#d97706] text-white p-2.5 rounded-xl disabled:opacity-50 shadow-md"><Send size={18} /></button>
+                  </div>
+                </div>
+              )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ── DESKTOP: floating popup ── */}
+      <div className="hidden md:block fixed bottom-6 right-5 z-[110]">
         <AnimatePresence>
           {isOpen && (
             <motion.div
@@ -149,23 +195,23 @@ export default function ChatBot() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 20, scale: 0.95 }}
               transition={{ duration: 0.2 }}
-              className="absolute bottom-16 right-0 w-[calc(100vw-2.5rem)] sm:w-96 bg-white rounded-3xl shadow-2xl overflow-hidden border border-amber-200 flex flex-col"
+              className="absolute bottom-16 right-0 w-96 bg-white rounded-3xl shadow-2xl overflow-hidden border border-amber-200 flex flex-col"
               style={{ height: '520px', maxHeight: '82vh' }}
             >
               {/* Header */}
-              <div className="bg-gradient-to-r from-[#5c3110] via-[#d97706] to-[#b45309] p-4 flex items-center justify-between shadow-md">
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full border-2 border-amber-300 bg-white p-0.5 flex items-center justify-center overflow-hidden flex-shrink-0">
-                    <img src="/logo.png" alt="Fortune Food Logo" className="w-full h-full object-contain" />
+              <div className="bg-gradient-to-r from-[#5c3110] via-[#d97706] to-[#b45309] p-4 flex items-center justify-between shadow-md w-full overflow-hidden">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-9 h-9 min-w-9 min-h-9 rounded-full border-2 border-amber-300 bg-white p-0.5 flex items-center justify-center overflow-hidden flex-shrink-0">
+                    <img src="/logo.png" alt="Fortune Foodz Logo" className="w-full h-full object-contain" />
                   </div>
-                  <div>
-                    <h3 className="text-amber-50 font-bold leading-tight font-cinzel text-sm">Fortune Food Assistant</h3>
-                    <p className="text-amber-200 text-[10px] uppercase font-bold tracking-wider flex items-center gap-1">
-                      <ShieldCheck size={11} className="text-emerald-400" /> Purity Verified
+                  <div className="min-w-0">
+                    <h3 className="text-amber-50 font-bold leading-tight font-cinzel text-sm truncate">Fortune Foodz Assistant</h3>
+                    <p className="text-amber-200 text-[10px] uppercase font-bold tracking-wider flex items-center gap-1 truncate">
+                      <ShieldCheck size={11} className="text-emerald-400 flex-shrink-0" /> <span className="truncate">Purity Verified</span>
                     </p>
                   </div>
                 </div>
-                <button onClick={() => setIsOpen(false)} className="text-amber-100 hover:text-white transition-colors p-1 bg-black/20 rounded-full hover:bg-black/40">
+                <button onClick={() => setIsOpen(false)} className="text-amber-100 hover:text-white transition-colors p-1 bg-black/20 rounded-full hover:bg-black/40 flex-shrink-0 ml-2">
                   <X size={18} />
                 </button>
               </div>
@@ -249,14 +295,24 @@ export default function ChatBot() {
           </a>
         )}
 
-        {/* Toggle Floating Action Button */}
+        {/* Toggle FAB */}
         <button
           onClick={() => setIsOpen(!isOpen)}
+          aria-label="Toggle chat assistant"
           className="w-14 h-14 bg-gradient-to-tr from-[#5c3110] to-[#d97706] text-amber-200 rounded-full flex items-center justify-center shadow-2xl hover:shadow-[0_0_25px_rgba(245,158,11,0.5)] transition-all transform hover:scale-105 active:scale-95 border-2 border-amber-300 relative z-10"
         >
           {isOpen ? <X size={24} /> : <MessageSquare size={24} />}
         </button>
       </div>
+
+      {/* ── MOBILE FAB button (separate, above bottom nav) ── */}
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="md:hidden fixed bottom-20 right-4 z-[110] w-13 h-13 w-12 h-12 bg-gradient-to-tr from-[#5c3110] to-[#d97706] text-white rounded-full flex items-center justify-center shadow-2xl border-2 border-amber-300 active:scale-90 transition-transform"
+        aria-label="Open chat assistant"
+      >
+        <MessageSquare size={22} />
+      </button>
     </>
   );
 }

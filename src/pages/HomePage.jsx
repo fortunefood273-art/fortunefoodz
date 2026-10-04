@@ -28,6 +28,16 @@ function HeroCarousel() {
   if (!slides || slides.length === 0) return null;
   const s = slides[cur] || slides[0];
 
+  // Gradient fallbacks per index
+  const GRADIENTS = [
+    'linear-gradient(135deg, #78350f 0%, #92400e 40%, #1c1917 100%)',
+    'linear-gradient(135deg, #14532d 0%, #166534 40%, #1c1917 100%)',
+    'linear-gradient(135deg, #7c2d12 0%, #9a3412 40%, #1c1917 100%)',
+    'linear-gradient(135deg, #713f12 0%, #854d0e 40%, #1c1917 100%)',
+    'linear-gradient(135deg, #3b0764 0%, #581c87 40%, #1c1917 100%)',
+  ];
+  const fallbackGrad = GRADIENTS[cur % GRADIENTS.length];
+
   return (
     <motion.div 
       initial={{ opacity: 0, y: 30 }}
@@ -36,14 +46,43 @@ function HeroCarousel() {
       className="relative z-10 max-w-[1600px] mx-auto w-full px-4 md:px-6 mb-4"
     >
       <div
-        className="relative overflow-hidden rounded-3xl w-full shadow-2xl border border-amber-200"
+        className="relative overflow-hidden rounded-3xl w-full shadow-2xl border border-amber-200/30"
+        style={{ background: fallbackGrad }}
         onMouseEnter={() => setAuto(false)}
         onMouseLeave={() => setAuto(true)}
       >
+        {/* Desktop banner */}
         {s.heroImage && (
-          <MediaDisplay src={s.heroImage} alt="Hero Banner" className="w-full h-auto object-cover max-h-[520px]" loading="eager" />
+          <MediaDisplay
+            src={s.heroImage}
+            alt="Hero Banner"
+            className="hidden md:block w-full h-auto object-cover"
+            loading="eager"
+          />
         )}
-        
+
+        {/* Mobile banner – falls back to heroImage if no mobileImage */}
+        {(s.mobileImage || s.heroImage) ? (
+          <MediaDisplay
+            src={s.mobileImage || s.heroImage}
+            alt="Hero Banner"
+            className="block md:hidden w-full h-auto object-cover"
+            loading="eager"
+          />
+        ) : (
+          /* Fallback when no image: show brand visual on mobile */
+          <div className="block md:hidden w-full h-[260px] flex items-center justify-center">
+            <div className="text-center px-8">
+              <div className="text-5xl mb-3">🌿</div>
+              <p className="text-amber-300 font-bold text-xl">Fortune Foodz</p>
+              <p className="text-white/70 text-sm mt-1">Pure. Natural. Authentic.</p>
+            </div>
+          </div>
+        )}
+
+
+
+
         {/* Navigation Arrows */}
         <button onClick={prev} className="absolute left-2 md:left-6 top-1/2 -translate-y-1/2 bg-white/90 backdrop-blur-md rounded-full p-2 md:p-3 shadow-lg hover:bg-amber-500 hover:text-white transition-all z-20">
           <ChevronLeft size={18} className="text-stone-800 hover:text-white" />
@@ -56,7 +95,7 @@ function HeroCarousel() {
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-20">
           {slides.map((_, i) => (
             <button key={i} onClick={() => setCur(i)}
-              className={`h-2.5 rounded-full transition-all duration-300 ${i === cur ? 'bg-amber-400 w-8' : 'bg-white/60 w-2.5'}`} />
+              className={`h-2 rounded-full transition-all duration-300 ${i === cur ? 'bg-amber-400 w-8' : 'bg-white/50 w-2'}`} />
           ))}
         </div>
       </div>
@@ -86,7 +125,7 @@ function SiteHeroBannersSection() {
           <ScrollReveal key={b.id || idx} delay={idx * 150} animation="scale-up">
             <div 
               onClick={() => navigate(b.link || '/category')}
-              className="group relative overflow-hidden rounded-3xl h-[220px] md:h-[280px] shadow-xl border border-amber-300/40 cursor-pointer bg-stone-900"
+              className="group relative overflow-hidden rounded-3xl h-[160px] md:h-[280px] shadow-xl border border-amber-300/40 cursor-pointer bg-stone-900"
             >
               <MediaDisplay 
                 src={b.mediaUrl} 
@@ -148,7 +187,7 @@ function QuickCategories() {
 
   return (
     <section className="relative z-10 max-w-[1600px] mx-auto w-full px-4 md:px-6 mb-4">
-      <div className="relative overflow-hidden rounded-3xl p-5 md:p-7 border border-amber-300/40 shadow-xl bg-gradient-to-br from-[#3b1c06] via-[#5c3110] to-[#1a0e05]">
+      <div className="relative overflow-hidden rounded-3xl p-4 md:p-7 border border-amber-300/40 shadow-xl bg-gradient-to-br from-[#3b1c06] via-[#5c3110] to-[#1a0e05]">
         
         {/* Background Sparkles */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -178,17 +217,17 @@ function QuickCategories() {
             <ChevronLeft size={24} />
           </button>
 
-          <div ref={scrollRef} className="flex gap-4 md:gap-6 overflow-x-auto scrollbar-hide snap-x px-2 md:px-12 py-3">
+          <AutoScrollWrapper direction="left" className="px-2 md:px-12 py-3">
             {infiniteCategories.map((cat, idx) => (
               <button key={`${cat.label}-${idx}`} onClick={() => navigate('/category', { state: { category: cat.label } })}
-                className="snap-center flex-shrink-0 flex flex-col items-center gap-3 group focus:outline-none w-24 sm:w-32 md:w-44 cursor-pointer">
+                className=" flex-shrink-0 flex flex-col items-center gap-3 group focus:outline-none w-24 sm:w-32 md:w-44 cursor-pointer">
                 <div className="w-24 h-24 sm:w-32 sm:h-32 md:w-44 md:h-44 rounded-2xl md:rounded-3xl border-2 border-amber-400/40 bg-[#120a05] overflow-hidden shadow-lg group-hover:border-amber-400 group-hover:scale-105 transition-all duration-300 relative">
                   <img src={cat.img} alt={cat.label} loading="lazy" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                 </div>
                 <span className="text-xs md:text-sm font-bold text-amber-100 text-center leading-tight group-hover:text-amber-400 transition-colors">{cat.label}</span>
               </button>
             ))}
-          </div>
+          </AutoScrollWrapper>
 
           <button onClick={() => scroll('right')} 
             className="absolute right-2 top-1/2 -translate-y-1/2 z-20 w-11 h-11 flex items-center justify-center rounded-full bg-stone-900/80 border border-amber-400 text-amber-300 transition-all hover:bg-amber-500 hover:text-stone-900 hidden md:flex">
@@ -207,7 +246,7 @@ function ExoticSpicesSection({ cat, products, addToCart, toggleWishlist, isInCar
 
   return (
     <section className="relative z-10 max-w-[1600px] mx-auto w-full px-4 md:px-6">
-      <div className="relative overflow-hidden rounded-3xl p-6 md:p-8 border border-amber-500/40 shadow-2xl bg-gradient-to-br from-[#2a0802] via-[#451004] to-[#170301] text-amber-50">
+      <div className="relative overflow-hidden rounded-3xl p-4 md:p-8 border border-amber-500/40 shadow-2xl bg-gradient-to-br from-[#2a0802] via-[#451004] to-[#170301] text-amber-50">
         
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 pb-4 border-b border-amber-500/30 gap-3">
@@ -240,7 +279,7 @@ function ExoticSpicesSection({ cat, products, addToCart, toggleWishlist, isInCar
                 <Heart size={16} className={isWishlisted(hero.id) ? 'fill-red-500 text-red-500' : ''} />
               </button>
 
-              <Link to={`/product/${hero.id}`} className="relative h-60 rounded-xl overflow-hidden mb-4 block">
+              <Link to={`/product/${hero.id}`} className="relative h-48 md:h-60 rounded-xl overflow-hidden mb-4 block">
                 <MediaDisplay src={hero.img} alt={hero.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-transparent to-transparent opacity-80" />
               </Link>
@@ -277,7 +316,7 @@ function ExoticSpicesSection({ cat, products, addToCart, toggleWishlist, isInCar
             {rest.map((p, idx) => (
               <ScrollReveal key={p.id} delay={idx * 60} animation="scale-up" className="h-full">
                 <div className="bg-stone-950/70 rounded-2xl border border-amber-500/30 overflow-hidden hover:border-amber-400 transition-all group flex flex-col h-full shadow-lg">
-                  <Link to={`/product/${p.id}`} className="relative h-36 bg-stone-900 overflow-hidden block">
+                  <Link to={`/product/${p.id}`} className="relative h-28 md:h-36 bg-stone-900 overflow-hidden block">
                     <MediaDisplay src={p.img} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                     <div className="absolute top-1.5 left-1.5 bg-amber-500/90 text-stone-950 text-[8px] font-extrabold px-1.5 py-0.5 rounded">{p.tag || '100% PURE'}</div>
                   </Link>
@@ -313,7 +352,7 @@ function DryFruitsSection({ cat, products, addToCart, toggleWishlist, isInCart, 
 
   return (
     <section className="relative z-10 max-w-[1600px] mx-auto w-full px-4 md:px-6">
-      <div className="relative overflow-hidden rounded-3xl p-6 md:p-8 border border-amber-700/40 shadow-xl bg-gradient-to-r from-[#241306] via-[#3a200b] to-[#190c03] text-amber-50">
+      <div className="relative overflow-hidden rounded-3xl p-4 md:p-8 border border-amber-700/40 shadow-xl bg-gradient-to-r from-[#241306] via-[#3a200b] to-[#190c03] text-amber-50">
         
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 pb-4 border-b border-amber-700/30 gap-3">
@@ -337,7 +376,7 @@ function DryFruitsSection({ cat, products, addToCart, toggleWishlist, isInCart, 
           {products.map((p, idx) => (
             <ScrollReveal key={p.id} delay={idx * 70} animation="scale-up" className="h-full">
               <div className="bg-[#170b03]/90 rounded-2xl border border-amber-700/40 overflow-hidden shadow-md hover:border-amber-400 transition-all cursor-pointer group flex flex-col h-full">
-                <Link to={`/product/${p.id}`} className="relative h-40 bg-stone-950 overflow-hidden block">
+                <Link to={`/product/${p.id}`} className="relative h-32 md:h-40 bg-stone-950 overflow-hidden block">
                   <MediaDisplay src={p.img} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                   <span className="absolute top-2 left-2 bg-amber-700/90 text-amber-100 text-[9px] font-bold px-2 py-0.5 rounded shadow">
                     {p.badge || 'HARVEST'}
@@ -387,7 +426,7 @@ function GourmetNutsSection({ cat, products, addToCart, toggleWishlist, isInCart
 
   return (
     <section className="relative z-10 max-w-[1600px] mx-auto w-full px-4 md:px-6">
-      <div className="relative overflow-hidden rounded-3xl p-6 md:p-8 border border-emerald-500/30 shadow-2xl bg-gradient-to-br from-[#052418] via-[#0a3827] to-[#03140e] text-emerald-50">
+      <div className="relative overflow-hidden rounded-3xl p-4 md:p-8 border border-emerald-500/30 shadow-2xl bg-gradient-to-br from-[#052418] via-[#0a3827] to-[#03140e] text-emerald-50">
         
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 pb-4 border-b border-emerald-500/30 gap-3">
@@ -413,7 +452,7 @@ function GourmetNutsSection({ cat, products, addToCart, toggleWishlist, isInCart
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {topTwo.map((p) => (
               <div key={p.id} className="bg-stone-950/80 rounded-2xl border border-emerald-500/40 p-4 flex gap-4 items-center shadow-xl group hover:border-emerald-400 transition-all">
-                <Link to={`/product/${p.id}`} className="relative w-36 h-36 rounded-xl overflow-hidden flex-shrink-0 bg-stone-900 block">
+                <Link to={`/product/${p.id}`} className="relative w-24 h-24 md:w-36 md:h-36 rounded-xl overflow-hidden flex-shrink-0 bg-stone-900 block">
                   <MediaDisplay src={p.img} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                   <span className="absolute top-1.5 left-1.5 bg-emerald-500 text-stone-950 text-[8px] font-extrabold px-2 py-0.5 rounded">{p.badge || 'ROASTED'}</span>
                 </Link>
@@ -449,7 +488,7 @@ function GourmetNutsSection({ cat, products, addToCart, toggleWishlist, isInCart
             {bottomFour.map((p, idx) => (
               <ScrollReveal key={p.id} delay={idx * 60} animation="scale-up" className="h-full">
                 <div className="bg-stone-950/70 rounded-2xl border border-emerald-500/30 overflow-hidden p-3 hover:border-emerald-400 transition-all group flex flex-col h-full shadow-md">
-                  <Link to={`/product/${p.id}`} className="relative h-32 rounded-xl overflow-hidden bg-stone-900 block mb-2">
+                  <Link to={`/product/${p.id}`} className="relative h-24 md:h-32 rounded-xl overflow-hidden bg-stone-900 block mb-2">
                     <MediaDisplay src={p.img} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                   </Link>
 
@@ -487,7 +526,7 @@ function GourmetNutsSection({ cat, products, addToCart, toggleWishlist, isInCart
 function HealthySeedsSection({ cat, products, addToCart, toggleWishlist, isInCart, isWishlisted, navigate }) {
   return (
     <section className="relative z-10 max-w-[1600px] mx-auto w-full px-4 md:px-6">
-      <div className="relative overflow-hidden rounded-3xl p-6 md:p-8 border border-emerald-300 shadow-xl bg-gradient-to-br from-[#f0fdf4] via-[#ecfdf5] to-[#d1fae5] text-stone-900">
+      <div className="relative overflow-hidden rounded-3xl p-4 md:p-8 border border-emerald-300 shadow-xl bg-gradient-to-br from-[#f0fdf4] via-[#ecfdf5] to-[#d1fae5] text-stone-900">
         
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 pb-4 border-b border-emerald-200 gap-3">
@@ -511,7 +550,7 @@ function HealthySeedsSection({ cat, products, addToCart, toggleWishlist, isInCar
           {products.map((p, idx) => (
             <ScrollReveal key={p.id} delay={idx * 65} animation="scale-up" className="h-full">
               <div className="bg-white rounded-2xl border border-emerald-200 p-3 overflow-hidden shadow-sm hover:shadow-xl transition-all cursor-pointer group flex flex-col h-full">
-                <Link to={`/product/${p.id}`} className="relative h-36 bg-emerald-50 rounded-xl overflow-hidden block mb-2">
+                <Link to={`/product/${p.id}`} className="relative h-28 md:h-36 bg-emerald-50 rounded-xl overflow-hidden block mb-2">
                   <MediaDisplay src={p.img} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                   <span className="absolute top-1.5 left-1.5 bg-emerald-600 text-white text-[8px] font-bold px-2 py-0.5 rounded-full shadow">
                     {p.badge || 'SUPERFOOD'}
@@ -561,7 +600,7 @@ function PureGheeSection({ cat, products, addToCart, toggleWishlist, isInCart, i
 
   return (
     <section className="relative z-10 max-w-[1600px] mx-auto w-full px-4 md:px-6">
-      <div className="relative overflow-hidden rounded-3xl p-6 md:p-8 border border-amber-400/60 shadow-xl bg-gradient-to-r from-[#fffbeb] via-[#fef3c7] to-[#fde68a] text-stone-900">
+      <div className="relative overflow-hidden rounded-3xl p-4 md:p-8 border border-amber-400/60 shadow-xl bg-gradient-to-r from-[#fffbeb] via-[#fef3c7] to-[#fde68a] text-stone-900">
         
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 pb-4 border-b border-amber-300/80 gap-3">
@@ -590,7 +629,7 @@ function PureGheeSection({ cat, products, addToCart, toggleWishlist, isInCart, i
                 <Award size={12} /> A2 BILONA CERTIFIED
               </div>
 
-              <Link to={`/product/${hero.id}`} className="relative h-56 rounded-xl overflow-hidden mb-4 block">
+              <Link to={`/product/${hero.id}`} className="relative h-48 md:h-56 rounded-xl overflow-hidden mb-4 block">
                 <MediaDisplay src={hero.img} alt={hero.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
               </Link>
 
@@ -621,7 +660,7 @@ function PureGheeSection({ cat, products, addToCart, toggleWishlist, isInCart, i
             {rest.map((p, idx) => (
               <ScrollReveal key={p.id} delay={idx * 60} animation="scale-up" className="h-full">
                 <div className="bg-white/90 rounded-2xl border border-amber-300/80 overflow-hidden hover:border-amber-500 transition-all group flex flex-col h-full shadow-sm p-2.5">
-                  <Link to={`/product/${p.id}`} className="relative h-32 bg-amber-50 rounded-xl overflow-hidden block mb-2">
+                  <Link to={`/product/${p.id}`} className="relative h-28 md:h-32 bg-amber-50 rounded-xl overflow-hidden block mb-2">
                     <MediaDisplay src={p.img} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                     <span className="absolute top-1 left-1 bg-amber-500 text-stone-950 text-[8px] font-bold px-1.5 py-0.5 rounded">{p.tag || '100% PURE'}</span>
                   </Link>
@@ -660,7 +699,7 @@ function PureGheeSection({ cat, products, addToCart, toggleWishlist, isInCart, i
 function FestiveGiftsSection({ cat, products, addToCart, toggleWishlist, isInCart, isWishlisted, navigate }) {
   return (
     <section className="relative z-10 max-w-[1600px] mx-auto w-full px-4 md:px-6">
-      <div className="relative overflow-hidden rounded-3xl p-6 md:p-8 border border-amber-400/50 shadow-2xl bg-gradient-to-br from-[#3b040a] via-[#5c0812] to-[#260206] text-amber-50">
+      <div className="relative overflow-hidden rounded-3xl p-4 md:p-8 border border-amber-400/50 shadow-2xl bg-gradient-to-br from-[#3b040a] via-[#5c0812] to-[#260206] text-amber-50">
         
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 pb-4 border-b border-amber-400/30 gap-3">
@@ -684,7 +723,7 @@ function FestiveGiftsSection({ cat, products, addToCart, toggleWishlist, isInCar
           {products.map((p, idx) => (
             <ScrollReveal key={p.id} delay={idx * 70} animation="scale-up" className="h-full">
               <div className="bg-[#200307]/90 rounded-2xl border border-amber-400/40 overflow-hidden shadow-xl hover:border-amber-300 transition-all cursor-pointer group flex flex-col h-full">
-                <Link to={`/product/${p.id}`} className="relative h-40 bg-stone-950 overflow-hidden block">
+                <Link to={`/product/${p.id}`} className="relative h-32 md:h-40 bg-stone-950 overflow-hidden block">
                   <MediaDisplay src={p.img} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                   <div className="absolute top-2 left-2 bg-amber-400 text-stone-950 text-[9px] font-black px-2 py-0.5 rounded shadow flex items-center gap-1">
                     <Sparkles size={10} /> {p.badge || 'ROYAL GIFT'}
@@ -727,91 +766,356 @@ function FestiveGiftsSection({ cat, products, addToCart, toggleWishlist, isInCar
   );
 }
 
-/* ── CATEGORY SECTIONS GRID (DIVERSE & RICH THEMED SECTIONS) ── */
+/* ── CATEGORY SECTIONS GRID ── */
 function CategorySectionsGrid() {
   const { categories, products } = useData();
   const { addToCart, toggleWishlist, isInCart, isWishlisted } = useCart();
   const navigate = useNavigate();
 
+  // Show ALL categories from the database in this preferred order
+  const FEATURED = [
+    'Spices', 'Dry Fruit', 'Seeds', 'Healthy Snacks', 'Dairy', 'Sharbat',
+    'Dried Fruit', 'Mukhwas', 'Choclate', 'Oil', 'Bakery', 'Ayurvedic', 'Millets'
+  ];
+  const featuredCats = FEATURED
+    .map(name => categories.find(c => c.label === name))
+    .filter(Boolean)
+    // Also append any remaining categories not in the above list
+    .concat(categories.filter(c => !FEATURED.includes(c.label)));
+
+  // Helper: small compact card used in most layouts
+  const SmallCard = ({ p }) => (
+    <div className="bg-white rounded-2xl border border-amber-100 overflow-hidden shadow-sm hover:shadow-xl transition-all cursor-pointer group flex flex-col">
+      <Link to={`/product/${p.id}`} className="relative overflow-hidden block h-28 md:h-36 bg-amber-50/50">
+        <MediaDisplay src={p.img} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+        <div className="absolute top-2 left-2 bg-[#d97706] text-white text-[9px] font-bold px-2 py-0.5 rounded-md shadow">{p.tag || 'PURE'}</div>
+        <button onClick={e => { e.preventDefault(); e.stopPropagation(); toggleWishlist(p); }}
+          className="absolute top-2 right-2 bg-white/90 rounded-full p-1.5 shadow-sm hover:scale-110 transition-transform">
+          <Heart size={12} className={isWishlisted(p.id) ? 'fill-red-500 text-red-500' : 'text-stone-400'} />
+        </button>
+      </Link>
+      <div className="p-2 flex flex-col flex-1">
+        <p className="text-[9px] text-[#d97706] font-bold uppercase tracking-wider truncate">{p.badge || 'Fortune Foodz'}</p>
+        <Link to={`/product/${p.id}`} className="text-stone-800 text-[11px] font-bold leading-tight mt-0.5 line-clamp-2 hover:text-[#d97706]">{p.name}</Link>
+        <div className="flex items-baseline gap-1 mt-auto pt-2">
+          <span className="text-stone-900 font-black text-sm">₹{p.price}</span>
+          {p.mrp && <span className="text-stone-400 text-[10px] line-through">₹{p.mrp}</span>}
+        </div>
+        <button onClick={() => addToCart(p)} className={`w-full mt-1.5 text-[10px] font-bold py-1.5 rounded-xl transition-all flex items-center justify-center gap-1 ${isInCart(p.id) ? 'bg-emerald-600 text-white' : 'bg-gradient-to-r from-[#5c3110] to-[#d97706] text-amber-50'}`}>
+          <ShoppingBag size={10} />{isInCart(p.id) ? 'Added ✓' : 'Add'}
+        </button>
+      </div>
+    </div>
+  );
+
+  // Helper: horizontal card (image left, text right) used for Dairy/Sharbat
+  const HorizontalCard = ({ p }) => (
+    <div className="bg-white rounded-2xl border border-amber-100 overflow-hidden shadow-sm hover:shadow-md transition-all cursor-pointer group flex flex-row gap-0">
+      <Link to={`/product/${p.id}`} className="relative overflow-hidden block w-24 md:w-32 flex-shrink-0 bg-amber-50/50">
+        <MediaDisplay src={p.img} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+      </Link>
+      <div className="p-3 flex flex-col flex-1 justify-between">
+        <div>
+          <p className="text-[9px] text-[#d97706] font-bold uppercase tracking-wider">{p.tag || 'PREMIUM'}</p>
+          <Link to={`/product/${p.id}`} className="text-stone-800 text-xs font-bold leading-tight mt-0.5 line-clamp-2 hover:text-[#d97706] block">{p.name}</Link>
+        </div>
+        <div className="flex items-center justify-between mt-2">
+          <div>
+            <span className="text-stone-900 font-black text-sm">₹{p.price}</span>
+            {p.mrp && <span className="text-stone-400 text-[10px] line-through ml-1">₹{p.mrp}</span>}
+          </div>
+          <button onClick={() => addToCart(p)} className={`text-[10px] font-bold py-1 px-3 rounded-lg transition-all ${isInCart(p.id) ? 'bg-emerald-600 text-white' : 'bg-[#d97706] text-white'}`}>
+            {isInCart(p.id) ? '✓' : '+'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
+  // Section header row
+  const SectionHeader = ({ cat, count }) => (
+    <div className="flex items-center justify-between mb-4 pb-3 border-b border-amber-200/50">
+      <div className="flex items-center gap-3">
+        <span className="text-2xl">{cat.emoji}</span>
+        <div>
+          <h2 className="text-stone-900 font-cinzel font-bold text-lg md:text-2xl leading-tight">{cat.label}</h2>
+          <p className="text-stone-400 text-xs">{count} products available</p>
+        </div>
+      </div>
+      <button onClick={() => navigate('/category', { state: { category: cat.label } })}
+        className="flex items-center gap-1 text-[#5c3110] text-xs font-bold bg-amber-50 hover:bg-[#5c3110] hover:text-white border border-amber-300 px-3 py-1.5 rounded-full transition-all">
+        View All <ArrowRight size={13} />
+      </button>
+    </div>
+  );
+
   return (
-    <div className="space-y-4 md:space-y-6 mb-4">
-      {categories.map((cat) => {
-        const catProducts = products.filter(p => p.category === cat.label);
-        const props = { cat, products: catProducts, addToCart, toggleWishlist, isInCart, isWishlisted, navigate };
+    <div className="space-y-4 md:space-y-5 mb-4">
+      {featuredCats.map((cat, sectionIdx) => {
+        const catProducts = products.filter(p => p.category === cat.label).slice(0, 6);
 
-        if (cat.label === 'Exotic Spices') return <ExoticSpicesSection key={cat.label} {...props} />;
-        if (cat.label === 'Dry Fruits') return <DryFruitsSection key={cat.label} {...props} />;
-        if (cat.label === 'Gourmet Nuts') return <GourmetNutsSection key={cat.label} {...props} />;
-        if (cat.label === 'Healthy Seeds') return <HealthySeedsSection key={cat.label} {...props} />;
-        if (cat.label === 'Pure Ghee & Oils') return <PureGheeSection key={cat.label} {...props} />;
-        if (cat.label === 'Festive Gift Boxes') return <FestiveGiftsSection key={cat.label} {...props} />;
-
-        // Fallback for any dynamic new categories
-        return (
+        // ── LAYOUT A: 2-col grid + 1 tall spotlight card (Spices) ──
+        if (cat.label === 'Spices') return (
           <section key={cat.label} className="relative z-10 max-w-[1600px] mx-auto w-full px-4 md:px-6">
-            <div className="glass-panel rounded-3xl p-4 md:p-6">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 pb-3 border-b border-amber-200/60 gap-3">
-                <div className="flex items-center gap-3">
-                  <span className="text-3xl p-2 bg-amber-100/80 rounded-2xl border border-amber-300/60 shadow-sm">{cat.emoji}</span>
-                  <div>
-                    <h2 className="text-stone-900 font-cinzel font-bold text-xl md:text-3xl flex items-center gap-2">
-                      {cat.label} Section <span className="text-xs font-bold text-amber-800 bg-amber-100 px-3 py-0.5 rounded-full border border-amber-300">({catProducts.length} Products)</span>
-                    </h2>
-                    <p className="text-stone-500 text-xs md:text-sm mt-0.5">Handpicked organic harvest & lab tested purity 🌿</p>
-                  </div>
+            <div className="glass-panel rounded-3xl p-4 md:p-5 bg-gradient-to-br from-amber-50/80 to-orange-50/60">
+              <SectionHeader cat={cat} count={catProducts.length} />
+              <div className="flex gap-3">
+                {/* Spotlight (first product large) */}
+                {catProducts[0] && (
+                  <Link to={`/product/${catProducts[0].id}`} className="relative flex-shrink-0 w-40 md:w-52 rounded-2xl overflow-hidden group shadow-md">
+                    <MediaDisplay src={catProducts[0].img} alt={catProducts[0].name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 min-h-[220px] md:min-h-[260px]" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+                    <div className="absolute bottom-0 left-0 right-0 p-3">
+                      <p className="text-amber-300 text-[9px] font-bold uppercase">{catProducts[0].tag}</p>
+                      <p className="text-white text-xs font-bold line-clamp-2">{catProducts[0].name}</p>
+                      <p className="text-amber-200 text-sm font-black mt-1">₹{catProducts[0].price}</p>
+                    </div>
+                  </Link>
+                )}
+                {/* Rest in 2-col grid */}
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-2 flex-1">
+                  {catProducts.slice(1).map(p => <SmallCard key={p.id} p={p} />)}
                 </div>
-                <button onClick={() => navigate('/category', { state: { category: cat.label } })}
-                  className="self-start sm:self-auto flex items-center gap-1.5 text-[#5c3110] text-xs md:text-sm font-bold bg-amber-50 hover:bg-[#5c3110] hover:text-amber-100 border border-amber-300 px-4 py-2 rounded-full transition-all shadow-sm">
-                  View All {cat.label} ({catProducts.length}) <ArrowRight size={14} />
-                </button>
               </div>
+            </div>
+          </section>
+        );
 
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                {catProducts.map((p, idx) => (
-                  <ScrollReveal key={p.id} delay={(idx % 6) * 80} className="h-full" animation="scale-up">
-                    <div className="product-card bg-white rounded-2xl border border-amber-100 overflow-hidden shadow-sm hover:shadow-xl transition-all cursor-pointer group h-full flex flex-col">
-                      <Link to={`/product/${p.id}`} className="relative bg-amber-50/50 overflow-hidden block" style={{ height: 160 }}>
-                        <MediaDisplay src={p.img} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                        <div className="absolute top-2 left-2 bg-[#d97706] text-white text-[9px] font-bold px-2 py-0.5 rounded-md shadow">{p.tag || '100% PURE'}</div>
-                        <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleWishlist(p); }} className="absolute top-2 right-2 bg-white/90 rounded-full p-1.5 shadow-sm hover:scale-110 transition-transform">
-                          <Heart size={13} className={isWishlisted(p.id) ? 'fill-red-500 text-red-500' : 'text-stone-400'} />
-                        </button>
-                      </Link>
+        // ── LAYOUT B: Horizontal scrollable row (Dry Fruit) ──
+        if (cat.label === 'Dry Fruit') return (
+          <section key={cat.label} className="relative z-10 max-w-[1600px] mx-auto w-full px-4 md:px-6">
+            <div className="glass-panel rounded-3xl p-4 md:p-5 bg-gradient-to-br from-stone-50/80 to-amber-50/60">
+              <SectionHeader cat={cat} count={catProducts.length} />
+              {catProducts.length <= 4 ? (
+                <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-hide">
+                  {catProducts.map((p) => (
+                    <div key={p.id} className="flex-shrink-0 w-36 md:w-44">
+                      <SmallCard p={p} />
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <AutoScrollWrapper direction={sectionIdx % 2 === 0 ? 'right' : 'left'}>
+                  {[...catProducts, ...catProducts, ...catProducts].map((p, i) => (
+                    <div key={p.id + '-' + i} className="flex-shrink-0 w-36 md:w-44 ">
+                      <SmallCard p={p} />
+                    </div>
+                  ))}
+                </AutoScrollWrapper>
+              )}
+            </div>
+          </section>
+        );
 
-                      <div className="p-3 flex flex-col flex-1">
-                        <p className="text-[9px] text-[#d97706] font-bold uppercase tracking-wider">{p.badge || p.brand || 'Fortune Food'}</p>
-                        <Link to={`/product/${p.id}`} className="text-stone-800 text-xs font-bold leading-tight mt-0.5 line-clamp-2 hover:text-[#d97706]">
-                          {p.name}
-                        </Link>
+        // ── LAYOUT C: 3-col grid (Seeds) ──
+        if (cat.label === 'Seeds') return (
+          <section key={cat.label} className="relative z-10 max-w-[1600px] mx-auto w-full px-4 md:px-6">
+            <div className="glass-panel rounded-3xl p-4 md:p-5 bg-gradient-to-br from-green-50/60 to-emerald-50/40">
+              <SectionHeader cat={cat} count={catProducts.length} />
+              {catProducts.length <= 4 ? (
+                  <div className="flex gap-2 md:gap-3 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-hide">
+                    {catProducts.map((p) => (
+                      <div key={p.id} className="flex-shrink-0 w-36 md:w-44">
+                        <SmallCard p={p} />
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <AutoScrollWrapper direction={sectionIdx % 2 === 0 ? 'right' : 'left'} speed={0.4}>
+                    {[...catProducts, ...catProducts, ...catProducts, ...catProducts].map((p, i) => (
+                      <div key={p.id + '-' + i} className="flex-shrink-0 w-36 md:w-44 ">
+                        <SmallCard p={p} />
+                      </div>
+                    ))}
+                  </AutoScrollWrapper>
+                )}
+            </div>
+          </section>
+        );
 
-                        <div className="flex items-center gap-1 mt-1">
-                          <div className="flex items-center bg-emerald-600 rounded px-1.5 py-0.5 gap-0.5">
-                            <Star size={8} className="text-white fill-white" />
-                            <span className="text-white text-[9px] font-bold">{p.rating}</span>
+        // ── LAYOUT D: Horizontal list cards (Healthy Snacks) ──
+        if (cat.label === 'Healthy Snacks') return (
+          <section key={cat.label} className="relative z-10 max-w-[1600px] mx-auto w-full px-4 md:px-6">
+            <div className="bg-snacks relative overflow-hidden glass-panel rounded-3xl p-4 md:p-5 bg-gradient-to-br from-lime-50/60 to-green-50/50">
+              <div className="ff-orb ff-orb-1"/><div className="ff-orb ff-orb-2"/><div className="ff-orb ff-orb-3"/>
+              <div className="ff-shimmer-layer"/>
+              <div className="ff-particle ff-p1"/><div className="ff-particle ff-p2"/><div className="ff-particle ff-p3"/><div className="ff-particle ff-p4"/>
+              <div className="relative z-10">
+                <SectionHeader cat={cat} count={catProducts.length} />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3">
+                  {catProducts.map(p => <HorizontalCard key={p.id} p={p} />)}
+                </div>
+              </div>
+            </div>
+          </section>
+        );
+
+        // ── LAYOUT E: 2-col with badge ribbon (Dairy) ──
+        if (cat.label === 'Dairy') return (
+          <section key={cat.label} className="relative z-10 max-w-[1600px] mx-auto w-full px-4 md:px-6">
+            <div className="glass-panel rounded-3xl p-4 md:p-5 bg-gradient-to-br from-blue-50/40 to-indigo-50/30">
+              <SectionHeader cat={cat} count={catProducts.length} />
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                {catProducts.map(p => (
+                  <div key={p.id} className="relative">
+                    <div className="absolute top-0 right-0 z-10 bg-blue-600 text-white text-[8px] font-black px-2 py-0.5 rounded-bl-lg rounded-tr-2xl">DAIRY</div>
+                    <SmallCard p={p} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        );
+
+        // ── LAYOUT F: Sharbat / Drinks – pill cards scrollable row ──
+        if (cat.label === 'Sharbat') return (
+          <section key={cat.label} className="relative z-10 max-w-[1600px] mx-auto w-full px-4 md:px-6">
+            <div className="bg-sharbat relative overflow-hidden glass-panel rounded-3xl p-4 md:p-5 bg-gradient-to-br from-pink-50/60 to-rose-50/40">
+              <div className="ff-orb ff-orb-1"/><div className="ff-orb ff-orb-2"/><div className="ff-orb ff-orb-3"/>
+              <div className="ff-shimmer-layer"/><div className="ff-wave"/>
+              <div className="ff-bubble ff-b1"/><div className="ff-bubble ff-b2"/><div className="ff-bubble ff-b3"/>
+              <div className="relative z-10">
+                <SectionHeader cat={cat} count={catProducts.length} />
+                {catProducts.length <= 4 ? (
+                  <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-hide">
+                    {catProducts.map((p) => (
+                      <div key={p.id} className="flex-shrink-0 w-32 md:w-40">
+                        <div className="bg-white rounded-2xl border border-pink-100 overflow-hidden shadow-sm hover:shadow-lg transition-all cursor-pointer group flex flex-col text-center">
+                          <Link to={`/product/${p.id}`} className="relative overflow-hidden block h-28 bg-pink-50/50">
+                            <MediaDisplay src={p.img} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                          </Link>
+                          <div className="p-2">
+                            <p className="text-stone-800 text-[10px] font-bold line-clamp-2">{p.name}</p>
+                            <p className="text-rose-600 font-black text-sm mt-1">₹{p.price}</p>
+                            <button onClick={() => addToCart(p)} className={`w-full mt-1.5 text-[10px] font-bold py-1 rounded-lg transition-all ${isInCart(p.id) ? 'bg-emerald-600 text-white' : 'bg-rose-500 text-white'}`}>
+                              {isInCart(p.id) ? 'Added ✓' : '+ Cart'}
+                            </button>
                           </div>
-                          <span className="text-stone-400 text-[9px]">({p.reviews})</span>
-                        </div>
-
-                        <div className="flex items-baseline gap-1 mt-2">
-                          <span className="text-stone-900 font-black text-sm">₹{p.price}</span>
-                          {p.mrp && <span className="text-stone-400 text-[10px] line-through">₹{p.mrp}</span>}
-                        </div>
-
-                        <div className="mt-auto pt-2">
-                          <button onClick={() => addToCart(p)}
-                            className={`w-full text-[11px] font-bold py-1.5 rounded-xl transition-all flex items-center justify-center gap-1 ${
-                              isInCart(p.id)
-                                ? 'bg-emerald-600 text-white'
-                                : 'bg-gradient-to-r from-[#5c3110] to-[#d97706] text-amber-50 hover:from-[#3b1c06] hover:to-[#b45309] shadow-sm'
-                            }`}>
-                            <ShoppingBag size={11} />
-                            {isInCart(p.id) ? 'Added ✓' : 'Add to Cart'}
-                          </button>
                         </div>
                       </div>
-                    </div>
-                  </ScrollReveal>
-                ))}
+                    ))}
+                  </div>
+                ) : (
+                  <AutoScrollWrapper direction={sectionIdx % 2 === 0 ? 'right' : 'left'}>
+                    {[...catProducts, ...catProducts, ...catProducts].map((p, i) => (
+                      <div key={p.id + "-" + i} className="flex-shrink-0 w-32 md:w-40 ">
+                        <div className="bg-white rounded-2xl border border-pink-100 overflow-hidden shadow-sm hover:shadow-lg transition-all cursor-pointer group flex flex-col text-center">
+                          <Link to={`/product/${p.id}`} className="relative overflow-hidden block h-28 bg-pink-50/50">
+                            <MediaDisplay src={p.img} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                          </Link>
+                          <div className="p-2">
+                            <p className="text-stone-800 text-[10px] font-bold line-clamp-2">{p.name}</p>
+                            <p className="text-rose-600 font-black text-sm mt-1">₹{p.price}</p>
+                            <button onClick={() => addToCart(p)} className={`w-full mt-1.5 text-[10px] font-bold py-1 rounded-lg transition-all ${isInCart(p.id) ? 'bg-emerald-600 text-white' : 'bg-rose-500 text-white'}`}>
+                              {isInCart(p.id) ? 'Added ✓' : '+ Cart'}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </AutoScrollWrapper>
+                )}
+              </div>
+            </div>
+          </section>
+        );
+
+        // ── FALLBACK: cycle through layouts A-F for all other categories ──
+        const bgPalette = [
+          'bg-gradient-to-br from-amber-50/80 to-orange-50/60',
+          'bg-gradient-to-br from-stone-50/80 to-amber-50/60',
+          'bg-gradient-to-br from-green-50/60 to-emerald-50/40',
+          'bg-gradient-to-br from-lime-50/60 to-green-50/50',
+          'bg-gradient-to-br from-violet-50/40 to-purple-50/30',
+          'bg-gradient-to-br from-teal-50/60 to-cyan-50/40',
+        ];
+        const bg = bgPalette[sectionIdx % bgPalette.length];
+        const layoutVariant = sectionIdx % 3; // 0=grid, 1=scroll, 2=horizontal list
+
+        if (layoutVariant === 1) return (
+          <section key={cat.label} className="relative z-10 max-w-[1600px] mx-auto w-full px-4 md:px-6">
+            <div className={`${cat.label === 'Dried Fruit' ? 'bg-driedberries' : ''} relative overflow-hidden glass-panel rounded-3xl p-4 md:p-5 ${bg}`}>
+              {cat.label === 'Dried Fruit' && (
+                <>
+                  <div className="ff-orb ff-orb-1"/><div className="ff-orb ff-orb-2"/><div className="ff-orb ff-orb-3"/>
+                  <div className="ff-shimmer-layer"/><div className="ff-ring ff-ring1"/><div className="ff-ring ff-ring2"/>
+                  <div className="ff-sparkle ff-sp1"/><div className="ff-sparkle ff-sp2"/><div className="ff-sparkle ff-sp3"/>
+                </>
+              )}
+              <div className="relative z-10">
+                <SectionHeader cat={cat} count={catProducts.length} />
+                {catProducts.length <= 4 ? (
+                  <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-hide">
+                    {catProducts.map((p) => (
+                      <div key={p.id} className="flex-shrink-0 w-36 md:w-44">
+                        <SmallCard p={p} />
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <AutoScrollWrapper direction={sectionIdx % 2 === 0 ? 'right' : 'left'}>
+                    {[...catProducts, ...catProducts, ...catProducts].map((p, i) => (
+                      <div key={p.id + '-' + i} className="flex-shrink-0 w-36 md:w-44 ">
+                        <SmallCard p={p} />
+                      </div>
+                    ))}
+                  </AutoScrollWrapper>
+                )}
+              </div>
+            </div>
+          </section>
+        );
+
+        if (layoutVariant === 2) return (
+          <section key={cat.label} className="relative z-10 max-w-[1600px] mx-auto w-full px-4 md:px-6">
+            <div className={`${cat.label === 'Dried Fruit' ? 'bg-driedberries' : ''} relative overflow-hidden glass-panel rounded-3xl p-4 md:p-5 ${bg}`}>
+              {cat.label === 'Dried Fruit' && (
+                <>
+                  <div className="ff-orb ff-orb-1"/><div className="ff-orb ff-orb-2"/><div className="ff-orb ff-orb-3"/>
+                  <div className="ff-shimmer-layer"/><div className="ff-ring ff-ring1"/><div className="ff-ring ff-ring2"/>
+                  <div className="ff-sparkle ff-sp1"/><div className="ff-sparkle ff-sp2"/><div className="ff-sparkle ff-sp3"/>
+                </>
+              )}
+              <div className="relative z-10">
+                <SectionHeader cat={cat} count={catProducts.length} />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3">
+                  {catProducts.map(p => <HorizontalCard key={p.id} p={p} />)}
+                </div>
+              </div>
+            </div>
+          </section>
+        );
+
+        // default: compact 3-col grid
+        return (
+          <section key={cat.label} className="relative z-10 max-w-[1600px] mx-auto w-full px-4 md:px-6">
+            <div className={`${cat.label === 'Dried Fruit' ? 'bg-driedberries' : ''} relative overflow-hidden glass-panel rounded-3xl p-4 md:p-5 ${bg}`}>
+              {cat.label === 'Dried Fruit' && (
+                <>
+                  <div className="ff-orb ff-orb-1"/><div className="ff-orb ff-orb-2"/><div className="ff-orb ff-orb-3"/>
+                  <div className="ff-shimmer-layer"/><div className="ff-ring ff-ring1"/><div className="ff-ring ff-ring2"/>
+                  <div className="ff-sparkle ff-sp1"/><div className="ff-sparkle ff-sp2"/><div className="ff-sparkle ff-sp3"/>
+                </>
+              )}
+              <div className="relative z-10">
+                <SectionHeader cat={cat} count={catProducts.length} />
+                {catProducts.length <= 4 ? (
+                  <div className="flex gap-2 md:gap-3 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-hide">
+                    {catProducts.map((p) => (
+                      <div key={p.id} className="flex-shrink-0 w-36 md:w-44">
+                        <SmallCard p={p} />
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <AutoScrollWrapper direction={sectionIdx % 2 === 0 ? 'right' : 'left'} speed={0.4}>
+                    {[...catProducts, ...catProducts, ...catProducts, ...catProducts].map((p, i) => (
+                      <div key={p.id + '-' + i} className="flex-shrink-0 w-36 md:w-44 ">
+                        <SmallCard p={p} />
+                      </div>
+                    ))}
+                  </AutoScrollWrapper>
+                )}
               </div>
             </div>
           </section>
@@ -872,7 +1176,7 @@ function DealsSection() {
 function FarmOriginSection() {
   return (
     <section className="relative z-10 max-w-[1600px] mx-auto w-full px-4 md:px-6 mb-4">
-      <div className="bg-gradient-to-r from-[#5c3110] to-[#3b1c06] rounded-3xl p-5 md:p-7 border border-amber-400/40 text-amber-50 shadow-xl relative overflow-hidden">
+      <div className="bg-gradient-to-r from-[#5c3110] to-[#3b1c06] rounded-3xl p-4 md:p-7 border border-amber-400/40 text-amber-50 shadow-xl relative overflow-hidden">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
           <div>
             <div className="inline-flex items-center gap-1.5 bg-amber-400/20 text-amber-300 px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-2">
@@ -882,7 +1186,7 @@ function FarmOriginSection() {
               100% Traceable Organic Sourcing
             </h2>
             <p className="text-amber-200/80 text-xs md:text-sm leading-relaxed mb-4">
-              Every package of Fortune Food is sourced directly from certified organic farmers across Pampore Valley, Wayanad, and California orchards to ensure unparalleled purity and flavor.
+              Every package of Fortune Foodz is sourced directly from certified organic farmers across Pampore Valley, Wayanad, and California orchards to ensure unparalleled purity and flavor.
             </p>
 
             <div className="grid grid-cols-2 gap-2.5 text-xs md:text-sm">
@@ -952,22 +1256,22 @@ function Footer() {
   const navigate = useNavigate();
 
   return (
-    <footer className="hidden md:block relative bg-[#1c0f05] text-amber-50 mt-6 overflow-hidden border-t border-amber-900/60">
+    <footer className="relative bg-[#1c0f05] text-amber-50 mt-6 overflow-hidden border-t border-amber-900/60 pb-24 md:pb-0">
       <div className="relative z-10 max-w-[1600px] mx-auto px-6 py-10">
-        <div className="grid grid-cols-4 gap-8 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           {/* Brand info */}
           <div>
             <div className="flex items-center gap-3 mb-3 cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
               <div className="w-11 h-11 rounded-full border-2 border-amber-400 bg-amber-50 p-0.5 overflow-hidden">
-                <img src="/logo.png" alt="Fortune Food" className="w-full h-full object-contain" />
+                <img src="/logo.png" alt="Fortune Foodz" className="w-full h-full object-contain" />
               </div>
               <div>
-                <p className="font-cinzel font-bold text-lg text-amber-100">FORTUNE FOOD</p>
+                <p className="font-cinzel font-bold text-lg text-amber-100">FORTUNE FOODZ</p>
                 <p className="text-[#2563eb] text-[9px] font-bold tracking-wider uppercase">Promise of Purity</p>
               </div>
             </div>
             <p className="text-amber-200/70 text-xs leading-relaxed mb-3">
-              Fortune Food brings 100% pure organic dry fruits, Kashmiri Mongra saffron, jumbo almonds, and authentic spices direct from certified organic farms to your kitchen.
+              Fortune Foodz brings 100% pure organic dry fruits, Kashmiri Mongra saffron, jumbo almonds, and authentic spices direct from certified organic farms to your kitchen.
             </p>
           </div>
 
@@ -1015,7 +1319,7 @@ function Footer() {
         </div>
 
         <div className="border-t border-amber-900/60 pt-4 flex justify-between text-xs text-amber-200/50">
-          <p>© 2026 Fortune Food — Promise of Purity. All rights reserved.</p>
+          <p>© 2026 Fortune Foodz — Promise of Purity. All rights reserved.</p>
           <div className="flex gap-4">
             <span>Organic Certified</span>
             <span>FSSAI Approved</span>
@@ -1028,6 +1332,23 @@ function Footer() {
 }
 
 /* ── HOME PAGE ── */
+/* AUTO SCROLL WRAPPER */
+function AutoScrollWrapper({ children, direction = 'left', speed = 0.5, className = "pb-2 -mx-1 px-1" }) {
+    const dir = direction === 'right' ? 'reverse' : 'normal';
+    const duration = speed > 0 ? (17.5 / speed).toFixed(1) + 's' : '35s';
+    
+    return (
+      <div className={`overflow-hidden whitespace-nowrap w-full ${className}`}>
+        <div 
+          className="animate-marquee inline-flex gap-3 items-stretch" 
+          style={{ animationDirection: dir, animationDuration: duration }}
+        >
+          {children}
+        </div>
+      </div>
+    );
+  }
+
 export default function HomePage() {
   return (
     <div className="min-h-screen mesh-bg">
@@ -1057,8 +1378,6 @@ export default function HomePage() {
       </main>
 
       <Footer />
-
-      <div className="h-20 md:hidden" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }} />
     </div>
   );
 }

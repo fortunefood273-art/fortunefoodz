@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const prisma = require('../db');
+const { sendEmail } = require('../utils/email');
 
 // GET all orders (admin)
 router.get('/', async (req, res) => {
@@ -19,7 +20,7 @@ router.get('/', async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     const {
-      visitorId, customerName, customerPhone, customerAddress,
+      visitorId, customerName, customerPhone, customerAddress, customerEmail,
       items, total, paymentMethod, razorpayOrderId,
       razorpayPaymentId, notes
     } = req.body;
@@ -32,6 +33,7 @@ router.post('/', async (req, res) => {
       data: {
         visitorId: visitorId && visitorId !== 'anonymous' ? visitorId : null,
         customerName,
+        customerEmail: customerEmail || null,
         customerPhone,
         customerAddress,
         items: typeof items === 'string' ? items : JSON.stringify(items),
@@ -54,6 +56,114 @@ router.post('/', async (req, res) => {
           phone: customerPhone
         }
       }).catch(e => console.error("Error linking visitor to order:", e.message));
+    }
+
+    // Send Order Alert Email to Admin
+    try {
+      const adminEmail = process.env.EMAIL_USER || 'pranavgugale561@gmail.com';
+      const itemsList = typeof items === 'string' ? JSON.parse(items) : items;
+
+      const itemsHtml = itemsList.map(function(item) {
+        const subtotal = item.quantity * item.price;
+        return '<li>' + item.name + ' (' + (item.selectedWeight || 'Standard') + ') - ' + item.quantity + ' x Rs.' + item.price + ' = Rs.' + subtotal + '</li>';
+      }).join('');
+
+      const adminHtml = '<h2>New Order Received!</h2>'
+        + '<p><strong>Order ID:</strong> #' + order.id + '</p>'
+        + '<p><strong>Customer Name:</strong> ' + customerName + '</p>'
+        + '<p><strong>Phone:</strong> ' + customerPhone + '</p>'
+        + (customerEmail ? '<p><strong>Email:</strong> ' + customerEmail + '</p>' : '')
+        + '<p><strong>Address:</strong> ' + customerAddress + '</p>'
+        + '<p><strong>Payment Method:</strong> ' + paymentMethod + ' (' + order.paymentStatus + ')</p>'
+        + '<p><strong>Total Amount:</strong> Rs.' + total + '</p>'
+        + '<h3>Order Items:</h3>'
+        + '<ul>' + itemsHtml + '</ul>'
+        + '<br/>'
+        + '<p><a href="https://fortunefoodz.vercel.app/admin" style="padding:10px 15px;background:#d97706;color:#fff;text-decoration:none;border-radius:5px;">View in Admin Panel</a></p>';
+
+      await sendEmail({
+        to: adminEmail,
+        subject: 'New Order #' + order.id + ' from ' + customerName + ' - Rs.' + total,
+        text: 'New Order #' + order.id + ' from ' + customerName + '. Total: Rs.' + total,
+        html: adminHtml
+      });
+      console.log('Order alert email sent to admin.');
+
+      // Send Order Confirmation to Customer
+      if (customerEmail) {
+        const invoiceDate = new Date().toLocaleDateString('en-IN');
+        
+        const tableItemsHtml = itemsList.map(function(item) {
+          const subtotal = item.quantity * item.price;
+          return '<tr style="border-bottom: 1px solid #eee;">' +
+                 '<td style="padding: 10px; color: #555;">' + item.name + '<br/><small style="color: #888;">Variant: ' + (item.selectedWeight || 'Standard') + '</small></td>' +
+                 '<td style="padding: 10px; text-align: center; color: #555;">' + item.quantity + '</td>' +
+                 '<td style="padding: 10px; text-align: right; color: #555;">Rs. ' + subtotal + '</td>' +
+                 '</tr>';
+        }).join('');
+
+        const customerHtml = '<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">'
+          + '<div style="background-color: #d97706; padding: 20px; text-align: center; color: white;">'
+          + '<h1 style="margin: 0; font-size: 24px; letter-spacing: 1px;">FORTUNE FOODZ</h1>'
+          + '<p style="margin: 5px 0 0 0; font-size: 14px; opacity: 0.9;">Taste of Goodness</p>'
+          + '</div>'
+          + '<div style="padding: 30px 20px;">'
+          + '<h2 style="color: #333; margin-top: 0; font-size: 20px; border-bottom: 2px solid #f3f4f6; padding-bottom: 10px;">Order Confirmation</h2>'
+          + '<p style="color: #555; font-size: 15px; line-height: 1.5;">Hi <strong>' + customerName + '</strong>,</p>'
+          + '<p style="color: #555; font-size: 15px; line-height: 1.5;">Thank you for your order! We are currently processing it. Below is your official invoice.</p>'
+          + '<table width="100%" cellpadding="0" cellspacing="0" style="margin-top: 25px; margin-bottom: 25px; font-size: 14px;">'
+          + '<tr>'
+          + '<td width="50%" valign="top" style="color: #555; line-height: 1.6;">'
+          + '<h4 style="margin: 0 0 5px 0; color: #333;">Order Details:</h4>'
+          + '<strong>Order ID:</strong> #' + order.id + '<br/>'
+          + '<strong>Date:</strong> ' + invoiceDate + '<br/>'
+          + '<strong>Payment:</strong> ' + paymentMethod + ' (' + order.paymentStatus + ')'
+          + '</td>'
+          + '<td width="50%" valign="top" style="color: #555; line-height: 1.6;">'
+          + '<h4 style="margin: 0 0 5px 0; color: #333;">Billed To:</h4>'
+          + customerName + '<br/>'
+          + customerAddress + '<br/>'
+          + customerPhone
+          + '</td>'
+          + '</tr>'
+          + '</table>'
+          + '<table width="100%" cellpadding="0" cellspacing="0" style="border-collapse: collapse; font-size: 14px; margin-bottom: 25px;">'
+          + '<thead>'
+          + '<tr style="background-color: #f8f9fa; border-bottom: 2px solid #ddd; text-align: left;">'
+          + '<th style="padding: 10px; color: #333;">Item</th>'
+          + '<th style="padding: 10px; color: #333; text-align: center;">Qty</th>'
+          + '<th style="padding: 10px; color: #333; text-align: right;">Price</th>'
+          + '</tr>'
+          + '</thead>'
+          + '<tbody>'
+          + tableItemsHtml
+          + '</tbody>'
+          + '<tfoot>'
+          + '<tr>'
+          + '<td colspan="2" style="text-align: right; font-weight: bold; padding: 15px 10px 0 0; border-top: 1px solid #ddd; color: #333;">Total Amount:</td>'
+          + '<td style="text-align: right; font-weight: bold; padding: 15px 10px 0 10px; border-top: 1px solid #ddd; font-size: 16px; color: #d97706;">Rs. ' + total + '</td>'
+          + '</tr>'
+          + '</tfoot>'
+          + '</table>'
+          + '<p style="text-align: center; color: #777; font-size: 14px; margin-top: 30px;">We will notify you as soon as your order ships.</p>'
+          + '</div>'
+          + '<div style="background-color: #f3f4f6; padding: 20px; text-align: center; font-size: 12px; color: #666; border-top: 1px solid #e0e0e0;">'
+          + '<p style="margin: 0 0 5px 0;"><strong>Fortune Foodz</strong></p>'
+          + '<p style="margin: 0 0 5px 0;">Email: fortunefood273@gmail.com</p>'
+          + '<p style="margin: 0;"><a href="https://fortunefoodz.vercel.app" style="color: #d97706; text-decoration: none;">www.fortunefoodz.vercel.app</a></p>'
+          + '</div>'
+          + '</div>';
+
+        await sendEmail({
+          to: customerEmail,
+          subject: 'Order Confirmation #' + order.id + ' - Fortune Foodz',
+          text: 'Thank you for your order #' + order.id + '. Total: Rs.' + total,
+          html: customerHtml
+        });
+        console.log('Order confirmation email sent to customer.');
+      }
+    } catch (emailErr) {
+      console.error('Failed to send order emails:', emailErr);
     }
 
     res.status(201).json(order);
@@ -97,4 +207,23 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+
+// GET /api/orders/mine - fetch orders for logged-in user by email (requires Firebase auth)
+const authRouter = require('./auth');
+const verifyToken = authRouter.verifyToken;
+router.get('/mine', verifyToken, async (req, res) => {
+  try {
+    const email = req.user.email;
+    if (!email) return res.json({ orders: [] });
+    const orders = await prisma.order.findMany({
+      where: { customerEmail: email },
+      orderBy: { createdAt: 'desc' }
+    });
+    res.json({ orders });
+  } catch (error) {
+    console.error('Error fetching user orders:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
 module.exports = router;
+

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Star, Heart, ShoppingBag, ChevronRight, ShieldCheck, Truck, RotateCcw, Plus, Minus, Award, Sparkles, CheckCircle2 } from 'lucide-react';
 import Header from '../components/Header';
@@ -14,10 +14,32 @@ export default function ProductPage() {
   const { addToCart, toggleWishlist, isWishlisted, setCartOpen } = useCart();
   
   const product = products.find(p => String(p.id) === String(id));
+  
+  const parsedVariants = useMemo(() => {
+    if (!product) return [];
+    try {
+      if (product.variants && typeof product.variants === 'string') {
+        const v = JSON.parse(product.variants);
+        if (Array.isArray(v) && v.length > 0) return v;
+      }
+    } catch(e){}
+    return [];
+  }, [product]);
+
   const [activeImage, setActiveImage] = useState(0);
-  const [selectedWeight, setSelectedWeight] = useState('250g');
+  const [selectedWeight, setSelectedWeight] = useState(parsedVariants.length > 0 ? parsedVariants[0].label : '');
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState('description');
+
+  useEffect(() => {
+    if (parsedVariants.length > 0) {
+      if (!parsedVariants.find(v => v.label === selectedWeight)) {
+        setSelectedWeight(parsedVariants[0].label);
+      }
+    } else {
+      setSelectedWeight('');
+    }
+  }, [parsedVariants, selectedWeight]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -25,7 +47,7 @@ export default function ProductPage() {
 
   if (!product) {
     return (
-      <div className="min-h-screen mesh-bg flex flex-col">
+      <div className="min-h-screen mesh-bg pb-32 md:pb-0 flex flex-col">
         <Header />
         <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
           <h2 className="text-2xl font-cinzel font-bold text-stone-900 mb-2">Product Not Found</h2>
@@ -38,24 +60,15 @@ export default function ProductPage() {
     );
   }
 
-  // Pack Weight Multipliers
-  const weightOptions = [
-    { label: '100g', multiplier: 0.5 },
-    { label: '250g', multiplier: 1.0 },
-    { label: '500g', multiplier: 1.85 },
-    { label: '1kg', multiplier: 3.5 },
-    { label: '5kg Box', multiplier: 16.0 },
-  ];
-
-  const currentMultiplier = weightOptions.find(w => w.label === selectedWeight)?.multiplier || 1.0;
-  const computedPrice = Math.round(product.price * currentMultiplier);
-  const computedMrp   = product.mrp ? Math.round(product.mrp * currentMultiplier) : Math.round(computedPrice * 1.3);
+  const activeVariant = parsedVariants.find(v => v.label === selectedWeight);
+  const computedPrice = activeVariant ? Number(activeVariant.price) : Number(product.price || 0);
+  const computedMrp   = activeVariant ? Number(activeVariant.mrp) : Number(product.mrp || Math.round(computedPrice * 1.3));
 
   const gallery = [product.img, ...(product.images ? (typeof product.images === 'string' ? JSON.parse(product.images) : product.images) : [])];
   const relatedProducts = products.filter(p => p.category === product.category && p.id !== product.id).slice(0, 4);
 
   return (
-    <div className="min-h-screen mesh-bg">
+    <div className="min-h-screen mesh-bg pb-32 md:pb-0">
       <Header />
       
       <main className="pb-28 md:pb-16 pt-4">
@@ -101,6 +114,48 @@ export default function ProductPage() {
                     onClick={() => toggleWishlist(product)}>
                     <Heart size={20} className={isWishlisted(product.id) ? "fill-red-500 text-red-500" : ""} />
                   </button>
+                  <button className="absolute top-16 right-4 p-2.5 bg-white/90 rounded-full hover:scale-110 text-stone-600 transition-all z-10 shadow-md"
+                      onClick={async () => {
+                        const messages = [
+                          "Hey look, I found this healthy snack! ",
+                          "You have to try this premium quality product! ",
+                          "Look at this amazing organic find! ",
+                          "I just found this on Fortune Foodz, looks delicious! "
+                        ];
+                        const msg = messages[Math.floor(Math.random() * messages.length)];
+                        const link = window.location.href;
+                        const shareText = msg + "\n" + link;
+                        
+                        try {
+                          const response = await fetch(gallery[activeImage]);
+                          const blob = await response.blob();
+                          const file = new File([blob], 'product.jpg', { type: blob.type || 'image/jpeg' });
+                          
+                          if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                            await navigator.share({
+                              title: product.name,
+                              text: shareText,
+                              files: [file]
+                            });
+                            return;
+                          }
+                        } catch (err) {
+                          console.log("Could not share image file, falling back to text share.", err);
+                        }
+                        
+                        if (navigator.share) {
+                          navigator.share({
+                            title: product.name,
+                            text: msg,
+                            url: link
+                          }).catch(console.error);
+                        } else {
+                          navigator.clipboard.writeText(shareText);
+                          alert("Link & message copied to clipboard!");
+                        }
+                      }}>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+                    </button>
                   <MediaDisplay src={gallery[activeImage]} alt={product.name} className="w-full h-full object-cover p-2" />
                 </div>
               </div>
@@ -110,7 +165,7 @@ export default function ProductPage() {
             <ScrollReveal delay={100}>
               <div className="flex flex-col">
                 <div className="mb-2 flex items-center justify-between">
-                  <span className="text-[#d97706] font-bold text-xs tracking-wider uppercase bg-amber-100 px-2.5 py-1 rounded-full">{product.brand || 'Fortune Food'}</span>
+                  <span className="text-[#d97706] font-bold text-xs tracking-wider uppercase bg-amber-100 px-2.5 py-1 rounded-full">{product.brand || 'Fortune Foodz'}</span>
                   <span className="text-emerald-700 text-xs font-bold flex items-center gap-1"><ShieldCheck size={14} /> 100% Organic Purity</span>
                 </div>
                 
@@ -134,27 +189,29 @@ export default function ProductPage() {
                 </div>
 
                 {/* Pack Size / Weight Variable Selector */}
-                <div className="mb-6">
-                  <p className="text-xs font-bold text-stone-700 uppercase tracking-wide mb-2 flex items-center justify-between">
-                    <span>Select Weight / Pack Size</span>
-                    <span className="text-[#d97706]">{selectedWeight}</span>
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {weightOptions.map(w => (
-                      <button
-                        key={w.label}
-                        onClick={() => setSelectedWeight(w.label)}
-                        className={`px-4 py-2 rounded-xl text-xs font-bold border transition-all ${
-                          selectedWeight === w.label
-                            ? 'bg-[#5c3110] text-amber-200 border-[#5c3110] shadow-md scale-105'
-                            : 'bg-white text-stone-700 border-amber-200 hover:border-[#d97706]'
-                        }`}
-                      >
-                        {w.label}
-                      </button>
-                    ))}
+                {parsedVariants.length > 0 && (
+                  <div className="mb-6">
+                    <p className="text-xs font-bold text-stone-700 uppercase tracking-wide mb-2 flex items-center justify-between">
+                      <span>Select Pack Size</span>
+                      <span className="text-[#d97706]">{selectedWeight}</span>
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {parsedVariants.map(w => (
+                        <button
+                          key={w.label}
+                          onClick={() => setSelectedWeight(w.label)}
+                          className={`px-4 py-2 rounded-xl text-xs font-bold border transition-all ${
+                            selectedWeight === w.label
+                              ? 'bg-[#5c3110] text-amber-200 border-[#5c3110] shadow-md scale-105'
+                              : 'bg-white text-stone-700 border-amber-200 hover:border-[#d97706]'
+                          }`}
+                        >
+                          {w.label}
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {/* Quantity modifier */}
                 <div className="mb-8 flex items-center justify-between border-t border-b border-amber-100 py-4">
@@ -228,35 +285,78 @@ export default function ProductPage() {
                 ))}
               </div>
               <div className="text-stone-700 text-sm leading-relaxed">
-                {activeTab === 'description' && (
-                  <div className="space-y-3">
-                    <p className="font-semibold text-stone-900">{product.description}</p>
-                    <p>Every batch is handpicked from organic farms and sealed in food-grade pouches to preserve natural aromas, crisp texture, and essential oils.</p>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2 pt-2">
-                      <div className="flex items-center gap-2 text-emerald-800 font-bold text-xs"><CheckCircle2 size={15} /> 100% Raw, Unsalted & Unprocessed</div>
-                      <div className="flex items-center gap-2 text-emerald-800 font-bold text-xs"><CheckCircle2 size={15} /> High In Antioxidants & Healthy Fats</div>
-                      <div className="flex items-center gap-2 text-emerald-800 font-bold text-xs"><CheckCircle2 size={15} /> Zero Chemical Additives & Preservatives</div>
-                      <div className="flex items-center gap-2 text-emerald-800 font-bold text-xs"><CheckCircle2 size={15} /> Nitrogen Flushed Freshness Pack</div>
-                    </div>
-                  </div>
-                )}
-                {activeTab === 'nutritional facts' && (
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-amber-50 p-4 rounded-2xl border border-amber-200">
-                    <div><p className="text-xs text-stone-500 font-bold">Energy</p><p className="font-black text-stone-900">579 kcal</p></div>
-                    <div><p className="text-xs text-stone-500 font-bold">Protein</p><p className="font-black text-stone-900">21.1 g</p></div>
-                    <div><p className="text-xs text-stone-500 font-bold">Dietary Fiber</p><p className="font-black text-stone-900">12.5 g</p></div>
-                    <div><p className="text-xs text-stone-500 font-bold">Healthy Fats</p><p className="font-black text-stone-900">49.9 g</p></div>
-                  </div>
-                )}
-                {activeTab === 'purity testing' && (
-                  <div className="space-y-2">
-                    <p className="font-bold text-[#5c3110]">Fortune Food Purity Guarantee:</p>
-                    <p>All dry fruits and spices undergo rigorous 12-point quality testing for moisture, heavy metals, synthetic colors, and artificial aromas.</p>
-                  </div>
-                )}
+                {(() => {
+                  let details = {};
+                  try {
+                    if (product.details) {
+                      details = typeof product.details === 'string' ? JSON.parse(product.details) : product.details;
+                    }
+                  } catch (e) {}
+
+                  const descriptionBullets = details?.descriptionBullets?.filter(Boolean) || [
+                    '100% Raw, Unsalted & Unprocessed',
+                    'High In Antioxidants & Healthy Fats',
+                    'Zero Chemical Additives & Preservatives',
+                    'Nitrogen Flushed Freshness Pack'
+                  ];
+
+                  const nutritionalFacts = details?.nutritionalFacts?.filter(n => n.name && n.value) || [
+                    { name: 'Energy', value: '579 kcal' },
+                    { name: 'Protein', value: '21.1 g' },
+                    { name: 'Dietary Fiber', value: '12.5 g' },
+                    { name: 'Healthy Fats', value: '49.9 g' }
+                  ];
+
+                  const purityTesting = details?.purityTesting?.filter(Boolean) || [
+                    '100% Organic & FSSAI Certified',
+                    'No artificial colors or preservatives',
+                    'Sourced directly from certified organic farms',
+                    'Rigorous quality checks at every stage'
+                  ];
+
+                  return (
+                    <>
+                      {activeTab === 'description' && (
+                        <div className="space-y-3">
+                          <p className="font-semibold text-stone-900 whitespace-pre-wrap">{product.description}</p>
+                          
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 pt-2">
+                            {descriptionBullets.map((bullet, idx) => (
+                              <div key={idx} className="flex items-center gap-2 text-emerald-800 font-bold text-xs">
+                                <CheckCircle2 size={15} /> {bullet}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      
+                      {activeTab === 'nutritional facts' && (
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-amber-50 p-4 rounded-2xl border border-amber-200">
+                          {nutritionalFacts.map((fact, idx) => (
+                            <div key={idx}>
+                              <p className="text-xs text-stone-500 font-bold">{fact.name}</p>
+                              <p className="font-black text-stone-900">{fact.value}</p>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      
+                      {activeTab === 'purity testing' && (
+                        <div className="space-y-2">
+                          <p className="font-bold text-[#5c3110]">Fortune Foodz Purity Guarantee:</p>
+                          <ul className="list-disc pl-5 text-sm text-stone-700 space-y-1">
+                            {purityTesting.map((pt, idx) => (
+                              <li key={idx}>{pt}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </>
+                  );
+                })()}
               </div>
-            </div>
-          </ScrollReveal>
+              </div>
+            </ScrollReveal>
 
           {/* Related Products */}
           {relatedProducts.length > 0 && (
@@ -290,7 +390,7 @@ export default function ProductPage() {
         <div className="flex items-center justify-between">
           <div className="flex-1 min-w-0 pr-2">
             <p className="text-xs font-bold text-stone-800 truncate">{product.name}</p>
-            <p className="font-black text-[#5c3110] text-base leading-tight">₹{computedPrice} <span className="text-xs text-amber-800 font-bold bg-amber-100 px-1.5 py-0.5 rounded">{selectedWeight}</span></p>
+            <p className="font-black text-[#5c3110] text-base leading-tight">₹{computedPrice} {selectedWeight && <span className="text-xs text-amber-800 font-bold bg-amber-100 px-1.5 py-0.5 rounded ml-1">{selectedWeight}</span>}</p>
           </div>
           <div className="flex items-center border border-amber-200 rounded-lg overflow-hidden flex-shrink-0 h-9 bg-amber-50">
             <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="px-2.5 text-stone-600 font-bold"><Minus size={13}/></button>

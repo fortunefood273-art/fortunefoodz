@@ -67,6 +67,14 @@ export default function AdminMusic() {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    if (file.size > 3 * 1024 * 1024) {
+      window.dispatchEvent(
+        new CustomEvent('toast', { detail: { message: 'File is too large! Please use a file smaller than 3MB or use the URL method.' } })
+      );
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      return;
+    }
+
     setFileName(file.name);
 
     // Convert to base64 for preview & saving (small files)
@@ -88,7 +96,13 @@ export default function AdminMusic() {
   const handleSave = async () => {
     setStatus('saving');
     try {
-      const newUrl = previewUrl === DEFAULT_AUDIO_URL ? null : previewUrl;
+      let finalUrl = previewUrl;
+      if (inputMode === 'url' && urlInput.trim() !== '' && urlInput.trim() !== previewUrl) {
+        finalUrl = urlInput.trim();
+        setPreviewUrl(finalUrl);
+      }
+
+      const newUrl = finalUrl === DEFAULT_AUDIO_URL ? null : finalUrl;
       await axios.put('/api/settings', {
         ...frontendSettings,
         siteAudioUrl: newUrl,
@@ -318,7 +332,7 @@ export default function AdminMusic() {
                   />
                 </div>
                 <p className="text-xs text-gray-400">
-                  File will be converted to base64 for storage. For files larger than 5MB, use the URL method instead.
+                  File will be converted to base64 for storage. For files larger than 3MB, use the URL method instead.
                 </p>
               </div>
             )}
@@ -353,7 +367,7 @@ export default function AdminMusic() {
             <AlertTriangle size={20} className="text-amber-500 shrink-0 mt-0.5" />
             <p className="text-sm text-amber-800 font-medium leading-relaxed">
               <span className="font-bold">Performance tip: </span>
-              Audio files larger than 5MB may slow down your site. Use a hosted URL (e.g. from a CDN or cloud storage) for best performance.
+              Audio files larger than 3MB may slow down your site. Use a hosted URL (e.g. from a CDN or cloud storage) for best performance.
             </p>
           </div>
         </ScrollReveal>
